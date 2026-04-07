@@ -109,6 +109,14 @@ openclaw skills list
 
 OpenClaw loads workspace skills on the next session. If you want the skill available immediately, start a new OpenClaw session or restart the gateway.
 
+## Environment
+
+AI-assisted set generation uses OpenRouter.
+
+1. Copy [`.env.example`](.env.example) to `.env`
+2. Set `OPENROUTER_API_KEY`
+3. Keep the real key out of version control
+
 ## Repository Layout
 
 - `SKILL.md` - OpenClaw skill definition and operating rules
