@@ -1,36 +1,90 @@
 # Trading Cards Skill for OpenClaw
 
-Public mirror of the OpenClaw `trading-cards` skill. This repo bundles the
-runtime scripts, reference material, and data files used by the skill so it can
-be installed, inspected, and updated as a self-contained package.
+Trading Cards Skill for OpenClaw is a full-throttle, stateful trading-card simulation skill for OpenClaw. It does the unglamorous work beautifully: it generates sets, opens packs, tracks collections, simulates the secondary market, and turns a parody card company called Flopps into a running joke with actual structure behind it.
 
-## Capabilities
+<!-- markdownlint-disable MD033 -->
+<p align="center">
+  <img src="img/image.png" alt="Trading Cards Skill for OpenClaw" width="90%" />
+</p>
+<!-- markdownlint-enable MD033 -->
 
-This skill supports the full lifecycle of a virtual trading-card simulation:
+This repo is the public mirror of the skill. It bundles the runtime scripts, reference notes, and seeded simulation data needed to inspect, install, and extend the skill as a real OpenClaw package.
 
-- Generate procedural card sets with configurable categories, themes, and size
+## What It Does
+
+The skill is built for the full lifecycle of virtual trading cards, from concept to collection to market noise.
+
+- Generate procedural card sets with themed categories, sizes, and rarity curves
 - Generate AI-assisted sets through OpenRouter
-- Model sports, celebrity, movie, TV, collection, novelty, and custom sets
-- Produce modular image prompts for front, back, or dual-sided card art
-- Open retail, blaster, hobby, and jumbo packs and boxes
-- Track collection state, wallet balance, portfolio value, duplicates, and hits
-- Simulate the secondary market, grading economy, and card-condition effects
-- Run the Flopps parody layer for corporate announcements and market events
-- Summarize Flopps status by day, today, or wildcard event
-- Build launch copy, bulletin text, and set metadata for new releases
-- Export prompt payloads and set data for downstream automation
+- Model sports, celebrity, movie, TV, collection, novelty, and custom set types
+- Build modular prompt payloads for front, back, or both sides of a card
+- Open retail, blaster, hobby, and jumbo packs or boxes
+- Track wallet balance, portfolio value, duplicates, sealed inventory, and hits
+- Simulate grading, resale, market drift, and condition-sensitive valuation
+- Produce Flopps bulletins, launch copy, investor-facing nonsense, and wildcard events
+- Generate release metadata, prompt bundles, and downstream export data
+- Preserve a reproducible hobby economy rather than a one-off prompt toy
 
-The underlying skill is intentionally simulation-heavy. It is designed to create
-repeatable, stateful hobby workflows rather than one-off creative prompts.
+## Why It Exists
 
-## Repository Layout
+Most card tools stop at "make a set." This one keeps going. It can act like a collector, a breaker, a market maker, and a fake corporate newsroom all at once. That makes it useful for testing workflows, building content, and stress-testing the economics of a hobby that is already half game, half spreadsheet, and half ritual. The math does not add up. The simulation does.
 
-- `SKILL.md` - OpenClaw skill definition and operating instructions
-- `scripts/` - runtime commands used by the skill
-- `references/` - design and behavior references for the simulation
-- `data/` - seed data and state snapshots used by the simulation
-- `CHANGELOG.md` - release history for public changes
-- `LICENSE.md` - MIT license
+## Core Skill Commands
+
+These are the primary user-facing commands the skill expects you to use inside OpenClaw.
+
+| Command | Purpose |
+| --- | --- |
+| `generate-set` | Build a procedural card set |
+| `generate-set-ai` | Build an AI-assisted card set through OpenRouter |
+| `open-pack <type>` | Open a retail, blaster, hobby, or jumbo pack |
+| `open-box <type>` | Open a sealed box of packs |
+| `portfolio` | Show collection value, wallet, and portfolio stats |
+| `wallet` | Show current cash balance and spending context |
+| `market` | Show the live market dashboard |
+| `market <card-num>` | Inspect a specific card’s market view |
+| `duplicates` | Find duplicate cards in the collection |
+| `top-cards` | Show the best cards owned |
+| `pack-stats` | Show pack-opening statistics |
+| `set-info` | Display set details and custom structure |
+| `card-types` | Display the type system for the current set |
+| `new-season` | Advance to the next season or set cycle |
+| `grade-card <card-num>` | Submit a card for grading |
+| `sell <card-num>` | Sell a card from the collection |
+| `buy <card-num>` | Buy from the market |
+| `flopps-status` | Show the current Flopps state and latest bulletin |
+| `flopps-day <day>` | Summarize Flopps activity on a specific simulation day |
+| `flopps-today` | Summarize the current simulation day |
+| `flopps-wildcard` | Force a surprise Flopps event |
+
+## Script Commands
+
+The repo includes the underlying scripts used by the skill. These are what the command surface is built on.
+
+| Script | Purpose |
+| --- | --- |
+| `scripts/card-engine.js` | Main simulation engine, pack opening, market logic, Flopps status, collection state |
+| `scripts/ai-set-generator.js` | OpenRouter-backed AI set generation and Flopps launch content |
+| `scripts/card-image-prompts.js` | Build structured front/back image prompt bundles for cards |
+| `scripts/card-image-system.js` | Prompt synthesis helpers and set prompt persistence |
+| `scripts/categories.js` | Category definitions and category-aware generation logic |
+| `scripts/set-metadata.js` | Set metadata helpers used by generators and prompt builders |
+| `scripts/generate-prompts.js` | Prompt generation utilities for card and set text |
+| `scripts/boc-set-generator.js` | Bake and generate the BOC set snapshot |
+| `scripts/test-flopps-simulation.js` | Regression suite for Flopps simulation behavior |
+| `scripts/test-flopps-simulation.sh` | Shell regression wrapper for Flopps simulation behavior |
+| `scripts/test-sell-dupes-regression.js` | Regression coverage for duplicate-selling flow |
+
+## Feature Highlights
+
+- **Pack economy** - hobby, blaster, retail, and jumbo flows with wallet checks and real-mode commits
+- **Collection engine** - owned cards, sealed inventory, duplicates, hits, and portfolio summaries
+- **Market simulation** - valuation drift, order books, marketplace behavior, and resale pressure
+- **Grading layer** - condition, grading companies, and value-sensitive fees
+- **Flopps newsroom** - parody company updates, wildcard events, and day-by-day summaries
+- **Prompt tooling** - image prompt synthesis for front, back, or both sides of a card
+- **Set design** - procedural and AI-assisted generation across multiple card categories
+- **Repeatable state** - seeded data and reference files for reproducible runs
 
 ## OpenClaw Install
 
@@ -49,13 +103,20 @@ openclaw skills install .
 openclaw skills list
 ```
 
-OpenClaw loads workspace skills on the next session. If you want the skill
-available immediately, start a new OpenClaw session or restart the gateway.
+OpenClaw loads workspace skills on the next session. If you want the skill available immediately, start a new OpenClaw session or restart the gateway.
+
+## Repository Layout
+
+- `SKILL.md` - OpenClaw skill definition and operating rules
+- `scripts/` - runtime commands used by the skill
+- `references/` - design and behavior references for the simulation
+- `data/` - seed data and state snapshots
+- `CHANGELOG.md` - release history
+- `LICENSE.md` - MIT license
 
 ## Public Status
 
-This repository is a public mirror for the skill content. It is not an official
-OpenClaw project and does not imply endorsement by OpenClaw maintainers.
+This repository is a public mirror for the skill content. It is not an official OpenClaw project and does not imply endorsement by OpenClaw maintainers.
 
 ## License
 
