@@ -115,7 +115,9 @@ AI-assisted set generation uses OpenRouter.
 
 1. Copy [`.env.example`](.env.example) to `.env`
 2. Set `OPENROUTER_API_KEY`
-3. Keep the real key out of version control
+3. Optionally set `OPENROUTER_MODEL` if you want a different default model
+4. Optionally set `TRADING_CARDS_DATA_DIR` if you want to relocate the runtime data
+5. Keep real secrets out of version control
 
 ## Repository Layout
 
