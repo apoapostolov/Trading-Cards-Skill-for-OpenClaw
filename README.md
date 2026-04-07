@@ -1,12 +1,14 @@
 # Trading Cards Skill for OpenClaw
 
-Trading Cards Skill for OpenClaw is a full-throttle, stateful trading-card simulation skill for OpenClaw. It does the unglamorous work beautifully: it generates sets, opens packs, tracks collections, simulates the secondary market, and turns a parody card company called Flopps into a running joke with actual structure behind it.
+Trading Cards Skill for OpenClaw drops you into an alternate universe where trading cards are the only currency that matters. Cards are not collectibles here. They are capital, status, rumor, leverage, and worship. The market has depth, the packs have heat, the specs have lore, and the company behind it all, Flopps, is the world's most influential end-stage capitalism machine, controlling the one true asset class: cardstock gold.
 
 <!-- markdownlint-disable MD033 -->
 <p align="center">
   <img src="img/image.png" alt="Trading Cards Skill for OpenClaw" width="90%" />
 </p>
 <!-- markdownlint-enable MD033 -->
+
+This skill is built for collectors and breakers who want the fantasy to feel real. It treats a virtual hobby like a living market: sealed product, chase tiers, grading pressure, resale spread, social hype, speculative liquidity, and the long emotional arc of chasing one more hit. The joke is that it is all fake. The joke also has a ledger.
 
 This repo is the public mirror of the skill. It bundles the runtime scripts, reference notes, and seeded simulation data needed to inspect, install, and extend the skill as a real OpenClaw package.
 
@@ -27,7 +29,7 @@ The skill is built for the full lifecycle of virtual trading cards, from concept
 
 ## Why It Exists
 
-Most card tools stop at "make a set." This one keeps going. It can act like a collector, a breaker, a market maker, and a fake corporate newsroom all at once. That makes it useful for testing workflows, building content, and stress-testing the economics of a hobby that is already half game, half spreadsheet, and half ritual. The math does not add up. The simulation does.
+Most card tools stop at "make a set." This one keeps going. It behaves like a collector, a breaker, a market maker, a grader, and a fake corporate newsroom all at once. That makes it useful for testing workflows, building content, and stress-testing the economics of a hobby that is already half game, half spreadsheet, and half ritual. The math does not add up. The simulation does. The obsession does.
 
 ## Core Skill Commands
 
@@ -56,6 +58,8 @@ These are the primary user-facing commands the skill expects you to use inside O
 | `flopps-day <day>` | Summarize Flopps activity on a specific simulation day |
 | `flopps-today` | Summarize the current simulation day |
 | `flopps-wildcard` | Force a surprise Flopps event |
+
+Use `openclaw skills list` after installation to confirm the skill is loaded.
 
 ## Script Commands
 
@@ -113,6 +117,18 @@ OpenClaw loads workspace skills on the next session. If you want the skill avail
 - `data/` - seed data and state snapshots
 - `CHANGELOG.md` - release history
 - `LICENSE.md` - MIT license
+
+## How To Use It
+
+Think of the skill as a trading-card operating system.
+
+1. Generate a set or load an existing one.
+2. Open packs and watch the market react.
+3. Track wallet, hits, duplicates, and portfolio drift.
+4. Grade, sell, buy, and relist cards like a serious collector.
+5. Trigger Flopps events when you want the fake corporate machine to speak.
+
+If the fantasy is working, the collection should feel valuable even when the cards are fictional. That is the point.
 
 ## Public Status
 
