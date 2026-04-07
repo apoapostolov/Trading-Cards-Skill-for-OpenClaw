@@ -1,0 +1,382 @@
+{
+  "lots": [
+    {
+      "id": "1",
+      "seller": "Collector Mike",
+      "sellerId": "collector-mike",
+      "cardCount": 7,
+      "price": 4.26,
+      "estimatedValue": 6.26,
+      "discount": 32,
+      "description": "7 cards from Collector Mike's collection",
+      "hasGem": false,
+      "contents": [
+        {
+          "num": "096",
+          "name": "The Folder Creator",
+          "starTier": "Common"
+        },
+        {
+          "num": "048",
+          "name": "\"Delete That\"",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "023",
+          "name": "The Permission Denier",
+          "starTier": "Star"
+        },
+        {
+          "num": "039",
+          "name": "The Node Pairer",
+          "starTier": "Star"
+        },
+        {
+          "num": "075",
+          "name": "\"That's Not What I Meant\"",
+          "starTier": "Common"
+        },
+        {
+          "num": "115",
+          "name": "The duplicate file maker",
+          "starTier": "Common"
+        },
+        {
+          "num": "012",
+          "name": "The Heartbeat Ignorer",
+          "starTier": "Superstar"
+        }
+      ],
+      "createdAt": 1774860830985
+    },
+    {
+      "id": "2",
+      "seller": "Shark Sarah",
+      "sellerId": "shark-sarah",
+      "cardCount": 14,
+      "price": 7.91,
+      "estimatedValue": 12.75,
+      "discount": 38,
+      "description": "14 cards from Shark Sarah's collection",
+      "hasGem": false,
+      "contents": [
+        {
+          "num": "137",
+          "name": "The overcommenter",
+          "starTier": "Common"
+        },
+        {
+          "num": "119",
+          "name": "The print statement debugger",
+          "starTier": "Common"
+        },
+        {
+          "num": "139",
+          "name": "The log output scroller",
+          "starTier": "Common"
+        },
+        {
+          "num": "087",
+          "name": "The WiFi Switcher",
+          "starTier": "Common"
+        },
+        {
+          "num": "112",
+          "name": "The ctrl c commander",
+          "starTier": "Common"
+        },
+        {
+          "num": "082",
+          "name": "The Notification Dismissor",
+          "starTier": "Common"
+        },
+        {
+          "num": "129",
+          "name": "The auto save disabler",
+          "starTier": "Common"
+        },
+        {
+          "num": "074",
+          "name": "The Copy-Paste Coder",
+          "starTier": "Common"
+        },
+        {
+          "num": "097",
+          "name": "The Theme Switcher",
+          "starTier": "Common"
+        },
+        {
+          "num": "149",
+          "name": "The webhook believer",
+          "starTier": "Common"
+        },
+        {
+          "num": "036",
+          "name": "The SearXNG Privacy Nerd",
+          "starTier": "Star"
+        },
+        {
+          "num": "109",
+          "name": "The \"Send It\" Messager",
+          "starTier": "Common"
+        },
+        {
+          "num": "001",
+          "name": "The Prompt Spammer",
+          "starTier": "Legendary"
+        },
+        {
+          "num": "002",
+          "name": "Apex Config Tweaker",
+          "starTier": "Legendary"
+        }
+      ],
+      "createdAt": 1774860830985
+    },
+    {
+      "id": "3",
+      "seller": "Vintage Vince",
+      "sellerId": "vintage-vince",
+      "cardCount": 13,
+      "price": 5.66,
+      "estimatedValue": 8.84,
+      "discount": 36,
+      "description": "13 cards from Vintage Vince's collection",
+      "hasGem": false,
+      "contents": [
+        {
+          "num": "121",
+          "name": "The DM Hunter",
+          "starTier": "Common"
+        },
+        {
+          "num": "130",
+          "name": "The api doc reader",
+          "starTier": "Common"
+        },
+        {
+          "num": "136",
+          "name": "The split terminal lover",
+          "starTier": "Common"
+        },
+        {
+          "num": "131",
+          "name": "The env variable misser",
+          "starTier": "Common"
+        },
+        {
+          "num": "124",
+          "name": "The dependency updater",
+          "starTier": "Common"
+        },
+        {
+          "num": "006",
+          "name": "The Memory Hoarder",
+          "starTier": "Legendary"
+        },
+        {
+          "num": "027",
+          "name": "The TOSHL Expense Logger",
+          "starTier": "Star"
+        },
+        {
+          "num": "041",
+          "name": "\"Write Me a cron Job\"",
+          "starTier": "Star"
+        },
+        {
+          "num": "144",
+          "name": "The responsive design denier",
+          "starTier": "Common"
+        },
+        {
+          "num": "132",
+          "name": "The reinstaller",
+          "starTier": "Common"
+        },
+        {
+          "num": "044",
+          "name": "The Silent Lurker",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "140",
+          "name": "The \"Add it to the backlog\" Guy",
+          "starTier": "Common"
+        },
+        {
+          "num": "117",
+          "name": "The error message closer",
+          "starTier": "Common"
+        }
+      ],
+      "createdAt": 1774860830985
+    },
+    {
+      "id": "4",
+      "seller": "Collector Mike",
+      "sellerId": "collector-mike",
+      "cardCount": 14,
+      "price": 6.63,
+      "estimatedValue": 9.78,
+      "discount": 32,
+      "description": "14 cards from Collector Mike's collection",
+      "hasGem": false,
+      "contents": [
+        {
+          "num": "124",
+          "name": "The dependency updater",
+          "starTier": "Common"
+        },
+        {
+          "num": "071",
+          "name": "The Casual User",
+          "starTier": "Common"
+        },
+        {
+          "num": "066",
+          "name": "The JSON Validator",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "068",
+          "name": "The Brew Cleanup Forgettor",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "069",
+          "name": "The Package.json Phantom",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "067",
+          "name": "The \"Reply Faster\" Guy",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "056",
+          "name": "The Log Reader Hater",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "074",
+          "name": "The Copy-Paste Coder",
+          "starTier": "Common"
+        },
+        {
+          "num": "054",
+          "name": "The \"Oops Wrong Chat\"",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "052",
+          "name": "The .env Scatterer",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "055",
+          "name": "The Git Force Pusher",
+          "starTier": "Uncommon"
+        },
+        {
+          "num": "020",
+          "name": "Captain Compaction",
+          "starTier": "Superstar"
+        },
+        {
+          "num": "043",
+          "name": "The Brew Update Warrior",
+          "starTier": "Star"
+        },
+        {
+          "num": "026",
+          "name": "The Parallel Pack Breaker",
+          "starTier": "Star"
+        }
+      ],
+      "createdAt": 1774860830985
+    },
+    {
+      "id": "5",
+      "seller": "Shark Sarah",
+      "sellerId": "shark-sarah",
+      "cardCount": 13,
+      "price": 11.43,
+      "estimatedValue": 16.43,
+      "discount": 30,
+      "description": "13 cards from Shark Sarah's collection",
+      "hasGem": false,
+      "contents": [
+        {
+          "num": "082",
+          "name": "The Notification Dismissor",
+          "starTier": "Common"
+        },
+        {
+          "num": "003",
+          "name": "The Cron Lord",
+          "starTier": "Legendary"
+        },
+        {
+          "num": "123",
+          "name": "The seed data lover",
+          "starTier": "Common"
+        },
+        {
+          "num": "011",
+          "name": "The Context Window Maximizer",
+          "starTier": "Superstar"
+        },
+        {
+          "num": "091",
+          "name": "The Multiple Terminal Guy",
+          "starTier": "Common"
+        },
+        {
+          "num": "080",
+          "name": "The Docs Skimmer",
+          "starTier": "Common"
+        },
+        {
+          "num": "014",
+          "name": "The GitHub Copilot Dropout",
+          "starTier": "Superstar"
+        },
+        {
+          "num": "030",
+          "name": "The Docker Compose Overlord",
+          "starTier": "Star"
+        },
+        {
+          "num": "026",
+          "name": "The Parallel Pack Breaker",
+          "starTier": "Star"
+        },
+        {
+          "num": "106",
+          "name": "The README Ignorer",
+          "starTier": "Common"
+        },
+        {
+          "num": "017",
+          "name": "\"Have You Tried Restarting?\"",
+          "starTier": "Superstar"
+        },
+        {
+          "num": "081",
+          "name": "The Auto-Accepter",
+          "starTier": "Common"
+        },
+        {
+          "num": "099",
+          "name": "The Backup Neglector",
+          "starTier": "Common"
+        }
+      ],
+      "createdAt": 1774860830985
+    }
+  ],
+  "soldLots": [],
+  "nextId": 6,
+  "lastRefreshed": 1774860830985
+}

@@ -1,0 +1,88 @@
+{
+  "auctions": [
+    {
+      "id": "1",
+      "cardId": "npc-1",
+      "cardNum": "041",
+      "name": "\"Write Me a cron Job\"",
+      "parallel": "Base",
+      "starTier": "Star",
+      "startingBid": 0.57,
+      "reserve": null,
+      "buyItNow": null,
+      "marketPrice": 1.1308522243771235,
+      "durationDays": 1,
+      "seller": "CardKing_Mike",
+      "startedAt": 1774753413888.8184,
+      "bids": [
+        {
+          "bidder": "CardKing_Mike",
+          "amount": 0.57,
+          "time": 1774821102579.7905,
+          "style": "genuine"
+        }
+      ],
+      "highestBid": 0.57,
+      "isRare": false,
+      "hot": false,
+      "status": "active"
+    },
+    {
+      "id": "2",
+      "cardId": "npc-2",
+      "cardNum": "131",
+      "name": "The env variable misser",
+      "parallel": "Base",
+      "starTier": "Common",
+      "startingBid": 0.07,
+      "reserve": null,
+      "buyItNow": null,
+      "marketPrice": 0.14398461835076484,
+      "durationDays": 1,
+      "seller": "CardKing_Mike",
+      "startedAt": 1774713891348.5684,
+      "bids": [
+        {
+          "bidder": "CardKing_Mike",
+          "amount": 0.07,
+          "time": 1774775045526.0696,
+          "style": "genuine"
+        }
+      ],
+      "highestBid": 0.07,
+      "isRare": false,
+      "hot": false,
+      "status": "active"
+    },
+    {
+      "id": "3",
+      "cardId": "npc-3",
+      "cardNum": "025",
+      "name": "The \"Fix This\" DM Guy",
+      "parallel": "Base",
+      "starTier": "Star",
+      "startingBid": 0.71,
+      "reserve": null,
+      "buyItNow": null,
+      "marketPrice": 1.4259358090999186,
+      "durationDays": 7,
+      "seller": "MysteryBidder",
+      "startedAt": 1774800391351.7605,
+      "bids": [
+        {
+          "bidder": "CardKing_Mike",
+          "amount": 0.71,
+          "time": 1774798470341.5723,
+          "style": "genuine"
+        }
+      ],
+      "highestBid": 0.71,
+      "isRare": false,
+      "hot": false,
+      "status": "active"
+    }
+  ],
+  "completed": [],
+  "nextId": 4,
+  "lastChecked": 1774861022559
+}

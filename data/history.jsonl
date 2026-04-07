@@ -1,0 +1,60 @@
+{"timestamp":"2026-03-29T23:41:48.460Z","action":"set-money","details":"$17.48 → $100.00","walletBefore":17.48,"walletAfter":100}
+{"timestamp":"2026-03-29T23:43:23.409Z","action":"remove-money","details":"-$3.00","walletBefore":100,"walletAfter":97}
+{"timestamp":"2026-03-30T07:00:08.336Z","action":"add-money","details":"+$5.00","walletBefore":27.16,"walletAfter":32.16}
+{"timestamp":"2026-03-30T16:51:02.571Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":32.16,"walletAfter":27.159999999999997}
+{"timestamp":"2026-03-30T17:08:47.722Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":28.1,"walletAfter":23.1,"setCode":"BOC","cardsAdded":5,"packType":"retail"}
+{"timestamp":"2026-03-30T19:56:06.276Z","action":"store-buy","details":"1× Retail Pack from Bargain Bin Bob's ($4.71)","walletBefore":23.1,"walletAfter":18.39}
+{"timestamp":"2026-03-31T07:00:14.532Z","action":"add-money","details":"+$5.00","walletBefore":18.39,"walletAfter":23.39}
+{"timestamp":"2026-03-31T07:01:20.780Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":23.39,"walletAfter":18.39,"setCode":"BOC","cardsAdded":5,"packType":"retail"}
+{"timestamp":"2026-03-31T07:03:35.890Z","action":"sell","details":"#125 The hot reload abuser ($0.15)","walletBefore":18.240000000000002,"walletAfter":18.54}
+{"timestamp":"2026-03-31T07:03:35.965Z","action":"sell","details":"#079 The Sound Effect Messenger ($0.13)","walletBefore":18.41,"walletAfter":18.669999999999998}
+{"timestamp":"2026-03-31T08:12:38.243Z","action":"store-buy","details":"1× Retail Pack from Bargain Bin Bob's ($4.72)","walletBefore":18.669999999999998,"walletAfter":13.95}
+{"timestamp":"2026-03-31T08:15:17.013Z","action":"sell","details":"#145 The lorem ipsum lover ($0.14)","walletBefore":13.809999999999999,"walletAfter":14.09}
+{"timestamp":"2026-03-31T08:19:36.241Z","action":"store-buy","details":"1× Retail Pack from Bargain Bin Bob's (held sealed)","walletBefore":14.09,"walletAfter":9.36,"setCode":"BOC","product":"retail","qty":1,"source":"inventory"}
+{"timestamp":"2026-03-31T08:19:36.250Z","action":"open-pack","details":"Retail Pack (owned sealed)","walletBefore":9.36,"walletAfter":9.36,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"inventory"}
+{"timestamp":"2026-03-31T08:19:55.515Z","action":"store-buy","details":"1× Retail Pack from Bargain Bin Bob's (held sealed)","walletBefore":9.36,"walletAfter":4.629999999999999,"setCode":"BOC","product":"retail","qty":1,"source":"inventory"}
+{"timestamp":"2026-03-31T08:19:55.517Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":9.36,"walletAfter":4.359999999999999,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-03-31T08:20:06.960Z","action":"open-pack","details":"Retail Pack (owned sealed)","walletBefore":4.629999999999999,"walletAfter":4.629999999999999,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"inventory"}
+{"timestamp":"2026-03-31T08:22:00.007Z","action":"set-money","details":"$4.63 → $20.00","walletBefore":4.629999999999999,"walletAfter":20}
+{"timestamp":"2026-03-31T08:22:01.567Z","action":"store-buy","details":"1× Retail Pack from Bargain Bin Bob's (held sealed)","walletBefore":20,"walletAfter":15.27,"setCode":"BOC","product":"retail","qty":1,"source":"inventory"}
+{"timestamp":"2026-03-31T08:22:03.102Z","action":"open-pack","details":"Retail Pack (owned sealed)","walletBefore":15.27,"walletAfter":15.27,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"inventory"}
+{"timestamp":"2026-03-31T12:42:54.411Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":15.27,"walletAfter":10.27,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-03-31T12:43:27.879Z","action":"sell-dups","details":"13 cards ($4.00)","walletBefore":6.27,"walletAfter":14.27}
+{"timestamp":"2026-03-31T12:45:34.751Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":14.27,"walletAfter":9.27,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-03-31T12:46:08.677Z","action":"sell-dups","details":"9 cards ($2.62)","walletBefore":6.6499999999999995,"walletAfter":11.89}
+{"timestamp":"2026-03-31T15:47:06.199Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":11.89,"walletAfter":6.890000000000001,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-03-31T15:47:52.353Z","action":"sell-dups","details":"8 cards ($1.42)","walletBefore":5.470000000000001,"walletAfter":8.31}
+{"timestamp":"2026-03-31T23:02:27.537Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":8.31,"walletAfter":3.3100000000000005,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-03-31T23:03:17.813Z","action":"sell","details":"#090 \"I'll Fix It Later\" ($0.13)","walletBefore":3.1800000000000006,"walletAfter":3.4400000000000004}
+{"timestamp":"2026-03-31T23:03:17.889Z","action":"sell","details":"#079 The Sound Effect Messenger ($0.13)","walletBefore":3.3100000000000005,"walletAfter":3.5700000000000003}
+{"timestamp":"2026-03-31T23:03:17.968Z","action":"sell","details":"#130 The api doc reader ($0.12)","walletBefore":3.45,"walletAfter":3.6900000000000004}
+{"timestamp":"2026-04-01T07:00:08.678Z","action":"add-money","details":"+$5.00","walletBefore":3.6900000000000004,"walletAfter":8.69}
+{"timestamp":"2026-04-01T09:54:30.184Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":8.69,"walletAfter":3.6899999999999995,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-01T09:55:17.377Z","action":"sell","details":"#147 The diff checker ($0.15)","walletBefore":3.5399999999999996,"walletAfter":3.8399999999999994}
+{"timestamp":"2026-04-01T09:55:17.457Z","action":"sell","details":"#079 The Sound Effect Messenger ($0.09)","walletBefore":3.7499999999999996,"walletAfter":3.9299999999999993}
+{"timestamp":"2026-04-02T08:26:45.262Z","action":"add-money","details":"+$5.00","walletBefore":3.9299999999999993,"walletAfter":8.93}
+{"timestamp":"2026-04-02T08:29:03.880Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":8.93,"walletAfter":3.9299999999999997,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-02T08:29:58.486Z","action":"sell","details":"#120 The \"It's a Feature\" Defender ($0.14)","walletBefore":3.7899999999999996,"walletAfter":4.069999999999999}
+{"timestamp":"2026-04-02T08:29:58.558Z","action":"sell","details":"#130 The api doc reader ($0.18)","walletBefore":3.8899999999999992,"walletAfter":4.249999999999999}
+{"timestamp":"2026-04-03T07:00:11.879Z","action":"add-money","details":"+$5.00","walletBefore":4.249999999999999,"walletAfter":9.25}
+{"timestamp":"2026-04-03T08:58:19.149Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":9.25,"walletAfter":4.25,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-03T08:59:41.008Z","action":"sell-dups","details":"2 cards ($0.29)","walletBefore":3.96,"walletAfter":4.54}
+{"timestamp":"2026-04-04T07:00:10.667Z","action":"add-money","details":"+$5.00","walletBefore":4.54,"walletAfter":9.54}
+{"timestamp":"2026-04-04T07:49:26.736Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":9.54,"walletAfter":4.539999999999999,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-04T07:50:07.677Z","action":"sell-dups","details":"2 cards ($0.34)","walletBefore":4.199999999999999,"walletAfter":4.879999999999999}
+{"timestamp":"2026-04-05T08:02:38.829Z","action":"add-money","details":"+$5.00","walletBefore":4.879999999999999,"walletAfter":9.88}
+{"timestamp":"2026-04-05T08:02:44.888Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":9.88,"walletAfter":4.880000000000001,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-05T08:03:24.630Z","action":"sell-dups","details":"3 cards ($3.37)","walletBefore":1.5100000000000007,"walletAfter":8.25}
+{"timestamp":"2026-04-05T08:04:04.625Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":8.25,"walletAfter":3.25,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-05T08:04:18.147Z","action":"add-money","details":"+$5.00","walletBefore":3.25,"walletAfter":8.25}
+{"timestamp":"2026-04-05T08:04:25.916Z","action":"sell-dups","details":"2 cards ($0.27)","walletBefore":7.98,"walletAfter":8.52}
+{"timestamp":"2026-04-06T07:00:11.326Z","action":"add-money","details":"+$5.00","walletBefore":8.52,"walletAfter":13.52}
+{"timestamp":"2026-04-06T07:43:14.533Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":13.52,"walletAfter":8.52,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-06T07:43:51.737Z","action":"sell-dups","details":"2 cards ($1.68)","walletBefore":6.84,"walletAfter":10.2}
+{"timestamp":"2026-04-06T07:44:21.304Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":10.2,"walletAfter":5.199999999999999,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-06T07:44:58.066Z","action":"sell-dups","details":"3 cards ($0.56)","walletBefore":4.639999999999999,"walletAfter":5.76}
+{"timestamp":"2026-04-06T07:45:24.609Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":5.76,"walletAfter":0.7599999999999998,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-06T07:46:05.339Z","action":"sell-dups","details":"2 cards ($0.74)","walletBefore":0.019999999999999796,"walletAfter":1.4999999999999998}
+{"timestamp":"2026-04-07T07:00:18.565Z","action":"add-money","details":"+$5.00","walletBefore":1.4999999999999998,"walletAfter":6.5}
+{"timestamp":"2026-04-07T08:17:10.973Z","action":"open-pack","details":"Retail Pack ($5.00)","walletBefore":6.5,"walletAfter":1.5,"setCode":"BOC","cardsAdded":5,"packType":"retail","source":"purchase"}
+{"timestamp":"2026-04-07T08:17:57.794Z","action":"sell-dups","details":"4 cards ($1.58)","walletBefore":-0.08000000000000007,"walletAfter":3.08}

@@ -1,0 +1,503 @@
+{
+  "lastSimulation": 1775594285803,
+  "scalpers": {
+    "flip-fred": {
+      "id": "flip-fred",
+      "name": "FlipFred",
+      "tier": "casual",
+      "emoji": "👤",
+      "aggressiveness": 0.3,
+      "markupRange": [
+        1.2,
+        1.4
+      ],
+      "targetStorePreference": [
+        "mega-mart",
+        "bargain-bob",
+        "card-kingdom"
+      ],
+      "cash": 500,
+      "activityPattern": "weekly",
+      "description": "Casual flipper. Buys 1-2 boxes when he spots a deal, lists at modest markup.",
+      "inventory": [],
+      "listings": [],
+      "lastAction": 1774832905125
+    },
+    "scout-sam": {
+      "id": "scout-sam",
+      "name": "ScoutSam",
+      "tier": "scout",
+      "emoji": "🔭",
+      "aggressiveness": 0.5,
+      "markupRange": [
+        1.3,
+        1.8
+      ],
+      "targetStorePreference": [
+        "card-kingdom",
+        "pristine-collectibles",
+        "sportcardvault"
+      ],
+      "cash": 2000,
+      "activityPattern": "weekly",
+      "description": "Store scout. Monitors multiple stores, knows when restocks hit. Medium markup.",
+      "inventory": [],
+      "listings": [],
+      "lastAction": 1774832905125
+    },
+    "card-cartel": {
+      "id": "card-cartel",
+      "name": "CardCartel",
+      "tier": "organized",
+      "emoji": "🏢",
+      "aggressiveness": 0.75,
+      "markupRange": [
+        1.5,
+        2.5
+      ],
+      "targetStorePreference": [
+        "card-kingdom",
+        "mega-mart",
+        "pristine-collectibles",
+        "sportcardvault"
+      ],
+      "cash": 7158.5,
+      "activityPattern": "daily",
+      "description": "Organized group. Coordinated buying across multiple stores. Aggressive pricing.",
+      "inventory": [],
+      "listings": [
+        {
+          "cardNum": "002",
+          "cardName": "Apex Config Tweaker",
+          "listPrice": 9.39,
+          "markup": 1.937535551281219,
+          "listedAt": 1774860960982,
+          "strategy": "flip_quick"
+        },
+        {
+          "cardNum": "007",
+          "cardName": "The Slash Command Surfer",
+          "listPrice": 8.23,
+          "markup": 1.6147370937895476,
+          "listedAt": 1775239537432,
+          "strategy": "flip_quick"
+        },
+        {
+          "cardNum": "002",
+          "cardName": "Apex Config Tweaker",
+          "listPrice": 12.01,
+          "markup": 2.2371846725410847,
+          "listedAt": 1775239537432,
+          "strategy": "flip_quick"
+        },
+        {
+          "cardNum": "007",
+          "cardName": "The Slash Command Surfer",
+          "listPrice": 10.96,
+          "markup": 2.1493636923736905,
+          "listedAt": 1775239537432,
+          "strategy": "flip_quick"
+        },
+        {
+          "cardNum": "001",
+          "cardName": "The Prompt Spammer",
+          "listPrice": 10.24,
+          "markup": 1.8664952918079538,
+          "listedAt": 1775594285803,
+          "strategy": "flip_quick"
+        }
+      ],
+      "lastAction": 1775594285803
+    },
+    "bot-brigade": {
+      "id": "bot-brigade",
+      "name": "BotBrigade",
+      "tier": "bot",
+      "emoji": "🤖",
+      "aggressiveness": 0.95,
+      "markupRange": [
+        2,
+        3.5
+      ],
+      "targetStorePreference": [
+        "sportcardvault",
+        "mega-mart"
+      ],
+      "cash": 17151,
+      "activityPattern": "daily",
+      "description": "Bot network. Dominates online stores with instant checkout. Maximum markup.",
+      "inventory": [],
+      "listings": [
+        {
+          "cardNum": "001",
+          "cardName": "The Prompt Spammer",
+          "listPrice": 17.15,
+          "markup": 3.131693111358301,
+          "listedAt": 1775239537432,
+          "strategy": "flip_quick"
+        },
+        {
+          "cardNum": "005",
+          "cardName": "The Subagent Whisperer",
+          "listPrice": 16.27,
+          "markup": 3.010205974040069,
+          "listedAt": 1775239537432,
+          "strategy": "flip_quick"
+        },
+        {
+          "cardNum": "007",
+          "cardName": "The Slash Command Surfer",
+          "listPrice": 10.33,
+          "markup": 2.026234232972068,
+          "listedAt": 1775239537432,
+          "strategy": "flip_quick"
+        },
+        {
+          "cardNum": "001",
+          "cardName": "The Prompt Spammer",
+          "listPrice": 16.41,
+          "markup": 2.9917923810985316,
+          "listedAt": 1775594285803,
+          "strategy": "flip_quick"
+        }
+      ],
+      "lastAction": 1775594285803
+    }
+  },
+  "activityLog": [
+    {
+      "timestamp": 1774860960982,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "storeId": "mega-mart",
+      "storeName": "MegaMart",
+      "action": "buy",
+      "product": "Jumbo Pack",
+      "productType": "jumbo",
+      "qty": 1,
+      "cost": 28.5,
+      "marketDirection": "neutral",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1774860960982,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "action": "list",
+      "cardNum": "002",
+      "cardName": "Apex Config Tweaker",
+      "cardTier": "Legendary",
+      "listPrice": 9.39,
+      "markup": 1.937535551281219,
+      "undercut": false,
+      "undercuttingWho": null
+    },
+    {
+      "timestamp": 1774860960982,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "storeId": "sportcardvault",
+      "storeName": "SportCardVault",
+      "action": "buy",
+      "product": "Hobby Box",
+      "productType": "hobby",
+      "qty": 7,
+      "cost": 924,
+      "marketDirection": "neutral",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1774860960982,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "storeId": "mega-mart",
+      "storeName": "MegaMart",
+      "action": "buy",
+      "product": "Blaster Box",
+      "productType": "blaster",
+      "qty": 6,
+      "cost": 285,
+      "marketDirection": "neutral",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "storeId": "mega-mart",
+      "storeName": "MegaMart",
+      "action": "buy",
+      "product": "Retail Pack",
+      "productType": "retail",
+      "qty": 4,
+      "cost": 19,
+      "marketDirection": "bullish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "storeId": "sportcardvault",
+      "storeName": "SportCardVault",
+      "action": "buy",
+      "product": "Blaster Box",
+      "productType": "blaster",
+      "qty": 4,
+      "cost": 220.00000000000003,
+      "marketDirection": "bullish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "action": "list",
+      "cardNum": "007",
+      "cardName": "The Slash Command Surfer",
+      "cardTier": "Legendary",
+      "listPrice": 8.23,
+      "markup": 1.6147370937895476,
+      "undercut": false,
+      "undercuttingWho": null
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "storeId": "mega-mart",
+      "storeName": "MegaMart",
+      "action": "buy",
+      "product": "Blaster Box",
+      "productType": "blaster",
+      "qty": 5,
+      "cost": 237.5,
+      "marketDirection": "bullish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "action": "list",
+      "cardNum": "002",
+      "cardName": "Apex Config Tweaker",
+      "cardTier": "Legendary",
+      "listPrice": 12.01,
+      "markup": 2.2371846725410847,
+      "undercut": false,
+      "undercuttingWho": null
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "storeId": "mega-mart",
+      "storeName": "MegaMart",
+      "action": "buy",
+      "product": "Blaster Box",
+      "productType": "blaster",
+      "qty": 5,
+      "cost": 237.5,
+      "marketDirection": "bullish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "action": "list",
+      "cardNum": "007",
+      "cardName": "The Slash Command Surfer",
+      "cardTier": "Legendary",
+      "listPrice": 10.96,
+      "markup": 2.1493636923736905,
+      "undercut": false,
+      "undercuttingWho": null
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "storeId": "mega-mart",
+      "storeName": "MegaMart",
+      "action": "buy",
+      "product": "Jumbo Pack",
+      "productType": "jumbo",
+      "qty": 9,
+      "cost": 256.5,
+      "marketDirection": "bullish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "action": "list",
+      "cardNum": "001",
+      "cardName": "The Prompt Spammer",
+      "cardTier": "Legendary",
+      "listPrice": 17.15,
+      "markup": 3.131693111358301,
+      "undercut": false,
+      "undercuttingWho": null
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "storeId": "mega-mart",
+      "storeName": "MegaMart",
+      "action": "buy",
+      "product": "Jumbo Pack",
+      "productType": "jumbo",
+      "qty": 8,
+      "cost": 228,
+      "marketDirection": "bullish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "action": "list",
+      "cardNum": "005",
+      "cardName": "The Subagent Whisperer",
+      "cardTier": "Legendary",
+      "listPrice": 16.27,
+      "markup": 3.010205974040069,
+      "undercut": false,
+      "undercuttingWho": null
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "storeId": "sportcardvault",
+      "storeName": "SportCardVault",
+      "action": "buy",
+      "product": "Jumbo Pack",
+      "productType": "jumbo",
+      "qty": 9,
+      "cost": 297,
+      "marketDirection": "bullish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "storeId": "mega-mart",
+      "storeName": "MegaMart",
+      "action": "buy",
+      "product": "Retail Pack",
+      "productType": "retail",
+      "qty": 7,
+      "cost": 33.25,
+      "marketDirection": "bullish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775239537432,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "action": "list",
+      "cardNum": "007",
+      "cardName": "The Slash Command Surfer",
+      "cardTier": "Legendary",
+      "listPrice": 10.33,
+      "markup": 2.026234232972068,
+      "undercut": true
+    },
+    {
+      "timestamp": 1775594285803,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "storeId": "sportcardvault",
+      "storeName": "SportCardVault",
+      "action": "buy",
+      "product": "Jumbo Pack",
+      "productType": "jumbo",
+      "qty": 3,
+      "cost": 99,
+      "marketDirection": "bearish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775594285803,
+      "scalperId": "card-cartel",
+      "scalperName": "CardCartel",
+      "emoji": "🏢",
+      "action": "list",
+      "cardNum": "001",
+      "cardName": "The Prompt Spammer",
+      "cardTier": "Legendary",
+      "listPrice": 10.24,
+      "markup": 1.8664952918079538,
+      "undercut": false,
+      "undercuttingWho": null
+    },
+    {
+      "timestamp": 1775594285803,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "storeId": "sportcardvault",
+      "storeName": "SportCardVault",
+      "action": "buy",
+      "product": "Hobby Box",
+      "productType": "hobby",
+      "qty": 6,
+      "cost": 792,
+      "marketDirection": "bearish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775594285803,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "storeId": "mega-mart",
+      "storeName": "MegaMart",
+      "action": "buy",
+      "product": "Retail Pack",
+      "productType": "retail",
+      "qty": 7,
+      "cost": 33.25,
+      "marketDirection": "bearish",
+      "strategy": "flip_quick"
+    },
+    {
+      "timestamp": 1775594285803,
+      "scalperId": "bot-brigade",
+      "scalperName": "BotBrigade",
+      "emoji": "🤖",
+      "action": "list",
+      "cardNum": "001",
+      "cardName": "The Prompt Spammer",
+      "cardTier": "Legendary",
+      "listPrice": 16.41,
+      "markup": 2.9917923810985316,
+      "undercut": true
+    }
+  ]
+}

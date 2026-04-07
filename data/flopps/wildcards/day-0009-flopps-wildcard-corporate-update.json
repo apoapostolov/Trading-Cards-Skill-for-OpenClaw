@@ -1,0 +1,21 @@
+{
+  "day": 9,
+  "createdAt": "2026-04-07T20:53:06.210Z",
+  "bulletin": {
+    "kind": "wildcard",
+    "id": "wildcard-9-flopps-wildcard-corporate-update",
+    "title": "Flopps Wildcard Corporate Update",
+    "summary": "Flopps published a surprise corporate update with immediate market implications.",
+    "paraphrase": "Something strange just hit the collector funnel and nobody was ready for it.",
+    "executive": "Marcus Reed",
+    "executiveRole": "VP of Allocation",
+    "stockDelta": 0,
+    "marketImpact": "The secondary market is repricing the news in real time.",
+    "collectorImpact": "Collectors, stores, and flippers are all trying to decode the implication.",
+    "source": "openrouter:kimi-k2.5"
+  },
+  "releasePhase": "sellthrough",
+  "currentRelease": "Bored OpenClaw Users Flagship Series",
+  "nextRelease": "Harry Potter Collectors Set",
+  "stockPrice": 100.16
+}

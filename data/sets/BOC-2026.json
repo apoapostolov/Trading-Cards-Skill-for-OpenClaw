@@ -1,0 +1,3480 @@
+{
+  "code": "BOC",
+  "name": "Bored OpenClaw Users",
+  "year": 2026,
+  "category": "Pop Culture Parody",
+  "tradeDress": {
+    "name": "Bored OpenClaw Users House Trade Dress",
+    "identity": "Bored OpenClaw Users wordmark or emblem",
+    "logoStyle": "full set name wordmark or emblem, not the internal abbreviation",
+    "logoPlacement": "top banner or upper-left crest",
+    "logo": "Bored OpenClaw Users wordmark",
+    "border": "chrome border with terminal corners and tech-ui ticks",
+    "nameplate": "compact lower-third tech UI nameplate",
+    "backFrame": "two-column stats grid with a flavor strip and serial rail",
+    "watermark": "subtle claw glyph watermark",
+    "motif": "terminal UI, chat, and developer-tool cues",
+    "accentPalette": "ink black, chrome silver, electric blue, and purple",
+    "baseRule": "Base cards should carry the house identity prominently and read as one family.",
+    "variantRule": "Variants should keep the logo and rail language readable unless they are intentionally premium.",
+    "premiumRule": "High-end variants can break the base dress and use a stronger finish-specific frame.",
+    "logoRule": "Use the full set name or emblem on cards; do not print the internal code.",
+    "notes": "Use a coherent house style for the set while allowing chase parallels to overtake the frame when needed."
+  },
+  "parallels": [
+    {
+      "name": "Base",
+      "tier": 1,
+      "odds": 1,
+      "num": false,
+      "ser": null,
+      "pm": 1,
+      "color": "#8B9DAF",
+      "emoji": ""
+    },
+    {
+      "name": "Chrome",
+      "tier": 2,
+      "odds": 3,
+      "num": false,
+      "ser": null,
+      "pm": 1.3,
+      "color": "#C0C0C0",
+      "emoji": "💎"
+    },
+    {
+      "name": "Purple Shimmer",
+      "tier": 3,
+      "odds": 6,
+      "num": false,
+      "ser": null,
+      "pm": 1.8,
+      "color": "#7B2D8E",
+      "emoji": "🟣"
+    },
+    {
+      "name": "Blue Crackle",
+      "tier": 4,
+      "odds": 12,
+      "num": false,
+      "ser": null,
+      "pm": 2.5,
+      "color": "#0055DD",
+      "emoji": "🔵"
+    },
+    {
+      "name": "Tie-Dye",
+      "tier": 5,
+      "odds": 18,
+      "num": false,
+      "ser": null,
+      "pm": 3.5,
+      "color": "#FF69B4",
+      "emoji": "🌀"
+    },
+    {
+      "name": "Pink Neon",
+      "tier": 6,
+      "odds": 24,
+      "num": false,
+      "ser": null,
+      "pm": 5,
+      "color": "#FF1493",
+      "emoji": "💗"
+    },
+    {
+      "name": "Gold",
+      "tier": 7,
+      "odds": 36,
+      "num": true,
+      "ser": 2026,
+      "pm": 8,
+      "color": "#FFD700",
+      "emoji": "🥇"
+    },
+    {
+      "name": "Green Lava",
+      "tier": 8,
+      "odds": 60,
+      "num": true,
+      "ser": 499,
+      "pm": 12,
+      "color": "#39FF14",
+      "emoji": "🟢"
+    },
+    {
+      "name": "Cyan Ice",
+      "tier": 9,
+      "odds": 80,
+      "num": true,
+      "ser": 299,
+      "pm": 18,
+      "color": "#00FFFF",
+      "emoji": "🧊"
+    },
+    {
+      "name": "Magenta Pulse",
+      "tier": 10,
+      "odds": 100,
+      "num": true,
+      "ser": 199,
+      "pm": 25,
+      "color": "#FF00FF",
+      "emoji": "💜"
+    },
+    {
+      "name": "Orange Blaze",
+      "tier": 11,
+      "odds": 130,
+      "num": true,
+      "ser": 99,
+      "pm": 35,
+      "color": "#FF6600",
+      "emoji": "🔥"
+    },
+    {
+      "name": "Teal Surge",
+      "tier": 12,
+      "odds": 160,
+      "num": true,
+      "ser": 75,
+      "pm": 45,
+      "color": "#008080",
+      "emoji": "🌊"
+    },
+    {
+      "name": "Red Magma",
+      "tier": 13,
+      "odds": 200,
+      "num": true,
+      "ser": 50,
+      "pm": 60,
+      "color": "#DC143C",
+      "emoji": "🌋"
+    },
+    {
+      "name": "Black Shattered",
+      "tier": 14,
+      "odds": 350,
+      "num": true,
+      "ser": 25,
+      "pm": 100,
+      "color": "#1A1A2E",
+      "emoji": "🖤"
+    },
+    {
+      "name": "White Rainbow",
+      "tier": 15,
+      "odds": 500,
+      "num": true,
+      "ser": 10,
+      "pm": 180,
+      "color": "#F0F0FF",
+      "emoji": "🌈"
+    },
+    {
+      "name": "Gold Superfractor",
+      "tier": 16,
+      "odds": 5000,
+      "num": true,
+      "ser": 1,
+      "pm": 400,
+      "color": "#FFD700",
+      "emoji": "👑"
+    },
+    {
+      "name": "Black Infinite",
+      "tier": 17,
+      "odds": 5000,
+      "num": true,
+      "ser": 1,
+      "pm": 600,
+      "color": "#000000",
+      "emoji": "♾️"
+    },
+    {
+      "name": "Printing Plate",
+      "tier": 18,
+      "odds": 5000,
+      "num": true,
+      "ser": 1,
+      "pm": 350,
+      "color": "#2F4F4F",
+      "emoji": "📋"
+    }
+  ],
+  "cardTypes": [
+    {
+      "id": "base",
+      "name": "Base",
+      "rarity": 0.85,
+      "priceMultiplier": 1,
+      "format": "standard",
+      "desc": "🃏 Standard Base Card"
+    },
+    {
+      "id": "lenticular",
+      "name": "Lenticular",
+      "rarity": 0.13,
+      "priceMultiplier": 2.5,
+      "format": "standard",
+      "desc": "🔮 3D Motion Holographic"
+    },
+    {
+      "id": "autograph",
+      "name": "Autograph",
+      "rarity": 0.02,
+      "priceMultiplier": 8,
+      "format": "standard",
+      "desc": "✍️ Signed by the OpenClaw core team"
+    }
+  ],
+  "inserts": [
+    {
+      "id": "legendary-threads",
+      "name": "Legendary Threads",
+      "size": 10,
+      "pullRate": "uncommon",
+      "pullOdds": 25,
+      "basePriceRange": [
+        8,
+        25
+      ],
+      "desc": "The most powerful OpenClaw users, immortalized in cardboard.",
+      "subset": "Legendary Threads"
+    },
+    {
+      "id": "hallucination-gallery",
+      "name": "Hallucination Gallery",
+      "size": 8,
+      "pullRate": "uncommon",
+      "pullOdds": 40,
+      "basePriceRange": [
+        3,
+        12
+      ],
+      "desc": "Cards where the AI went completely off the rails. Beautifully unhinged.",
+      "subset": "Hallucination Gallery"
+    },
+    {
+      "id": "cron-graveyard",
+      "name": "The Cron Graveyard",
+      "size": 6,
+      "pullRate": "rare",
+      "pullOdds": 80,
+      "basePriceRange": [
+        15,
+        50
+      ],
+      "desc": "Memorializing failed cron jobs that crashed and burned at 3 AM.",
+      "subset": "Cron Graveyard"
+    }
+  ],
+  "cards": [
+    {
+      "num": "001",
+      "name": "The Prompt Spammer",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "Sent 847 prompts in one session. The context window wept.",
+      "stats": {
+        "power": 97,
+        "speed": 45,
+        "technique": 88,
+        "endurance": 99,
+        "charisma": 92
+      },
+      "basePrice": 4.85,
+      "cardTypes": [
+        "Base",
+        "Lenticular",
+        "Autograph"
+      ],
+      "imagePromptBackFlavor": "Prompt Spammer turns Sent 847 prompts in one session into a habit the room already recognizes. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.",
+      "imagePrompt": "Manic programmer surrounded by floating chat bubbles and neon terminals, digital art, Topps Chrome, vibrant purple and cyan, dramatic lighting",
+      "imagePromptBack": "Card back, gold foil finish, stats: POW 97 SPD 45 TEC 88 END 99 CHR 92, text: \"Prompt Spammer turns Sent 847 prompts in one session into a habit the room already recognizes. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.\", holo border, #001/150, gold accents"
+    },
+    {
+      "num": "002",
+      "name": "Apex Config Tweaker",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "Changed 43 config values in a single weekend. Nothing worked afterward.",
+      "stats": {
+        "power": 95,
+        "speed": 60,
+        "technique": 98,
+        "endurance": 88,
+        "charisma": 85
+      },
+      "basePrice": 4.72,
+      "cardTypes": [
+        "Base",
+        "Lenticular",
+        "Autograph"
+      ],
+      "imagePromptBackFlavor": "Changed 43 config values in a single weekend. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "tech enthusiast, Apex Config Tweaker, casual mood, digital art trading card portrait, gold and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, gold foil finish, stats: POW 95 SPD 60 TEC 98 END 88 CHR 85, text: \"Changed 43 config values in a single weekend. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #002/150, gold accents"
+    },
+    {
+      "num": "003",
+      "name": "The Cron Lord",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "So many cron jobs running that the machine begged for mercy at 3 AM.",
+      "stats": {
+        "power": 92,
+        "speed": 35,
+        "technique": 96,
+        "endurance": 95,
+        "charisma": 78
+      },
+      "basePrice": 5,
+      "cardTypes": [
+        "Base",
+        "Lenticular",
+        "Autograph"
+      ],
+      "imagePromptBackFlavor": "So many cron jobs running that the machine begged for mercy at 3 AM. The loud part is never the bug; it is the pattern that made the bug inevitable.",
+      "imagePrompt": "Dark lord of automation on throne of floating clock faces, neon green glow, digital art, dark purple atmosphere, dramatic perspective",
+      "imagePromptBack": "Card back, gold foil finish, stats: POW 92 SPD 35 TEC 96 END 95 CHR 78, text: \"So many cron jobs running that the machine begged for mercy at 3 AM. The loud part is never the bug; it is the pattern that made the bug inevitable.\", holo border, #003/150, gold accents"
+    },
+    {
+      "num": "004",
+      "name": "King of the 3AM Sessions",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "Every meaningful conversation happens between midnight and 4 AM.",
+      "stats": {
+        "power": 88,
+        "speed": 55,
+        "technique": 90,
+        "endurance": 97,
+        "charisma": 96
+      },
+      "basePrice": 4.5,
+      "cardTypes": [
+        "Base",
+        "Lenticular",
+        "Autograph"
+      ],
+      "imagePromptBackFlavor": "Every meaningful conversation happens between midnight and 4 AM. What starts as a quip ends up sounding like the unofficial operating manual.",
+      "imagePrompt": "obsessive tech user, King of the 3AM Sessions, fixated mood, digital art trading card portrait, gold and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, gold foil finish, stats: POW 88 SPD 55 TEC 90 END 97 CHR 96, text: \"Every meaningful conversation happens between midnight and 4 AM. What starts as a quip ends up sounding like the unofficial operating manual.\", holo border, #004/150, gold accents"
+    },
+    {
+      "num": "005",
+      "name": "The Subagent Whisperer",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "Spawned 12 parallel agents and somehow steered all of them to completion.",
+      "stats": {
+        "power": 94,
+        "speed": 80,
+        "technique": 97,
+        "endurance": 90,
+        "charisma": 82
+      },
+      "basePrice": 4.9,
+      "cardTypes": [
+        "Base",
+        "Lenticular",
+        "Autograph"
+      ],
+      "imagePromptBackFlavor": "Spawned 12 parallel agents and somehow steered all of them to completion. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.",
+      "imagePrompt": "Mysterious figure controlling 12 glowing orbs representing AI agents, ethereal digital art, cosmic purple and gold, sharp focus",
+      "imagePromptBack": "Card back, gold foil finish, stats: POW 94 SPD 80 TEC 97 END 90 CHR 82, text: \"Spawned 12 parallel agents and somehow steered all of them to completion. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.\", holo border, #005/150, gold accents"
+    },
+    {
+      "num": "006",
+      "name": "The Memory Hoarder",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "Has 47 daily memory files and can quote conversations from 8 months ago.",
+      "stats": {
+        "power": 86,
+        "speed": 40,
+        "technique": 93,
+        "endurance": 96,
+        "charisma": 88
+      },
+      "basePrice": 4.35,
+      "cardTypes": [
+        "Base",
+        "Lenticular",
+        "Autograph"
+      ],
+      "imagePromptBackFlavor": "Has 47 daily memory files and can quote conversations from 8 months ago. Nothing is ever really lost; it just gets archived until the next session drags it back into the light.",
+      "imagePrompt": "tech enthusiast, The Memory Hoarder, casual mood, digital art trading card portrait, gold and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, gold foil finish, stats: POW 86 SPD 40 TEC 93 END 96 CHR 88, text: \"Has 47 daily memory files and can quote conversations from 8 months ago. Nothing is ever really lost; it just gets archived until the next session drags it back into the light.\", holo border, #006/150, gold accents"
+    },
+    {
+      "num": "007",
+      "name": "The Slash Command Surfer",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "Types /status, /reasoning, /model, /clear every 30 seconds like it's a slot machine.",
+      "stats": {
+        "power": 91,
+        "speed": 92,
+        "technique": 85,
+        "endurance": 80,
+        "charisma": 90
+      },
+      "basePrice": 4.6,
+      "cardTypes": [
+        "Base",
+        "Lenticular",
+        "Autograph"
+      ],
+      "imagePromptBackFlavor": "Types /status, /reasoning, /model, /clear every 30 seconds like it's a slot machine. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.",
+      "imagePrompt": "Intense figure mashing keyboard, floating slash commands erupting from screen, digital art, neon green terminal, dynamic action pose",
+      "imagePromptBack": "Card back, gold foil finish, stats: POW 91 SPD 92 TEC 85 END 80 CHR 90, text: \"Types /status, /reasoning, /model, /clear every 30 seconds like it's a slot machine. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.\", holo border, #007/150, gold accents"
+    },
+    {
+      "num": "008",
+      "name": "\"Just One More Thing\"",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "desc": "Said 'just one more thing' 23 times. It was never just one more thing.",
+      "stats": {
+        "power": 88,
+        "speed": 70,
+        "technique": 82,
+        "endurance": 85,
+        "charisma": 93
+      },
+      "basePrice": 2.85,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Just One More Thing leans on \"just one more thing\" like proof. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "stubborn developer, Just One More Thing, determined mood, digital art trading card portrait, purple and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 88 SPD 70 TEC 82 END 85 CHR 93, text: \"Just One More Thing leans on \\\"just one more thing\\\" like proof. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #008/150, purple accents"
+    },
+    {
+      "num": "009",
+      "name": "The Token Anxiety Guy",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "desc": "Checks token usage after every single message. Still has no idea what a token is.",
+      "stats": {
+        "power": 80,
+        "speed": 65,
+        "technique": 78,
+        "endurance": 82,
+        "charisma": 95
+      },
+      "basePrice": 2.4,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Checks token usage after every single message. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.",
+      "imagePrompt": "obsessive tech user, The Token Anxiety Guy, fixated mood, digital art trading card portrait, purple and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 80 SPD 65 TEC 78 END 82 CHR 95, text: \"Checks token usage after every single message. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.\", holo border, #009/150, purple accents"
+    },
+    {
+      "num": "010",
+      "name": "Agent Multi-Installer",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "desc": "Runs OpenClaw on four machines simultaneously. Three of them are VMs inside WSL.",
+      "stats": {
+        "power": 90,
+        "speed": 75,
+        "technique": 88,
+        "endurance": 78,
+        "charisma": 70
+      },
+      "basePrice": 2.95,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Runs OpenClaw on four machines simultaneously. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.",
+      "imagePrompt": "tech enthusiast, Agent Multi-Installer, casual mood, digital art trading card portrait, purple and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 90 SPD 75 TEC 88 END 78 CHR 70, text: \"Runs OpenClaw on four machines simultaneously. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.\", holo border, #010/150, purple accents"
+    },
+    {
+      "num": "011",
+      "name": "The Context Window Maximizer",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "desc": "Uploads entire codebases and asks 'can you review this?' with 200K tokens.",
+      "stats": {
+        "power": 85,
+        "speed": 50,
+        "technique": 92,
+        "endurance": 95,
+        "charisma": 75
+      },
+      "basePrice": 2.6,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "The Context Window Maximizer leans on \"can you review this?\" like proof. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.",
+      "imagePrompt": "Figure trying to stuff an entire library through a small window frame, digital art, surreal blue and white, absurdist composition",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 85 SPD 50 TEC 92 END 95 CHR 75, text: \"The Context Window Maximizer leans on \\\"can you review this?\\\" like proof. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.\", holo border, #011/150, purple accents"
+    },
+    {
+      "num": "012",
+      "name": "The Heartbeat Ignorer",
+      "subset": "Flashback",
+      "starTier": "Superstar",
+      "desc": "HEARTBEAT_OK every single time. For six months straight.",
+      "stats": {
+        "power": 78,
+        "speed": 88,
+        "technique": 80,
+        "endurance": 72,
+        "charisma": 85
+      },
+      "basePrice": 2.75,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Heartbeat Ignorer turns HEARTBEAT_OK every single time into a habit the room already recognizes. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.",
+      "imagePrompt": "Perfectly calm meditating figure with flatline heartbeat monitor, digital art, zen green tones, peaceful expression",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 78 SPD 88 TEC 80 END 72 CHR 85, text: \"Heartbeat Ignorer turns HEARTBEAT_OK every single time into a habit the room already recognizes. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.\", holo border, #012/150, purple accents"
+    },
+    {
+      "num": "013",
+      "name": "The Experimental Model Swapper",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "desc": "Switches between 14 models daily looking for 'the vibe.' Still using the cheapest one.",
+      "stats": {
+        "power": 82,
+        "speed": 85,
+        "technique": 90,
+        "endurance": 70,
+        "charisma": 80
+      },
+      "basePrice": 2.9,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "The Experimental Model Swapper leans on \"the vibe.\" like proof. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.",
+      "imagePrompt": "tech enthusiast, The Experimental Model Swapper, casual mood, digital art trading card portrait, purple and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 82 SPD 85 TEC 90 END 70 CHR 80, text: \"The Experimental Model Swapper leans on \\\"the vibe.\\\" like proof. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.\", holo border, #013/150, purple accents"
+    },
+    {
+      "num": "014",
+      "name": "The GitHub Copilot Dropout",
+      "subset": "Flashback",
+      "starTier": "Superstar",
+      "desc": "Left Copilot for OpenClaw. Hasn't looked back. Won't shut up about it either.",
+      "stats": {
+        "power": 84,
+        "speed": 78,
+        "technique": 86,
+        "endurance": 80,
+        "charisma": 88
+      },
+      "basePrice": 2.5,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "The GitHub Copilot Dropout leans on \"t looked back. Won\" like proof. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.",
+      "imagePrompt": "tech enthusiast, The GitHub Copilot Dropout, casual mood, digital art trading card portrait, purple and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 84 SPD 78 TEC 86 END 80 CHR 88, text: \"The GitHub Copilot Dropout leans on \\\"t looked back. Won\\\" like proof. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.\", holo border, #014/150, purple accents"
+    },
+    {
+      "num": "015",
+      "name": "Browser Automation Maniac",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "desc": "Made the AI book a restaurant, buy shoes, and file taxes. All through browser control.",
+      "stats": {
+        "power": 92,
+        "speed": 82,
+        "technique": 91,
+        "endurance": 76,
+        "charisma": 72
+      },
+      "basePrice": 2.8,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Made the AI book a restaurant, buy shoes, and file taxes. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.",
+      "imagePrompt": "tech enthusiast, Browser Automation Maniac, casual mood, digital art trading card portrait, purple and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 92 SPD 82 TEC 91 END 76 CHR 72, text: \"Made the AI book a restaurant, buy shoes, and file taxes. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.\", holo border, #015/150, purple accents"
+    },
+    {
+      "num": "016",
+      "name": "The Skill Creator",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "Writes skills for OpenClaw. Then writes skills to manage the skills. Meta inception.",
+      "stats": {
+        "power": 87,
+        "speed": 68,
+        "technique": 95,
+        "endurance": 84,
+        "charisma": 82
+      },
+      "basePrice": 2.95,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Skill Creator turns Writes skills for OpenClaw into a habit the room already recognizes. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.",
+      "imagePrompt": "Inception-style figure within a figure within a figure, each holding a scroll, digital art, purple recursive aesthetic, mind-bending",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 87 SPD 68 TEC 95 END 84 CHR 82, text: \"Skill Creator turns Writes skills for OpenClaw into a habit the room already recognizes. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.\", holo border, #016/150, purple accents"
+    },
+    {
+      "num": "017",
+      "name": "\"Have You Tried Restarting?\"",
+      "subset": "Legend",
+      "starTier": "Superstar",
+      "desc": "Every problem's solution is a gateway restart. Shockingly, it works 80% of the time.",
+      "stats": {
+        "power": 75,
+        "speed": 90,
+        "technique": 72,
+        "endurance": 65,
+        "charisma": 98
+      },
+      "basePrice": 2.35,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Every problem's solution is a gateway restart. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.",
+      "imagePrompt": "obsessive tech user, Have You Tried Restarting?, fixated mood, digital art trading card portrait, purple and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 75 SPD 90 TEC 72 END 65 CHR 98, text: \"Every problem's solution is a gateway restart. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.\", holo border, #017/150, purple accents"
+    },
+    {
+      "num": "018",
+      "name": "The MCP Server Collector",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "desc": "Has 15 MCP servers installed. Uses two of them regularly.",
+      "stats": {
+        "power": 88,
+        "speed": 60,
+        "technique": 93,
+        "endurance": 82,
+        "charisma": 76
+      },
+      "basePrice": 2.7,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "The MCP Server Collector keeps 15 servers around and treats only two of them as daily tools. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.",
+      "imagePrompt": "tech enthusiast, The MCP Server Collector, casual mood, digital art trading card portrait, purple and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 88 SPD 60 TEC 93 END 82 CHR 76, text: \"The MCP Server Collector keeps 15 servers around and treats only two of them as daily tools. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.\", holo border, #018/150, purple accents"
+    },
+    {
+      "num": "019",
+      "name": "The Discord Bot Wrangler",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "Set up Discord integration and now the AI replies to every message. Chaos ensued.",
+      "stats": {
+        "power": 83,
+        "speed": 80,
+        "technique": 87,
+        "endurance": 78,
+        "charisma": 84
+      },
+      "basePrice": 2.55,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Set up Discord integration and now the AI replies to every message. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.",
+      "imagePrompt": "Chaotic scene of AI bot replying to every Discord message, speech bubbles flooding screen, digital art, Discord blurple palette",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 83 SPD 80 TEC 87 END 78 CHR 84, text: \"Set up Discord integration and now the AI replies to every message. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.\", holo border, #019/150, purple accents"
+    },
+    {
+      "num": "020",
+      "name": "Captain Compaction",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "desc": "Triggers context compaction so often the AI forgets what year it is.",
+      "stats": {
+        "power": 80,
+        "speed": 72,
+        "technique": 85,
+        "endurance": 90,
+        "charisma": 78
+      },
+      "basePrice": 2.45,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Triggers context compaction so often the AI forgets what year it is. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.",
+      "imagePrompt": "Figure compressing a giant cube of text into a tiny cube, information leaking out, digital art, blue compression waves, surreal",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 80 SPD 72 TEC 85 END 90 CHR 78, text: \"Triggers context compaction so often the AI forgets what year it is. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.\", holo border, #020/150, purple accents"
+    },
+    {
+      "num": "021",
+      "name": "The Telegram Pinger",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "desc": "Sends 'hey' from Telegram at random intervals. The AI responds every single time.",
+      "stats": {
+        "power": 76,
+        "speed": 92,
+        "technique": 74,
+        "endurance": 68,
+        "charisma": 91
+      },
+      "basePrice": 2.65,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "The Telegram Pinger leans on \"hey\" like proof. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.",
+      "imagePrompt": "obsessive tech user, The Telegram Pinger, fixated mood, digital art trading card portrait, purple and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, purple holographic finish, stats: POW 76 SPD 92 TEC 74 END 68 CHR 91, text: \"The Telegram Pinger leans on \\\"hey\\\" like proof. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.\", holo border, #021/150, purple accents"
+    },
+    {
+      "num": "022",
+      "name": "\"It Worked Yesterday\"",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "The four most dangerous words in AI-assisted development.",
+      "stats": {
+        "power": 72,
+        "speed": 65,
+        "technique": 70,
+        "endurance": 75,
+        "charisma": 80
+      },
+      "basePrice": 1.2,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "The four most dangerous words in AI-assisted development. What starts as a quip ends up sounding like the unofficial operating manual.",
+      "imagePrompt": "tech enthusiast, It Worked Yesterday, casual mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 72 SPD 65 TEC 70 END 75 CHR 80, text: \"The four most dangerous words in AI-assisted development. What starts as a quip ends up sounding like the unofficial operating manual.\", holo border, #022/150, blue accents"
+    },
+    {
+      "num": "023",
+      "name": "The Permission Denier",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Denied exec permissions so many times the AI just gives up and suggests manual steps.",
+      "stats": {
+        "power": 68,
+        "speed": 55,
+        "technique": 78,
+        "endurance": 80,
+        "charisma": 72
+      },
+      "basePrice": 1.35,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Denied exec permissions so many times the AI just gives up and suggests manual steps. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.",
+      "imagePrompt": "tech enthusiast, The Permission Denier, casual mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 68 SPD 55 TEC 78 END 80 CHR 72, text: \"Denied exec permissions so many times the AI just gives up and suggests manual steps. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.\", holo border, #023/150, blue accents"
+    },
+    {
+      "num": "024",
+      "name": "The Memory File Hoarder",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Writes everything to daily memory. The memory folder is 2GB and counting.",
+      "stats": {
+        "power": 70,
+        "speed": 50,
+        "technique": 75,
+        "endurance": 85,
+        "charisma": 65
+      },
+      "basePrice": 1.1,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Memory File Hoarder turns Writes everything to daily memory into a habit the room already recognizes. Nothing is ever really lost; it just gets archived until the next session drags it back into the light.",
+      "imagePrompt": "obsessive tech user, The Memory File Hoarder, fixated mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 70 SPD 50 TEC 75 END 85 CHR 65, text: \"Memory File Hoarder turns Writes everything to daily memory into a habit the room already recognizes. Nothing is ever really lost; it just gets archived until the next session drags it back into the light.\", holo border, #024/150, blue accents"
+    },
+    {
+      "num": "025",
+      "name": "The \"Fix This\" DM Guy",
+      "subset": "Rookie",
+      "starTier": "Star",
+      "desc": "Sends screenshots of errors with zero context. Expects a full diagnosis.",
+      "stats": {
+        "power": 75,
+        "speed": 82,
+        "technique": 68,
+        "endurance": 70,
+        "charisma": 88
+      },
+      "basePrice": 1.45,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Sends screenshots of errors with zero context. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.",
+      "imagePrompt": "unlucky developer surrounded by disaster, The Fix This DM Guy, chaotic mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 75 SPD 82 TEC 68 END 70 CHR 88, text: \"Sends screenshots of errors with zero context. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.\", holo border, #025/150, blue accents"
+    },
+    {
+      "num": "026",
+      "name": "The Parallel Pack Breaker",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Built an entire trading card system just to rip virtual packs at 3 AM.",
+      "stats": {
+        "power": 78,
+        "speed": 70,
+        "technique": 80,
+        "endurance": 72,
+        "charisma": 76
+      },
+      "basePrice": 1.3,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Built an entire trading card system just to rip virtual packs at 3 AM. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.",
+      "imagePrompt": "Excited figure ripping open a glowing trading card pack at night, cards flying everywhere, digital art, neon card glow, midnight blue",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 78 SPD 70 TEC 80 END 72 CHR 76, text: \"Built an entire trading card system just to rip virtual packs at 3 AM. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.\", holo border, #026/150, blue accents"
+    },
+    {
+      "num": "027",
+      "name": "The TOSHL Expense Logger",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "Every purchase logged, categorized, and analyzed. Still broke.",
+      "stats": {
+        "power": 65,
+        "speed": 60,
+        "technique": 82,
+        "endurance": 78,
+        "charisma": 70
+      },
+      "basePrice": 1.15,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Every purchase logged, categorized, and analyzed. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.",
+      "imagePrompt": "obsessive tech user, The TOSHL Expense Logger, fixated mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 65 SPD 60 TEC 82 END 78 CHR 70, text: \"Every purchase logged, categorized, and analyzed. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.\", holo border, #027/150, blue accents"
+    },
+    {
+      "num": "028",
+      "name": "The Browserless Devotee",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Runs browserless on port 3001 for everything. Hasn't opened a real browser in weeks.",
+      "stats": {
+        "power": 74,
+        "speed": 68,
+        "technique": 79,
+        "endurance": 76,
+        "charisma": 73
+      },
+      "basePrice": 1.25,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Runs browserless on port 3001 for everything. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.",
+      "imagePrompt": "obsessive tech user, The Browserless Devotee, fixated mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 74 SPD 68 TEC 79 END 76 CHR 73, text: \"Runs browserless on port 3001 for everything. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.\", holo border, #028/150, blue accents"
+    },
+    {
+      "num": "029",
+      "name": "\"What Model Are You?\"",
+      "subset": "Rookie",
+      "starTier": "Star",
+      "desc": "Asks the AI what model it is at least once per session.",
+      "stats": {
+        "power": 60,
+        "speed": 75,
+        "technique": 65,
+        "endurance": 70,
+        "charisma": 90
+      },
+      "basePrice": 1,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Asks the AI what model it is at least once per session. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.",
+      "imagePrompt": "tech enthusiast, What Model Are You?, casual mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 60 SPD 75 TEC 65 END 70 CHR 90, text: \"Asks the AI what model it is at least once per session. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.\", holo border, #029/150, blue accents"
+    },
+    {
+      "num": "030",
+      "name": "The Docker Compose Overlord",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Runs 12 Docker containers for a personal assistant. Only three are actually needed.",
+      "stats": {
+        "power": 82,
+        "speed": 55,
+        "technique": 85,
+        "endurance": 80,
+        "charisma": 68
+      },
+      "basePrice": 1.4,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Runs 12 Docker containers for a personal assistant. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.",
+      "imagePrompt": "Overlord standing atop a stack of shipping containers with whale logo, digital art, Docker blue, imposing scale",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 82 SPD 55 TEC 85 END 80 CHR 68, text: \"Runs 12 Docker containers for a personal assistant. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.\", holo border, #030/150, blue accents"
+    },
+    {
+      "num": "031",
+      "name": "The \"Show Status\" Addict",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Runs /status 15 times a day. Watches the token counter like it's a stock ticker.",
+      "stats": {
+        "power": 62,
+        "speed": 80,
+        "technique": 60,
+        "endurance": 65,
+        "charisma": 82
+      },
+      "basePrice": 0.95,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Show Status Addict turns Runs /status 15 times a day into a habit the room already recognizes. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.",
+      "imagePrompt": "tech enthusiast, The Show Status Addict, casual mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 62 SPD 80 TEC 60 END 65 CHR 82, text: \"Show Status Addict turns Runs /status 15 times a day into a habit the room already recognizes. Every prompt adds another layer of momentum until the workflow starts feeling like a habit with its own pulse.\", holo border, #031/150, blue accents"
+    },
+    {
+      "num": "032",
+      "name": "The WSL Path Sufferer",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Every path is /home/user/.../.../.../file.js. Has given up on Windows Explorer.",
+      "stats": {
+        "power": 70,
+        "speed": 58,
+        "technique": 76,
+        "endurance": 82,
+        "charisma": 74
+      },
+      "basePrice": 1.15,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Every path is /home/user/.../.../.../file.js. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.",
+      "imagePrompt": "obsessive tech user, The WSL Path Sufferer, fixated mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 70 SPD 58 TEC 76 END 82 CHR 74, text: \"Every path is /home/user/.../.../.../file.js. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.\", holo border, #032/150, blue accents"
+    },
+    {
+      "num": "033",
+      "name": "The README Writer",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "Makes the AI write beautiful READMEs for every project. None of the projects are finished.",
+      "stats": {
+        "power": 68,
+        "speed": 72,
+        "technique": 80,
+        "endurance": 74,
+        "charisma": 78
+      },
+      "basePrice": 1.3,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Makes the AI write beautiful READMEs for every project. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.",
+      "imagePrompt": "obsessive tech user, The README Writer, fixated mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 68 SPD 72 TEC 80 END 74 CHR 78, text: \"Makes the AI write beautiful READMEs for every project. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.\", holo border, #033/150, blue accents"
+    },
+    {
+      "num": "034",
+      "name": "The Node.js Purist",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "\"We don't need Python. Node can do everything.\" It cannot do everything.",
+      "stats": {
+        "power": 76,
+        "speed": 65,
+        "technique": 83,
+        "endurance": 75,
+        "charisma": 70
+      },
+      "basePrice": 1.2,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "The Node.js Purist leans on \"We don't need Python. Node can do everything.\" like proof. The pages were always there; the real story is how long the room kept pretending they were optional.",
+      "imagePrompt": "obsessive tech user, The Node.js Purist, fixated mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 76 SPD 65 TEC 83 END 75 CHR 70, text: \"The Node.js Purist leans on \\\"We don't need Python. Node can do everything.\\\" like proof. The pages were always there; the real story is how long the room kept pretending they were optional.\", holo border, #034/150, blue accents"
+    },
+    {
+      "num": "035",
+      "name": "The Firecrawl Fanboy",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Uses Firecrawl for everything. Scraped 47 websites about houseplants last Tuesday.",
+      "stats": {
+        "power": 72,
+        "speed": 62,
+        "technique": 78,
+        "endurance": 77,
+        "charisma": 71
+      },
+      "basePrice": 1.05,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "The Firecrawl Fanboy uses Firecrawl for everything, as if every answer deserved the same trusted passage through the web. What started as a convenience now behaves like a system, which is how it quietly becomes normal.",
+      "imagePrompt": "obsessive tech user, The Firecrawl Fanboy, fixated mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 72 SPD 62 TEC 78 END 77 CHR 71, text: \"The Firecrawl Fanboy uses Firecrawl for everything, as if every answer deserved the same trusted passage through the web. What started as a convenience now behaves like a system, which is how it quietly becomes normal.\", holo border, #035/150, blue accents"
+    },
+    {
+      "num": "036",
+      "name": "The SearXNG Privacy Nerd",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Won't use Google. Runs a private metasearch engine just to search for memes.",
+      "stats": {
+        "power": 66,
+        "speed": 70,
+        "technique": 74,
+        "endurance": 78,
+        "charisma": 75
+      },
+      "basePrice": 1.1,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "The SearXNG Privacy Nerd refuses Google entirely, turning privacy into a habit instead of a slogan. Every channel gets folded into the ritual, and the habit starts answering before anyone asks.",
+      "imagePrompt": "tech enthusiast, The SearXNG Privacy Nerd, casual mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 66 SPD 70 TEC 74 END 78 CHR 75, text: \"The SearXNG Privacy Nerd refuses Google entirely, turning privacy into a habit instead of a slogan. Every channel gets folded into the ritual, and the habit starts answering before anyone asks.\", holo border, #036/150, blue accents"
+    },
+    {
+      "num": "037",
+      "name": "\"Can You Make It Cheaper?\"",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Switches models based on cost per million tokens. Spends more time optimizing than coding.",
+      "stats": {
+        "power": 64,
+        "speed": 68,
+        "technique": 72,
+        "endurance": 80,
+        "charisma": 85
+      },
+      "basePrice": 0.9,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Switches models based on cost per million tokens. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.",
+      "imagePrompt": "tech enthusiast, Can You Make It Cheaper?, casual mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 64 SPD 68 TEC 72 END 80 CHR 85, text: \"Switches models based on cost per million tokens. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.\", holo border, #037/150, blue accents"
+    },
+    {
+      "num": "038",
+      "name": "The Launch Day Upgrader",
+      "subset": "Rookie",
+      "starTier": "Star",
+      "desc": "Updates OpenClaw within 30 seconds of a new release. Has broken things 11 times.",
+      "stats": {
+        "power": 73,
+        "speed": 88,
+        "technique": 70,
+        "endurance": 65,
+        "charisma": 77
+      },
+      "basePrice": 1.35,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Updates OpenClaw within 30 seconds of a new release. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.",
+      "imagePrompt": "unlucky developer surrounded by disaster, The Launch Day Upgrader, chaotic mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 73 SPD 88 TEC 70 END 65 CHR 77, text: \"Updates OpenClaw within 30 seconds of a new release. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.\", holo border, #038/150, blue accents"
+    },
+    {
+      "num": "039",
+      "name": "The Node Pairer",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Paired a phone, a tablet, and a smart fridge to OpenClaw. The fridge sends useful weather alerts.",
+      "stats": {
+        "power": 80,
+        "speed": 60,
+        "technique": 82,
+        "endurance": 78,
+        "charisma": 66
+      },
+      "basePrice": 1.25,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Paired a phone, a tablet, and a smart fridge to OpenClaw. What looked like a shortcut turns into a lesson in why the docs exist in the first place.",
+      "imagePrompt": "tech enthusiast, The Node Pairer, casual mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 80 SPD 60 TEC 82 END 78 CHR 66, text: \"Paired a phone, a tablet, and a smart fridge to OpenClaw. What looked like a shortcut turns into a lesson in why the docs exist in the first place.\", holo border, #039/150, blue accents"
+    },
+    {
+      "num": "040",
+      "name": "The NPM Global Dump Guy",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Installs every CLI tool known to humanity. Has used three of them, ever.",
+      "stats": {
+        "power": 71,
+        "speed": 56,
+        "technique": 77,
+        "endurance": 74,
+        "charisma": 68
+      },
+      "basePrice": 1,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Installs every CLI tool known to humanity. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.",
+      "imagePrompt": "obsessive tech user, The NPM Global Dump Guy, fixated mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 71 SPD 56 TEC 77 END 74 CHR 68, text: \"Installs every CLI tool known to humanity. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.\", holo border, #040/150, blue accents"
+    },
+    {
+      "num": "041",
+      "name": "\"Write Me a cron Job\"",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "Every problem can be solved with a cron job. Every. Single. Problem.",
+      "stats": {
+        "power": 67,
+        "speed": 74,
+        "technique": 76,
+        "endurance": 72,
+        "charisma": 80
+      },
+      "basePrice": 1.15,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Every problem can be solved with a cron job. The machine is doing exactly what it was told, which is why the correction feels so personal.",
+      "imagePrompt": "obsessive tech user, Write Me a cron Job, fixated mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 67 SPD 74 TEC 76 END 72 CHR 80, text: \"Every problem can be solved with a cron job. The machine is doing exactly what it was told, which is why the correction feels so personal.\", holo border, #041/150, blue accents"
+    },
+    {
+      "num": "042",
+      "name": "The Brain Dump Chatter",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Uses the AI as a therapist. Sends 3000-word stream-of-consciousness messages at 2 AM.",
+      "stats": {
+        "power": 60,
+        "speed": 78,
+        "technique": 65,
+        "endurance": 70,
+        "charisma": 88
+      },
+      "basePrice": 0.95,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Brain Dump Chatter turns Uses the AI as a therapist into a habit the room already recognizes. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.",
+      "imagePrompt": "tech enthusiast, The Brain Dump Chatter, casual mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 60 SPD 78 TEC 65 END 70 CHR 88, text: \"Brain Dump Chatter turns Uses the AI as a therapist into a habit the room already recognizes. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.\", holo border, #042/150, blue accents"
+    },
+    {
+      "num": "043",
+      "name": "The Brew Update Warrior",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Runs brew upgrade weekly. Has never read the changelog.",
+      "stats": {
+        "power": 74,
+        "speed": 62,
+        "technique": 79,
+        "endurance": 76,
+        "charisma": 71
+      },
+      "basePrice": 1.2,
+      "cardTypes": [
+        "Base",
+        "Lenticular"
+      ],
+      "imagePromptBackFlavor": "Brew Update Warrior turns Runs brew upgrade weekly into a habit the room already recognizes. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.",
+      "imagePrompt": "stubborn developer, The Brew Update Warrior, determined mood, digital art trading card portrait, blue and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, blue chrome finish, stats: POW 74 SPD 62 TEC 79 END 76 CHR 71, text: \"Brew Update Warrior turns Runs brew upgrade weekly into a habit the room already recognizes. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.\", holo border, #043/150, blue accents"
+    },
+    {
+      "num": "044",
+      "name": "The Silent Lurker",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Watches every conversation but never participates. The AI knows they're there.",
+      "stats": {
+        "power": 55,
+        "speed": 60,
+        "technique": 62,
+        "endurance": 65,
+        "charisma": 50
+      },
+      "basePrice": 0.65,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Watches every conversation but never participates. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "stubborn developer, The Silent Lurker, determined mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 55 SPD 60 TEC 62 END 65 CHR 50, text: \"Watches every conversation but never participates. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #044/150, green accents"
+    },
+    {
+      "num": "045",
+      "name": "\"Test Message Ignore\"",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Sends test messages constantly. They are never ignored.",
+      "stats": {
+        "power": 52,
+        "speed": 68,
+        "technique": 55,
+        "endurance": 58,
+        "charisma": 60
+      },
+      "basePrice": 0.55,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Test Message Ignore turns Sends test messages constantly into a habit the room already recognizes. The punchline works because everyone in the room has seen the habit before.",
+      "imagePrompt": "stubborn developer, Test Message Ignore, determined mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 52 SPD 68 TEC 55 END 58 CHR 60, text: \"Test Message Ignore turns Sends test messages constantly into a habit the room already recognizes. The punchline works because everyone in the room has seen the habit before.\", holo border, #045/150, green accents"
+    },
+    {
+      "num": "046",
+      "name": "The Emoji Spammer",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Communicates exclusively in emoji. The AI has learned to decode them.",
+      "stats": {
+        "power": 50,
+        "speed": 70,
+        "technique": 58,
+        "endurance": 60,
+        "charisma": 75
+      },
+      "basePrice": 0.5,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Emoji Spammer turns Communicates exclusively in emoji into a habit the room already recognizes. The card feels playful, but the behavior it describes has already settled in as routine.",
+      "imagePrompt": "Figure whose entire body is made of emoji faces and symbols, digital art, colorful rainbow emoji explosion, chaotic fun",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 50 SPD 70 TEC 58 END 60 CHR 75, text: \"Emoji Spammer turns Communicates exclusively in emoji into a habit the room already recognizes. The card feels playful, but the behavior it describes has already settled in as routine.\", holo border, #046/150, green accents"
+    },
+    {
+      "num": "047",
+      "name": "The Multi-Channel Poster",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Active on Telegram, Discord, AND webchat simultaneously. Getting the same answer three times.",
+      "stats": {
+        "power": 60,
+        "speed": 65,
+        "technique": 68,
+        "endurance": 62,
+        "charisma": 58
+      },
+      "basePrice": 0.6,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Active on Telegram, Discord, AND webchat simultaneously. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.",
+      "imagePrompt": "tech enthusiast, The Multi-Channel Poster, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 60 SPD 65 TEC 68 END 62 CHR 58, text: \"Active on Telegram, Discord, AND webchat simultaneously. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.\", holo border, #047/150, green accents"
+    },
+    {
+      "num": "048",
+      "name": "\"Delete That\"",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Sends 'delete that' but the AI already replied to three channels.",
+      "stats": {
+        "power": 58,
+        "speed": 72,
+        "technique": 60,
+        "endurance": 55,
+        "charisma": 65
+      },
+      "basePrice": 0.45,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Delete That leans on \"delete that\" like proof. The machine is doing the work, but the compulsion to automate it belongs to the person behind the keyboard.",
+      "imagePrompt": "tech enthusiast, Delete That, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 58 SPD 72 TEC 60 END 55 CHR 65, text: \"Delete That leans on \\\"delete that\\\" like proof. The machine is doing the work, but the compulsion to automate it belongs to the person behind the keyboard.\", holo border, #048/150, green accents"
+    },
+    {
+      "num": "049",
+      "name": "The Screenshot Sender",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Takes screenshots of terminal errors instead of copy-pasting the text.",
+      "stats": {
+        "power": 56,
+        "speed": 64,
+        "technique": 62,
+        "endurance": 60,
+        "charisma": 62
+      },
+      "basePrice": 0.55,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Takes screenshots of terminal errors instead of copy-pasting the text. What started as a convenience now behaves like a system, which is how it quietly becomes normal.",
+      "imagePrompt": "unlucky developer surrounded by disaster, The Screenshot Sender, chaotic mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 56 SPD 64 TEC 62 END 60 CHR 62, text: \"Takes screenshots of terminal errors instead of copy-pasting the text. What started as a convenience now behaves like a system, which is how it quietly becomes normal.\", holo border, #049/150, green accents"
+    },
+    {
+      "num": "050",
+      "name": "The YAML Indent Victim",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Broke their entire config with one wrong space in a YAML file.",
+      "stats": {
+        "power": 54,
+        "speed": 58,
+        "technique": 66,
+        "endurance": 64,
+        "charisma": 55
+      },
+      "basePrice": 0.7,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Broke their entire config with one wrong space in a YAML file. The loud part is never the bug; it is the pattern that made the bug inevitable.",
+      "imagePrompt": "unlucky developer surrounded by disaster, The YAML Indent Victim, chaotic mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 54 SPD 58 TEC 66 END 64 CHR 55, text: \"Broke their entire config with one wrong space in a YAML file. The loud part is never the bug; it is the pattern that made the bug inevitable.\", holo border, #050/150, green accents"
+    },
+    {
+      "num": "051",
+      "name": "The \"What Else Can You Do?\" Guy",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Never has a specific task. Just wants to know the AI's capabilities. Again.",
+      "stats": {
+        "power": 58,
+        "speed": 62,
+        "technique": 60,
+        "endurance": 60,
+        "charisma": 68
+      },
+      "basePrice": 0.5,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "What Else Can You Do? Guy turns Never has a specific task into a habit the room already recognizes. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.",
+      "imagePrompt": "stubborn developer, The What Else Can You Do? Guy, determined mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 58 SPD 62 TEC 60 END 60 CHR 68, text: \"What Else Can You Do? Guy turns Never has a specific task into a habit the room already recognizes. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.\", holo border, #051/150, green accents"
+    },
+    {
+      "num": "052",
+      "name": "The .env Scatterer",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Has API keys in five different .env files. None of them are in the right place.",
+      "stats": {
+        "power": 55,
+        "speed": 56,
+        "technique": 64,
+        "endurance": 62,
+        "charisma": 52
+      },
+      "basePrice": 0.6,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Has API keys in five different .env files. Version control becomes a confession booth the moment the tidy part gets delayed too long.",
+      "imagePrompt": "tech enthusiast, The .env Scatterer, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 55 SPD 56 TEC 64 END 62 CHR 52, text: \"Has API keys in five different .env files. Version control becomes a confession booth the moment the tidy part gets delayed too long.\", holo border, #052/150, green accents"
+    },
+    {
+      "num": "053",
+      "name": "The Timeout King",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Every exec command times out. Increasing the timeout didn't help.",
+      "stats": {
+        "power": 52,
+        "speed": 50,
+        "technique": 58,
+        "endurance": 70,
+        "charisma": 55
+      },
+      "basePrice": 0.65,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Timeout King turns Every exec command times out into a habit the room already recognizes. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.",
+      "imagePrompt": "obsessive tech user, The Timeout King, fixated mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 52 SPD 50 TEC 58 END 70 CHR 55, text: \"Timeout King turns Every exec command times out into a habit the room already recognizes. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.\", holo border, #053/150, green accents"
+    },
+    {
+      "num": "054",
+      "name": "The \"Oops Wrong Chat\"",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Sent their grocery list to the AI instead of their wife. The AI categorized it by aisle.",
+      "stats": {
+        "power": 50,
+        "speed": 75,
+        "technique": 55,
+        "endurance": 52,
+        "charisma": 70
+      },
+      "basePrice": 0.45,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Sent their grocery list to the AI instead of their wife. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.",
+      "imagePrompt": "tech enthusiast, The Oops Wrong Chat, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 50 SPD 75 TEC 55 END 52 CHR 70, text: \"Sent their grocery list to the AI instead of their wife. The desk fills with half-finished ideas, but the machine keeps getting pulled back into the same pattern.\", holo border, #054/150, green accents"
+    },
+    {
+      "num": "055",
+      "name": "The Git Force Pusher",
+      "subset": "Flashback",
+      "starTier": "Uncommon",
+      "desc": "git push --force is their only commit strategy. History is a suggestion.",
+      "stats": {
+        "power": 62,
+        "speed": 58,
+        "technique": 65,
+        "endurance": 60,
+        "charisma": 48
+      },
+      "basePrice": 0.7,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "git push --force is their only commit strategy. The repository keeps the receipts, and the diff makes the habit easy to trace.",
+      "imagePrompt": "Reckless figure pushing a giant boulder labeled git push --force off a cliff, digital art, danger red, bold action",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 62 SPD 58 TEC 65 END 60 CHR 48, text: \"git push --force is their only commit strategy. The repository keeps the receipts, and the diff makes the habit easy to trace.\", holo border, #055/150, green accents"
+    },
+    {
+      "num": "056",
+      "name": "The Log Reader Hater",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "\"I'm not reading 500 lines of logs.\" Makes the AI read them instead.",
+      "stats": {
+        "power": 56,
+        "speed": 60,
+        "technique": 62,
+        "endurance": 64,
+        "charisma": 52
+      },
+      "basePrice": 0.55,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Log Reader Hater leans on \"I'm not reading 500 lines of logs.\" like proof. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.",
+      "imagePrompt": "tech enthusiast, The Log Reader Hater, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 56 SPD 60 TEC 62 END 64 CHR 52, text: \"The Log Reader Hater leans on \\\"I'm not reading 500 lines of logs.\\\" like proof. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.\", holo border, #056/150, green accents"
+    },
+    {
+      "num": "057",
+      "name": "The VS Code AI Tab Opener",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Has 47 VS Code tabs open. Six of them are ChatGPT, three are Claude.",
+      "stats": {
+        "power": 60,
+        "speed": 66,
+        "technique": 64,
+        "endurance": 58,
+        "charisma": 58
+      },
+      "basePrice": 0.6,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "VS Code AI Tab Opener turns Has 47 VS Code tabs open into a habit the room already recognizes. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.",
+      "imagePrompt": "tech enthusiast, The VS Code AI Tab Opener, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 60 SPD 66 TEC 64 END 58 CHR 58, text: \"VS Code AI Tab Opener turns Has 47 VS Code tabs open into a habit the room already recognizes. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.\", holo border, #057/150, green accents"
+    },
+    {
+      "num": "058",
+      "name": "The Daily Reminder Setter",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Sets reminders for everything. Including reminders to check reminders.",
+      "stats": {
+        "power": 54,
+        "speed": 62,
+        "technique": 60,
+        "endurance": 66,
+        "charisma": 60
+      },
+      "basePrice": 0.5,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Daily Reminder Setter turns every tiny obligation into a reminder, as if forgetting were the only enemy that matters. Nothing is ever really lost; it just gets archived until the next session brings it back.",
+      "imagePrompt": "obsessive tech user, The Daily Reminder Setter, fixated mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 54 SPD 62 TEC 60 END 66 CHR 60, text: \"The Daily Reminder Setter turns every tiny obligation into a reminder, as if forgetting were the only enemy that matters. Nothing is ever really lost; it just gets archived until the next session brings it back.\", holo border, #058/150, green accents"
+    },
+    {
+      "num": "059",
+      "name": "The Terminal Font Nerd",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Spent 3 hours picking a monospace font. Uses it to stare at errors.",
+      "stats": {
+        "power": 50,
+        "speed": 55,
+        "technique": 58,
+        "endurance": 60,
+        "charisma": 65
+      },
+      "basePrice": 0.4,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Spent 3 hours picking a monospace font. What looks like efficiency from afar is really just a very familiar performance.",
+      "imagePrompt": "unlucky developer surrounded by disaster, The Terminal Font Nerd, chaotic mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 50 SPD 55 TEC 58 END 60 CHR 65, text: \"Spent 3 hours picking a monospace font. What looks like efficiency from afar is really just a very familiar performance.\", holo border, #059/150, green accents"
+    },
+    {
+      "num": "060",
+      "name": "\"Can You Hear Me?\"",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Tests every new channel with 'hello? can you hear me?' every single time.",
+      "stats": {
+        "power": 48,
+        "speed": 72,
+        "technique": 52,
+        "endurance": 55,
+        "charisma": 68
+      },
+      "basePrice": 0.45,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Can You Hear Me? leans on \"hello? can you hear me?\" like proof. The machine is doing the work, but the compulsion to automate it belongs to the person behind the keyboard.",
+      "imagePrompt": "obsessive tech user, Can You Hear Me?, fixated mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 48 SPD 72 TEC 52 END 55 CHR 68, text: \"Can You Hear Me? leans on \\\"hello? can you hear me?\\\" like proof. The machine is doing the work, but the compulsion to automate it belongs to the person behind the keyboard.\", holo border, #060/150, green accents"
+    },
+    {
+      "num": "061",
+      "name": "The Alias Creator",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Created 50 shell aliases to save typing. Forgot what any of them do.",
+      "stats": {
+        "power": 58,
+        "speed": 64,
+        "technique": 66,
+        "endurance": 60,
+        "charisma": 56
+      },
+      "basePrice": 0.55,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Created 50 shell aliases to save typing. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.",
+      "imagePrompt": "tech enthusiast, The Alias Creator, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 58 SPD 64 TEC 66 END 60 CHR 56, text: \"Created 50 shell aliases to save typing. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.\", holo border, #061/150, green accents"
+    },
+    {
+      "num": "062",
+      "name": "The Multiple Desktop Guy",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Has 8 virtual desktops. Desktop 7 is where things go to die.",
+      "stats": {
+        "power": 52,
+        "speed": 60,
+        "technique": 58,
+        "endurance": 62,
+        "charisma": 58
+      },
+      "basePrice": 0.5,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Multiple Desktop Guy runs eight desktops and assigns each one a different layer of avoidance. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.",
+      "imagePrompt": "tech enthusiast, The Multiple Desktop Guy, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 52 SPD 60 TEC 58 END 62 CHR 58, text: \"The Multiple Desktop Guy runs eight desktops and assigns each one a different layer of avoidance. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.\", holo border, #062/150, green accents"
+    },
+    {
+      "num": "063",
+      "name": "The Weather Checker Addict",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Asks the AI for weather updates 8 times a day. Lives in an apartment with no windows.",
+      "stats": {
+        "power": 45,
+        "speed": 62,
+        "technique": 54,
+        "endurance": 58,
+        "charisma": 64
+      },
+      "basePrice": 0.4,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Asks the AI for weather updates 8 times a day. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.",
+      "imagePrompt": "tech enthusiast, The Weather Checker Addict, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 45 SPD 62 TEC 54 END 58 CHR 64, text: \"Asks the AI for weather updates 8 times a day. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.\", holo border, #063/150, green accents"
+    },
+    {
+      "num": "064",
+      "name": "The \"One Last Feature\"",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Promised 'one last feature' 47 features ago.",
+      "stats": {
+        "power": 62,
+        "speed": 58,
+        "technique": 65,
+        "endurance": 60,
+        "charisma": 62
+      },
+      "basePrice": 0.65,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The One Last Feature leans on \"one last feature\" like proof. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "tech enthusiast, The One Last Feature, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 62 SPD 58 TEC 65 END 60 CHR 62, text: \"The One Last Feature leans on \\\"one last feature\\\" like proof. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #064/150, green accents"
+    },
+    {
+      "num": "065",
+      "name": "The Process Killer",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Kills processes they don't recognize. That was the database. It's dead now.",
+      "stats": {
+        "power": 56,
+        "speed": 70,
+        "technique": 58,
+        "endurance": 55,
+        "charisma": 54
+      },
+      "basePrice": 0.6,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Process Killer leans on \"t recognize. That was the database. It\" like proof. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.",
+      "imagePrompt": "unlucky developer surrounded by disaster, The Process Killer, chaotic mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 56 SPD 70 TEC 58 END 55 CHR 54, text: \"The Process Killer leans on \\\"t recognize. That was the database. It\\\" like proof. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.\", holo border, #065/150, green accents"
+    },
+    {
+      "num": "066",
+      "name": "The JSON Validator",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Validates every JSON file 3 times before using it. One was still wrong.",
+      "stats": {
+        "power": 55,
+        "speed": 56,
+        "technique": 68,
+        "endurance": 64,
+        "charisma": 50
+      },
+      "basePrice": 0.55,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Validates every JSON file 3 times before using it. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.",
+      "imagePrompt": "obsessive tech user, The JSON Validator, fixated mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 55 SPD 56 TEC 68 END 64 CHR 50, text: \"Validates every JSON file 3 times before using it. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.\", holo border, #066/150, green accents"
+    },
+    {
+      "num": "067",
+      "name": "The \"Reply Faster\" Guy",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Complains about response times while running on the cheapest available model.",
+      "stats": {
+        "power": 50,
+        "speed": 74,
+        "technique": 56,
+        "endurance": 52,
+        "charisma": 60
+      },
+      "basePrice": 0.45,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Complains about response times while running on the cheapest available model. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.",
+      "imagePrompt": "tech enthusiast, The Reply Faster Guy, casual mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 50 SPD 74 TEC 56 END 52 CHR 60, text: \"Complains about response times while running on the cheapest available model. The obsession has long since stopped behaving like a joke and now runs like part of the room's operating rhythm.\", holo border, #067/150, green accents"
+    },
+    {
+      "num": "068",
+      "name": "The Brew Cleanup Forgettor",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Homebrew cache is 14GB. Has never run brew cleanup. Ever.",
+      "stats": {
+        "power": 54,
+        "speed": 55,
+        "technique": 60,
+        "endurance": 65,
+        "charisma": 52
+      },
+      "basePrice": 0.55,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Brew Cleanup Forgettor turns Homebrew cache is 14GB into a habit the room already recognizes. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.",
+      "imagePrompt": "stubborn developer, The Brew Cleanup Forgettor, determined mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 54 SPD 55 TEC 60 END 65 CHR 52, text: \"Brew Cleanup Forgettor turns Homebrew cache is 14GB into a habit the room already recognizes. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.\", holo border, #068/150, green accents"
+    },
+    {
+      "num": "069",
+      "name": "The Package.json Phantom",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Installs packages but never adds them to package.json. Works until it doesn't.",
+      "stats": {
+        "power": 58,
+        "speed": 60,
+        "technique": 64,
+        "endurance": 60,
+        "charisma": 54
+      },
+      "basePrice": 0.6,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Installs packages but never adds them to package.json. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.",
+      "imagePrompt": "stubborn developer, The Package.json Phantom, determined mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 58 SPD 60 TEC 64 END 60 CHR 54, text: \"Installs packages but never adds them to package.json. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.\", holo border, #069/150, green accents"
+    },
+    {
+      "num": "070",
+      "name": "The Help Menu Hero",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Reads every --help output in full. Still doesn't understand the tool.",
+      "stats": {
+        "power": 48,
+        "speed": 58,
+        "technique": 55,
+        "endurance": 62,
+        "charisma": 60
+      },
+      "basePrice": 0.4,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Help Menu Hero turns Reads every --help output in full into a habit the room already recognizes. The pages were always there; the real story is how long the room kept pretending they were optional.",
+      "imagePrompt": "stubborn developer, The Help Menu Hero, determined mood, digital art trading card portrait, green and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, green glossy finish, stats: POW 48 SPD 58 TEC 55 END 62 CHR 60, text: \"Help Menu Hero turns Reads every --help output in full into a habit the room already recognizes. The pages were always there; the real story is how long the room kept pretending they were optional.\", holo border, #070/150, green accents"
+    },
+    {
+      "num": "071",
+      "name": "The Casual User",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Uses the AI twice a week for simple things. Lives a balanced, healthy life.",
+      "stats": {
+        "power": 45,
+        "speed": 50,
+        "technique": 48,
+        "endurance": 52,
+        "charisma": 55
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Uses the AI twice a week for simple things. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "tech enthusiast, The Casual User, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 45 SPD 50 TEC 48 END 52 CHR 55, text: \"Uses the AI twice a week for simple things. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #071/150, silver accents"
+    },
+    {
+      "num": "072",
+      "name": "\"Hey Chat\"",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Starts every message with 'hey chat' like the AI is their roommate.",
+      "stats": {
+        "power": 42,
+        "speed": 55,
+        "technique": 45,
+        "endurance": 48,
+        "charisma": 60
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Hey Chat leans on \"hey chat\" like proof. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.",
+      "imagePrompt": "obsessive tech user, Hey Chat, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 55 TEC 45 END 48 CHR 60, text: \"Hey Chat leans on \\\"hey chat\\\" like proof. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.\", holo border, #072/150, silver accents"
+    },
+    {
+      "num": "073",
+      "name": "The List Maker",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Asks the AI to make lists of things. Organizes the lists into more lists.",
+      "stats": {
+        "power": 48,
+        "speed": 52,
+        "technique": 50,
+        "endurance": 55,
+        "charisma": 52
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Asks the AI to make lists of things, then turns the result into a system of sublists and side notes. The card feels playful, but the behavior it describes has already settled in as routine.",
+      "imagePrompt": "tech enthusiast, The List Maker, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 48 SPD 52 TEC 50 END 55 CHR 52, text: \"Asks the AI to make lists of things, then turns the result into a system of sublists and side notes. The card feels playful, but the behavior it describes has already settled in as routine.\", holo border, #073/150, silver accents"
+    },
+    {
+      "num": "074",
+      "name": "The Copy-Paste Coder",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Copies every code snippet the AI generates. Understands exactly zero of them.",
+      "stats": {
+        "power": 50,
+        "speed": 58,
+        "technique": 52,
+        "endurance": 50,
+        "charisma": 48
+      },
+      "basePrice": 0.25,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Copies every code snippet the AI generates. The card feels playful, but the behavior it describes has already settled in as routine.",
+      "imagePrompt": "obsessive tech user, The Copy-Paste Coder, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 50 SPD 58 TEC 52 END 50 CHR 48, text: \"Copies every code snippet the AI generates. The card feels playful, but the behavior it describes has already settled in as routine.\", holo border, #074/150, silver accents"
+    },
+    {
+      "num": "075",
+      "name": "\"That's Not What I Meant\"",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "The AI's most frequent feedback. Communication is a two-way street, buddy.",
+      "stats": {
+        "power": 44,
+        "speed": 60,
+        "technique": 46,
+        "endurance": 50,
+        "charisma": 62
+      },
+      "basePrice": 0.22,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Thats Not What I Meant turns The AI's most frequent feedback into a habit the room already recognizes. The punchline works because everyone in the room has seen the habit before.",
+      "imagePrompt": "tech enthusiast, That's Not What I Meant, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 60 TEC 46 END 50 CHR 62, text: \"Thats Not What I Meant turns The AI's most frequent feedback into a habit the room already recognizes. The punchline works because everyone in the room has seen the habit before.\", holo border, #075/150, silver accents"
+    },
+    {
+      "num": "076",
+      "name": "The Tab Closer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Closes browser tabs instead of bookmarking them. Will need that page again in 10 minutes.",
+      "stats": {
+        "power": 40,
+        "speed": 65,
+        "technique": 44,
+        "endurance": 48,
+        "charisma": 55
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Closes browser tabs instead of bookmarking them. What started as a convenience now behaves like a system, which is how it quietly becomes normal.",
+      "imagePrompt": "tech enthusiast, The Tab Closer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 65 TEC 44 END 48 CHR 55, text: \"Closes browser tabs instead of bookmarking them. What started as a convenience now behaves like a system, which is how it quietly becomes normal.\", holo border, #076/150, silver accents"
+    },
+    {
+      "num": "077",
+      "name": "The Password Reset Looper",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Resets their password, forgets it, resets again. The cycle never ends.",
+      "stats": {
+        "power": 42,
+        "speed": 48,
+        "technique": 46,
+        "endurance": 55,
+        "charisma": 45
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Resets their password, forgets it, resets again. The punchline works because everyone in the room has seen the habit before.",
+      "imagePrompt": "stubborn developer, The Password Reset Looper, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 48 TEC 46 END 55 CHR 45, text: \"Resets their password, forgets it, resets again. The punchline works because everyone in the room has seen the habit before.\", holo border, #077/150, silver accents"
+    },
+    {
+      "num": "078",
+      "name": "The Git Commit Procrastinator",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "One giant commit with the message 'fixes'. 847 files changed.",
+      "stats": {
+        "power": 46,
+        "speed": 50,
+        "technique": 50,
+        "endurance": 52,
+        "charisma": 48
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Git Commit Procrastinator leans on \"fixes\" like proof. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.",
+      "imagePrompt": "tech enthusiast, The Git Commit Procrastinator, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 50 TEC 50 END 52 CHR 48, text: \"The Git Commit Procrastinator leans on \\\"fixes\\\" like proof. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.\", holo border, #078/150, silver accents"
+    },
+    {
+      "num": "079",
+      "name": "The Sound Effect Messenger",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Types 'sudo make me a sandwich' and expects the AI to play along.",
+      "stats": {
+        "power": 40,
+        "speed": 58,
+        "technique": 44,
+        "endurance": 46,
+        "charisma": 65
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Sound Effect Messenger leans on \"sudo make me a sandwich\" like proof. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.",
+      "imagePrompt": "tech enthusiast, The Sound Effect Messenger, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 58 TEC 44 END 46 CHR 65, text: \"The Sound Effect Messenger leans on \\\"sudo make me a sandwich\\\" like proof. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.\", holo border, #079/150, silver accents"
+    },
+    {
+      "num": "080",
+      "name": "The Docs Skimmer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "\"I read the docs.\" They did not read the docs.",
+      "stats": {
+        "power": 48,
+        "speed": 52,
+        "technique": 55,
+        "endurance": 50,
+        "charisma": 45
+      },
+      "basePrice": 0.22,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Docs Skimmer leans on \"I read the docs.\" like proof. What looked like a shortcut turns into a lesson in why the docs exist in the first place.",
+      "imagePrompt": "tech enthusiast, The Docs Skimmer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 48 SPD 52 TEC 55 END 50 CHR 45, text: \"The Docs Skimmer leans on \\\"I read the docs.\\\" like proof. What looked like a shortcut turns into a lesson in why the docs exist in the first place.\", holo border, #080/150, silver accents"
+    },
+    {
+      "num": "081",
+      "name": "The Auto-Accepter",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Clicks 'allow' on every permission prompt. Has never read a single one.",
+      "stats": {
+        "power": 44,
+        "speed": 56,
+        "technique": 48,
+        "endurance": 50,
+        "charisma": 52
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Auto-Accepter leans on \"allow\" like proof. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.",
+      "imagePrompt": "stubborn developer, The Auto-Accepter, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 56 TEC 48 END 50 CHR 52, text: \"The Auto-Accepter leans on \\\"allow\\\" like proof. The session has the feel of a ritual now, something the room repeats because it has already worked one too many times.\", holo border, #081/150, silver accents"
+    },
+    {
+      "num": "082",
+      "name": "The Notification Dismissor",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Dismisses every notification without reading. Missed three important alerts today.",
+      "stats": {
+        "power": 42,
+        "speed": 60,
+        "technique": 46,
+        "endurance": 48,
+        "charisma": 50
+      },
+      "basePrice": 0.12,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Dismisses every notification without reading. What starts as a quip ends up sounding like the unofficial operating manual.",
+      "imagePrompt": "obsessive tech user, The Notification Dismissor, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 60 TEC 46 END 48 CHR 50, text: \"Dismisses every notification without reading. What starts as a quip ends up sounding like the unofficial operating manual.\", holo border, #082/150, silver accents"
+    },
+    {
+      "num": "083",
+      "name": "The \"Works On My Machine\" Dev",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "It works on their machine. It works nowhere else. They don't understand why.",
+      "stats": {
+        "power": 52,
+        "speed": 48,
+        "technique": 54,
+        "endurance": 55,
+        "charisma": 44
+      },
+      "basePrice": 0.25,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Works On My Machine Dev turns It works on their machine into a habit the room already recognizes. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.",
+      "imagePrompt": "tech enthusiast, The Works On My Machine Dev, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 52 SPD 48 TEC 54 END 55 CHR 44, text: \"Works On My Machine Dev turns It works on their machine into a habit the room already recognizes. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.\", holo border, #083/150, silver accents"
+    },
+    {
+      "num": "084",
+      "name": "The Password Saver",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Saves passwords in a file called 'passwords.txt' on their desktop.",
+      "stats": {
+        "power": 40,
+        "speed": 45,
+        "technique": 50,
+        "endurance": 58,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Password Saver leans on \"passwords.txt\" like proof. Every channel gets folded into the ritual, and the habit starts answering before anyone asks.",
+      "imagePrompt": "tech enthusiast, The Password Saver, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 45 TEC 50 END 58 CHR 48, text: \"The Password Saver leans on \\\"passwords.txt\\\" like proof. Every channel gets folded into the ritual, and the habit starts answering before anyone asks.\", holo border, #084/150, silver accents"
+    },
+    {
+      "num": "085",
+      "name": "The Incognito Tab Believer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Thinks incognito mode makes them invisible. It does not.",
+      "stats": {
+        "power": 38,
+        "speed": 55,
+        "technique": 42,
+        "endurance": 45,
+        "charisma": 58
+      },
+      "basePrice": 0.1,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Thinks incognito mode makes them invisible. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.",
+      "imagePrompt": "tech enthusiast, The Incognito Tab Believer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 38 SPD 55 TEC 42 END 45 CHR 58, text: \"Thinks incognito mode makes them invisible. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.\", holo border, #085/150, silver accents"
+    },
+    {
+      "num": "086",
+      "name": "The Stack Overflow Loyalist",
+      "subset": "Flashback",
+      "starTier": "Common",
+      "desc": "Still copies from Stack Overflow even though the AI is right there.",
+      "stats": {
+        "power": 50,
+        "speed": 52,
+        "technique": 54,
+        "endurance": 52,
+        "charisma": 48
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Still copies from Stack Overflow even though the AI is right there. The card feels playful, but the behavior it describes has already settled in as routine.",
+      "imagePrompt": "tech enthusiast, The Stack Overflow Loyalist, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 50 SPD 52 TEC 54 END 52 CHR 48, text: \"Still copies from Stack Overflow even though the AI is right there. The card feels playful, but the behavior it describes has already settled in as routine.\", holo border, #086/150, silver accents"
+    },
+    {
+      "num": "087",
+      "name": "The WiFi Switcher",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Switches between WiFi and cellular back and forth. Signal strength remains unchanged.",
+      "stats": {
+        "power": 40,
+        "speed": 62,
+        "technique": 44,
+        "endurance": 46,
+        "charisma": 50
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Switches between WiFi and cellular back and forth. The machine is doing exactly what it was told, which is why the correction feels so personal.",
+      "imagePrompt": "tech enthusiast, The WiFi Switcher, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 62 TEC 44 END 46 CHR 50, text: \"Switches between WiFi and cellular back and forth. The machine is doing exactly what it was told, which is why the correction feels so personal.\", holo border, #087/150, silver accents"
+    },
+    {
+      "num": "088",
+      "name": "The Desktop Icon Sorter",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Organizes desktop icons by color. Has 200 shortcuts to the same application.",
+      "stats": {
+        "power": 38,
+        "speed": 48,
+        "technique": 42,
+        "endurance": 50,
+        "charisma": 52
+      },
+      "basePrice": 0.12,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Desktop Icon Sorter turns Organizes desktop icons by color into a habit the room already recognizes. Every channel gets folded into the ritual, and the habit starts answering before anyone asks.",
+      "imagePrompt": "tech enthusiast, The Desktop Icon Sorter, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 38 SPD 48 TEC 42 END 50 CHR 52, text: \"Desktop Icon Sorter turns Organizes desktop icons by color into a habit the room already recognizes. Every channel gets folded into the ritual, and the habit starts answering before anyone asks.\", holo border, #088/150, silver accents"
+    },
+    {
+      "num": "089",
+      "name": "The Snippet Saver",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Saves code snippets in random files. Will never find them again.",
+      "stats": {
+        "power": 46,
+        "speed": 50,
+        "technique": 52,
+        "endurance": 54,
+        "charisma": 46
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Saves code snippets in random files and swears they will remember where they are. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.",
+      "imagePrompt": "stubborn developer, The Snippet Saver, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 50 TEC 52 END 54 CHR 46, text: \"Saves code snippets in random files and swears they will remember where they are. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.\", holo border, #089/150, silver accents"
+    },
+    {
+      "num": "090",
+      "name": "\"I'll Fix It Later\"",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "The TODO list grows longer. The fixes never come. Legacy debt accumulates.",
+      "stats": {
+        "power": 44,
+        "speed": 48,
+        "technique": 46,
+        "endurance": 58,
+        "charisma": 50
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "I'll Fix It Later keeps the TODO list growing, which is how procrastination starts feeling like architecture. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "stubborn developer, I'll Fix It Later, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 48 TEC 46 END 58 CHR 50, text: \"I'll Fix It Later keeps the TODO list growing, which is how procrastination starts feeling like architecture. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #090/150, silver accents"
+    },
+    {
+      "num": "091",
+      "name": "The Multiple Terminal Guy",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Opens 12 terminal windows. Uses one. The other 11 show a blinking cursor.",
+      "stats": {
+        "power": 48,
+        "speed": 54,
+        "technique": 50,
+        "endurance": 52,
+        "charisma": 46
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Multiple Terminal Guy turns Opens 12 terminal windows into a habit the room already recognizes. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.",
+      "imagePrompt": "tech enthusiast, The Multiple Terminal Guy, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 48 SPD 54 TEC 50 END 52 CHR 46, text: \"Multiple Terminal Guy turns Opens 12 terminal windows into a habit the room already recognizes. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.\", holo border, #091/150, silver accents"
+    },
+    {
+      "num": "092",
+      "name": "The Manual Page Reader",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Actually reads man pages cover to cover. Respected but slow.",
+      "stats": {
+        "power": 45,
+        "speed": 46,
+        "technique": 52,
+        "endurance": 56,
+        "charisma": 44
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Actually reads man pages cover to cover. What looked like a shortcut turns into a lesson in why the docs exist in the first place.",
+      "imagePrompt": "tech enthusiast, The Manual Page Reader, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 45 SPD 46 TEC 52 END 56 CHR 44, text: \"Actually reads man pages cover to cover. What looked like a shortcut turns into a lesson in why the docs exist in the first place.\", holo border, #092/150, silver accents"
+    },
+    {
+      "num": "093",
+      "name": "The Update Postponer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "\"Update available? I'll do it tomorrow.\" Seven months later, still on v0.3.",
+      "stats": {
+        "power": 42,
+        "speed": 50,
+        "technique": 48,
+        "endurance": 60,
+        "charisma": 46
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Update Postponer leans on \"Update available? I'll do it tomorrow.\" like proof. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.",
+      "imagePrompt": "tech enthusiast, The Update Postponer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 50 TEC 48 END 60 CHR 46, text: \"The Update Postponer leans on \\\"Update available? I'll do it tomorrow.\\\" like proof. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.\", holo border, #093/150, silver accents"
+    },
+    {
+      "num": "094",
+      "name": "The Taskbar Hider",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Auto-hides the taskbar. Spends 3 seconds every time waiting for it to appear.",
+      "stats": {
+        "power": 38,
+        "speed": 52,
+        "technique": 42,
+        "endurance": 48,
+        "charisma": 55
+      },
+      "basePrice": 0.1,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Taskbar Hider hides the taskbar so aggressively the desktop starts feeling like a secret. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.",
+      "imagePrompt": "obsessive tech user, The Taskbar Hider, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 38 SPD 52 TEC 42 END 48 CHR 55, text: \"The Taskbar Hider hides the taskbar so aggressively the desktop starts feeling like a secret. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.\", holo border, #094/150, silver accents"
+    },
+    {
+      "num": "095",
+      "name": "The Clipboard Clearer",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Clears clipboard after every paste. Paranoid or disciplined? Nobody knows.",
+      "stats": {
+        "power": 40,
+        "speed": 58,
+        "technique": 44,
+        "endurance": 46,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Clears clipboard after every paste, as if even the paste history were a liability. What starts as a quip ends up sounding like the unofficial operating manual.",
+      "imagePrompt": "obsessive tech user, The Clipboard Clearer, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 58 TEC 44 END 46 CHR 48, text: \"Clears clipboard after every paste, as if even the paste history were a liability. What starts as a quip ends up sounding like the unofficial operating manual.\", holo border, #095/150, silver accents"
+    },
+    {
+      "num": "096",
+      "name": "The Folder Creator",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Creates folders for organization. Puts everything in one folder called 'stuff'.",
+      "stats": {
+        "power": 44,
+        "speed": 50,
+        "technique": 48,
+        "endurance": 54,
+        "charisma": 46
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Folder Creator leans on \"stuff\" like proof. The punchline works because everyone in the room has seen the habit before.",
+      "imagePrompt": "obsessive tech user, The Folder Creator, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 50 TEC 48 END 54 CHR 46, text: \"The Folder Creator leans on \\\"stuff\\\" like proof. The punchline works because everyone in the room has seen the habit before.\", holo border, #096/150, silver accents"
+    },
+    {
+      "num": "097",
+      "name": "The Theme Switcher",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Changes VS Code theme weekly. Dark, light, dracula, monokai, solarized. Repeats.",
+      "stats": {
+        "power": 40,
+        "speed": 56,
+        "technique": 44,
+        "endurance": 46,
+        "charisma": 58
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Theme Switcher turns Changes VS Code theme weekly into a habit the room already recognizes. A new finish only reveals the same habit in a better color.",
+      "imagePrompt": "tech enthusiast, The Theme Switcher, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 56 TEC 44 END 46 CHR 58, text: \"Theme Switcher turns Changes VS Code theme weekly into a habit the room already recognizes. A new finish only reveals the same habit in a better color.\", holo border, #097/150, silver accents"
+    },
+    {
+      "num": "098",
+      "name": "The \"Did You Google It?\" Guy",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Asks the AI questions they could've Googled in 5 seconds.",
+      "stats": {
+        "power": 46,
+        "speed": 54,
+        "technique": 50,
+        "endurance": 52,
+        "charisma": 52
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Asks the AI questions they could've Googled in 5 seconds. What looked like a shortcut turns into a lesson in why the docs exist in the first place.",
+      "imagePrompt": "tech enthusiast, The Did You Google It? Guy, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 54 TEC 50 END 52 CHR 52, text: \"Asks the AI questions they could've Googled in 5 seconds. What looked like a shortcut turns into a lesson in why the docs exist in the first place.\", holo border, #098/150, silver accents"
+    },
+    {
+      "num": "099",
+      "name": "The Backup Neglector",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Has never backed up anything. Lives on the edge. The edge is a cliff.",
+      "stats": {
+        "power": 42,
+        "speed": 48,
+        "technique": 46,
+        "endurance": 55,
+        "charisma": 44
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Backup Neglector turns Has never backed up anything into a habit the room already recognizes. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.",
+      "imagePrompt": "stubborn developer, The Backup Neglector, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 48 TEC 46 END 55 CHR 44, text: \"Backup Neglector turns Has never backed up anything into a habit the room already recognizes. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.\", holo border, #099/150, silver accents"
+    },
+    {
+      "num": "100",
+      "name": "The Night Mode Enthusiast",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Everything must be dark mode. Squints painfully at the occasional white website.",
+      "stats": {
+        "power": 40,
+        "speed": 50,
+        "technique": 46,
+        "endurance": 52,
+        "charisma": 52
+      },
+      "basePrice": 0.12,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Night Mode Enthusiast turns Everything must be dark mode into a habit the room already recognizes. The room looks different every time, yet the obsession still reads from across the table.",
+      "imagePrompt": "obsessive tech user, The Night Mode Enthusiast, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 50 TEC 46 END 52 CHR 52, text: \"Night Mode Enthusiast turns Everything must be dark mode into a habit the room already recognizes. The room looks different every time, yet the obsession still reads from across the table.\", holo border, #100/150, silver accents"
+    },
+    {
+      "num": "101",
+      "name": "The Keyboard Shortcut Forgettor",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Learns a new keyboard shortcut. Forgets it by the next day. Repeat forever.",
+      "stats": {
+        "power": 44,
+        "speed": 48,
+        "technique": 50,
+        "endurance": 54,
+        "charisma": 46
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Keyboard Shortcut Forgettor turns Learns a new keyboard shortcut into a habit the room already recognizes. The punchline works because everyone in the room has seen the habit before.",
+      "imagePrompt": "tech enthusiast, The Keyboard Shortcut Forgettor, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 48 TEC 50 END 54 CHR 46, text: \"Keyboard Shortcut Forgettor turns Learns a new keyboard shortcut into a habit the room already recognizes. The punchline works because everyone in the room has seen the habit before.\", holo border, #101/150, silver accents"
+    },
+    {
+      "num": "102",
+      "name": "The Extension Hoarder",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "28 browser extensions. Browser takes 47 seconds to start. Uses three of them.",
+      "stats": {
+        "power": 46,
+        "speed": 50,
+        "technique": 52,
+        "endurance": 52,
+        "charisma": 44
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Extension Hoarder turns 28 browser extensions into a habit the room already recognizes. The machine is doing the work, but the compulsion to automate it belongs to the person behind the keyboard.",
+      "imagePrompt": "tech enthusiast, The Extension Hoarder, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 50 TEC 52 END 52 CHR 44, text: \"Extension Hoarder turns 28 browser extensions into a habit the room already recognizes. The machine is doing the work, but the compulsion to automate it belongs to the person behind the keyboard.\", holo border, #102/150, silver accents"
+    },
+    {
+      "num": "103",
+      "name": "The \"Quick Question\" Askor",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Every question is 'quick.' No question has ever been quick.",
+      "stats": {
+        "power": 42,
+        "speed": 58,
+        "technique": 46,
+        "endurance": 48,
+        "charisma": 56
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The Quick Question Askor leans on \"quick.\" like proof. The card feels playful, but the behavior it describes has already settled in as routine.",
+      "imagePrompt": "obsessive tech user, The Quick Question Askor, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 58 TEC 46 END 48 CHR 56, text: \"The Quick Question Askor leans on \\\"quick.\\\" like proof. The card feels playful, but the behavior it describes has already settled in as routine.\", holo border, #103/150, silver accents"
+    },
+    {
+      "num": "104",
+      "name": "The Space-Bar Presser",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Presses spacebar to scroll. Page jumps 3 screens. Scrolls back up. Repeats.",
+      "stats": {
+        "power": 38,
+        "speed": 62,
+        "technique": 42,
+        "endurance": 44,
+        "charisma": 50
+      },
+      "basePrice": 0.1,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Space-Bar Presser turns Presses spacebar to scroll into a habit the room already recognizes. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.",
+      "imagePrompt": "tech enthusiast, The Space-Bar Presser, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 38 SPD 62 TEC 42 END 44 CHR 50, text: \"Space-Bar Presser turns Presses spacebar to scroll into a habit the room already recognizes. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.\", holo border, #104/150, silver accents"
+    },
+    {
+      "num": "105",
+      "name": "The Git Branch Phantom",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Creates feature branches. Never merges them. 47 orphan branches and counting.",
+      "stats": {
+        "power": 48,
+        "speed": 50,
+        "technique": 52,
+        "endurance": 52,
+        "charisma": 44
+      },
+      "basePrice": 0.22,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Git Branch Phantom turns Creates feature branches into a habit the room already recognizes. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.",
+      "imagePrompt": "stubborn developer, The Git Branch Phantom, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 48 SPD 50 TEC 52 END 52 CHR 44, text: \"Git Branch Phantom turns Creates feature branches into a habit the room already recognizes. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.\", holo border, #105/150, silver accents"
+    },
+    {
+      "num": "106",
+      "name": "The README Ignorer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Never reads READMEs. Opens issues asking questions answered in line 3.",
+      "stats": {
+        "power": 42,
+        "speed": 52,
+        "technique": 46,
+        "endurance": 50,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "README Ignorer turns Never reads READMEs into a habit the room already recognizes. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.",
+      "imagePrompt": "stubborn developer, The README Ignorer, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 52 TEC 46 END 50 CHR 48, text: \"README Ignorer turns Never reads READMEs into a habit the room already recognizes. Convenience keeps hardening into infrastructure, and the whole setup now answers before anyone remembers asking.\", holo border, #106/150, silver accents"
+    },
+    {
+      "num": "107",
+      "name": "The One Password Guy",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Uses the same password for everything. It's 'password123'. Obviously.",
+      "stats": {
+        "power": 40,
+        "speed": 48,
+        "technique": 46,
+        "endurance": 55,
+        "charisma": 46
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The One Password Guy leans on \"s \" like proof. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "obsessive tech user, The One Password Guy, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 48 TEC 46 END 55 CHR 46, text: \"The One Password Guy leans on \\\"s \\\" like proof. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #107/150, silver accents"
+    },
+    {
+      "num": "108",
+      "name": "The Ctrl+Z Addict",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Undoes so many times they've accidentally deleted the entire project twice.",
+      "stats": {
+        "power": 44,
+        "speed": 60,
+        "technique": 48,
+        "endurance": 46,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Undoes so many times they've accidentally deleted the entire project twice. What starts as a quip ends up sounding like the unofficial operating manual.",
+      "imagePrompt": "tech enthusiast, The Ctrl+Z Addict, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 60 TEC 48 END 46 CHR 48, text: \"Undoes so many times they've accidentally deleted the entire project twice. What starts as a quip ends up sounding like the unofficial operating manual.\", holo border, #108/150, silver accents"
+    },
+    {
+      "num": "109",
+      "name": "The \"Send It\" Messager",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Sends messages without proofreading. Typos are a lifestyle.",
+      "stats": {
+        "power": 46,
+        "speed": 65,
+        "technique": 44,
+        "endurance": 42,
+        "charisma": 58
+      },
+      "basePrice": 0.12,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Sends messages without proofreading, then trusts the typo to carry the tone. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "tech enthusiast, The Send It Messager, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 65 TEC 44 END 42 CHR 58, text: \"Sends messages without proofreading, then trusts the typo to carry the tone. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #109/150, silver accents"
+    },
+    {
+      "num": "110",
+      "name": "The uptime checker",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Checks if the AI is online every 20 minutes. It's always online. It never sleeps.",
+      "stats": {
+        "power": 42,
+        "speed": 52,
+        "technique": 48,
+        "endurance": 56,
+        "charisma": 44
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Checks if the AI is online every 20 minutes. The punchline works because everyone in the room has seen the habit before.",
+      "imagePrompt": "stubborn developer, The uptime checker, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 52 TEC 48 END 56 CHR 44, text: \"Checks if the AI is online every 20 minutes. The punchline works because everyone in the room has seen the habit before.\", holo border, #110/150, silver accents"
+    },
+    {
+      "num": "111",
+      "name": "The error log ignorer",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Errors scroll past in the terminal. They scroll right past without a glance.",
+      "stats": {
+        "power": 40,
+        "speed": 50,
+        "technique": 44,
+        "endurance": 52,
+        "charisma": 46
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Errors scroll past in the terminal. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.",
+      "imagePrompt": "unlucky developer surrounded by disaster, The error log ignorer, chaotic mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 50 TEC 44 END 52 CHR 46, text: \"Errors scroll past in the terminal. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.\", holo border, #111/150, silver accents"
+    },
+    {
+      "num": "112",
+      "name": "The ctrl c commander",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Ctrl+C is their favorite key. Kills processes they don't even recognize.",
+      "stats": {
+        "power": 45,
+        "speed": 62,
+        "technique": 48,
+        "endurance": 44,
+        "charisma": 50
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "ctrl c commander turns Ctrl+C is their favorite key into a habit the room already recognizes. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.",
+      "imagePrompt": "tech enthusiast, The ctrl c commander, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 45 SPD 62 TEC 48 END 44 CHR 50, text: \"ctrl c commander turns Ctrl+C is their favorite key into a habit the room already recognizes. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.\", holo border, #112/150, silver accents"
+    },
+    {
+      "num": "113",
+      "name": "The .gitignore forgetter",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Committed node_modules to git. Three times. On three different projects.",
+      "stats": {
+        "power": 46,
+        "speed": 48,
+        "technique": 52,
+        "endurance": 50,
+        "charisma": 42
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": ".gitignore forgetter turns Committed node_modules to git into a habit the room already recognizes. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.",
+      "imagePrompt": "tech enthusiast, The .gitignore forgetter, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 48 TEC 52 END 50 CHR 42, text: \".gitignore forgetter turns Committed node_modules to git into a habit the room already recognizes. The repository keeps the receipts, and the diff makes it obvious how the habit keeps trying to masquerade as tidiness.\", holo border, #113/150, silver accents"
+    },
+    {
+      "num": "114",
+      "name": "The localhost believer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "\"It works on localhost!\" Famous last words before the production disaster.",
+      "stats": {
+        "power": 42,
+        "speed": 50,
+        "technique": 48,
+        "endurance": 54,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The localhost believer leans on \"It works on localhost!\" like proof. The pages were always there; the real story is how long the room kept pretending they were optional.",
+      "imagePrompt": "tech enthusiast, The localhost believer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 50 TEC 48 END 54 CHR 48, text: \"The localhost believer leans on \\\"It works on localhost!\\\" like proof. The pages were always there; the real story is how long the room kept pretending they were optional.\", holo border, #114/150, silver accents"
+    },
+    {
+      "num": "115",
+      "name": "The duplicate file maker",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Copies files instead of versioning them. Has final_final_v3_REAL.js.",
+      "stats": {
+        "power": 40,
+        "speed": 48,
+        "technique": 44,
+        "endurance": 52,
+        "charisma": 46
+      },
+      "basePrice": 0.12,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Copies files instead of versioning them. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "tech enthusiast, The duplicate file maker, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 48 TEC 44 END 52 CHR 46, text: \"Copies files instead of versioning them. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #115/150, silver accents"
+    },
+    {
+      "num": "116",
+      "name": "The terminal maximizer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Maximizes the terminal window to full screen. For a single ls command.",
+      "stats": {
+        "power": 38,
+        "speed": 52,
+        "technique": 44,
+        "endurance": 50,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Maximizes the terminal window to full screen. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.",
+      "imagePrompt": "tech enthusiast, The terminal maximizer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 38 SPD 52 TEC 44 END 50 CHR 48, text: \"Maximizes the terminal window to full screen. Even the shortcuts feel ceremonial now, as if speed itself had developed a favorite trick.\", holo border, #116/150, silver accents"
+    },
+    {
+      "num": "117",
+      "name": "The error message closer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Closes error popups without reading them. The error persists. They are confused.",
+      "stats": {
+        "power": 44,
+        "speed": 56,
+        "technique": 46,
+        "endurance": 48,
+        "charisma": 50
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Closes error popups without reading them. The loud part is never the bug; it is the pattern that made the bug inevitable.",
+      "imagePrompt": "unlucky developer surrounded by disaster, The error message closer, chaotic mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 56 TEC 46 END 48 CHR 50, text: \"Closes error popups without reading them. The loud part is never the bug; it is the pattern that made the bug inevitable.\", holo border, #117/150, silver accents"
+    },
+    {
+      "num": "118",
+      "name": "The typing watcher",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Watches the AI type in real-time. Gets impatient after 2 seconds.",
+      "stats": {
+        "power": 40,
+        "speed": 54,
+        "technique": 44,
+        "endurance": 48,
+        "charisma": 52
+      },
+      "basePrice": 0.12,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "typing watcher turns Watches the AI type in real-time into a habit the room already recognizes. The card feels playful, but the behavior it describes has already settled in as routine.",
+      "imagePrompt": "tech enthusiast, The typing watcher, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 54 TEC 44 END 48 CHR 52, text: \"typing watcher turns Watches the AI type in real-time into a habit the room already recognizes. The card feels playful, but the behavior it describes has already settled in as routine.\", holo border, #118/150, silver accents"
+    },
+    {
+      "num": "119",
+      "name": "The print statement debugger",
+      "subset": "Flashback",
+      "starTier": "Common",
+      "desc": "console.log('here'), console.log('here2'), console.log('PLEASE WORK').",
+      "stats": {
+        "power": 50,
+        "speed": 50,
+        "technique": 48,
+        "endurance": 52,
+        "charisma": 44
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The print statement debugger leans on \"here\" like proof. The loud part is never the bug; it is the pattern that made the bug inevitable.",
+      "imagePrompt": "Frantic developer surrounded by console.log printouts filling the air like confetti, digital art, terminal green, comedic debugging",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 50 SPD 50 TEC 48 END 52 CHR 44, text: \"The print statement debugger leans on \\\"here\\\" like proof. The loud part is never the bug; it is the pattern that made the bug inevitable.\", holo border, #119/150, silver accents"
+    },
+    {
+      "num": "120",
+      "name": "The \"It's a Feature\" Defender",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Every bug is defended as an intentional feature. Users disagree.",
+      "stats": {
+        "power": 46,
+        "speed": 52,
+        "technique": 50,
+        "endurance": 54,
+        "charisma": 48
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Every bug is defended as an intentional feature. What starts as a quip ends up sounding like the unofficial operating manual.",
+      "imagePrompt": "obsessive tech user, The It's a Feature Defender, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 52 TEC 50 END 54 CHR 48, text: \"Every bug is defended as an intentional feature. What starts as a quip ends up sounding like the unofficial operating manual.\", holo border, #120/150, silver accents"
+    },
+    {
+      "num": "121",
+      "name": "The DM Hunter",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Slides into the AI's DMs from every available channel. Just to say hi.",
+      "stats": {
+        "power": 42,
+        "speed": 60,
+        "technique": 46,
+        "endurance": 46,
+        "charisma": 55
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Slides into the AI's DMs from every available channel. The machine is doing the work, but the compulsion to automate it belongs to the person behind the keyboard.",
+      "imagePrompt": "obsessive tech user, The DM Hunter, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 60 TEC 46 END 46 CHR 55, text: \"Slides into the AI's DMs from every available channel. The machine is doing the work, but the compulsion to automate it belongs to the person behind the keyboard.\", holo border, #121/150, silver accents"
+    },
+    {
+      "num": "122",
+      "name": "The curl commands guy",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Tests APIs with curl commands that are 400 characters long. Works perfectly every time.",
+      "stats": {
+        "power": 48,
+        "speed": 50,
+        "technique": 54,
+        "endurance": 52,
+        "charisma": 42
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Tests APIs with curl commands that are 400 characters long. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.",
+      "imagePrompt": "obsessive tech user, The curl commands guy, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 48 SPD 50 TEC 54 END 52 CHR 42, text: \"Tests APIs with curl commands that are 400 characters long. Nothing about the result is mysterious once the pages are finally opened, which is usually the late part of the story.\", holo border, #122/150, silver accents"
+    },
+    {
+      "num": "123",
+      "name": "The seed data lover",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Adds seed data to databases. The seed data is funnier than the real data.",
+      "stats": {
+        "power": 44,
+        "speed": 48,
+        "technique": 50,
+        "endurance": 54,
+        "charisma": 46
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "seed data lover turns Adds seed data to databases into a habit the room already recognizes. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.",
+      "imagePrompt": "tech enthusiast, The seed data lover, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 48 TEC 50 END 54 CHR 46, text: \"seed data lover turns Adds seed data to databases into a habit the room already recognizes. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.\", holo border, #123/150, silver accents"
+    },
+    {
+      "num": "124",
+      "name": "The dependency updater",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Runs npm audit fix. Everything breaks. Reverts. Tries again next month.",
+      "stats": {
+        "power": 46,
+        "speed": 52,
+        "technique": 52,
+        "endurance": 52,
+        "charisma": 44
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "dependency updater turns Runs npm audit fix into a habit the room already recognizes. The machine is doing exactly what it was told, which is why the correction feels so personal.",
+      "imagePrompt": "obsessive tech user, The dependency updater, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 52 TEC 52 END 52 CHR 44, text: \"dependency updater turns Runs npm audit fix into a habit the room already recognizes. The machine is doing exactly what it was told, which is why the correction feels so personal.\", holo border, #124/150, silver accents"
+    },
+    {
+      "num": "125",
+      "name": "The hot reload abuser",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Saves a file every 3 seconds to watch it hot reload. The reload is instant. They still watch.",
+      "stats": {
+        "power": 44,
+        "speed": 58,
+        "technique": 48,
+        "endurance": 48,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Saves a file every 3 seconds to watch it hot reload. What starts as a quip ends up sounding like the unofficial operating manual.",
+      "imagePrompt": "obsessive tech user, The hot reload abuser, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 58 TEC 48 END 48 CHR 48, text: \"Saves a file every 3 seconds to watch it hot reload. What starts as a quip ends up sounding like the unofficial operating manual.\", holo border, #125/150, silver accents"
+    },
+    {
+      "num": "126",
+      "name": "The \"I Know JSON\" Guy",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Claims to know JSON. Has a trailing comma in every object.",
+      "stats": {
+        "power": 48,
+        "speed": 52,
+        "technique": 50,
+        "endurance": 50,
+        "charisma": 46
+      },
+      "basePrice": 0.22,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "I Know JSON Guy turns Claims to know JSON into a habit the room already recognizes. The missing step was always waiting in the manual, but the confidence to skip it is what keeps the story interesting.",
+      "imagePrompt": "obsessive tech user, The I Know JSON Guy, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 48 SPD 52 TEC 50 END 50 CHR 46, text: \"I Know JSON Guy turns Claims to know JSON into a habit the room already recognizes. The missing step was always waiting in the manual, but the confidence to skip it is what keeps the story interesting.\", holo border, #126/150, silver accents"
+    },
+    {
+      "num": "127",
+      "name": "The ping pong player",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Pings the AI, AI replies, they ping again. Ping pong for 30 minutes.",
+      "stats": {
+        "power": 42,
+        "speed": 56,
+        "technique": 46,
+        "endurance": 48,
+        "charisma": 52
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Pings the AI, AI replies, they ping again, until the exchange starts feeling like a reflex instead of a conversation. The punchline works because everyone in the room has seen the habit before.",
+      "imagePrompt": "tech enthusiast, The ping pong player, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 56 TEC 46 END 48 CHR 52, text: \"Pings the AI, AI replies, they ping again, until the exchange starts feeling like a reflex instead of a conversation. The punchline works because everyone in the room has seen the habit before.\", holo border, #127/150, silver accents"
+    },
+    {
+      "num": "128",
+      "name": "The default settings guy",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Has never changed a single default setting. Everything is factory. They are content.",
+      "stats": {
+        "power": 40,
+        "speed": 48,
+        "technique": 44,
+        "endurance": 52,
+        "charisma": 50
+      },
+      "basePrice": 0.12,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Has never changed a single default setting. What starts as a quip ends up sounding like the unofficial operating manual.",
+      "imagePrompt": "stubborn developer, The default settings guy, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 48 TEC 44 END 52 CHR 50, text: \"Has never changed a single default setting. What starts as a quip ends up sounding like the unofficial operating manual.\", holo border, #128/150, silver accents"
+    },
+    {
+      "num": "129",
+      "name": "The auto save disabler",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Disabled auto-save. Lost 3 hours of work. Re-enabled auto-save.",
+      "stats": {
+        "power": 42,
+        "speed": 50,
+        "technique": 46,
+        "endurance": 50,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The auto save disabler turns off the safety net and learns, painfully, why the net existed. The loud part is never the bug; it is the pattern that made the bug inevitable.",
+      "imagePrompt": "tech enthusiast, The auto save disabler, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 50 TEC 46 END 50 CHR 48, text: \"The auto save disabler turns off the safety net and learns, painfully, why the net existed. The loud part is never the bug; it is the pattern that made the bug inevitable.\", holo border, #129/150, silver accents"
+    },
+    {
+      "num": "130",
+      "name": "The api doc reader",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Reads API docs for fun. Doesn't use the API. Just reads.",
+      "stats": {
+        "power": 46,
+        "speed": 48,
+        "technique": 56,
+        "endurance": 52,
+        "charisma": 44
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "api doc reader turns Reads API docs for fun into a habit the room already recognizes. The pages were always there; the real story is how long the room kept pretending they were optional.",
+      "imagePrompt": "stubborn developer, The api doc reader, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 48 TEC 56 END 52 CHR 44, text: \"api doc reader turns Reads API docs for fun into a habit the room already recognizes. The pages were always there; the real story is how long the room kept pretending they were optional.\", holo border, #130/150, silver accents"
+    },
+    {
+      "num": "131",
+      "name": "The env variable misser",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Forgets to source .env. Spends 20 minutes debugging a missing API key.",
+      "stats": {
+        "power": 42,
+        "speed": 50,
+        "technique": 46,
+        "endurance": 52,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "env variable misser turns Forgets to source .env into a habit the room already recognizes. The pages were always there; the real story is how long the room kept pretending they were optional.",
+      "imagePrompt": "tech enthusiast, The env variable misser, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 50 TEC 46 END 52 CHR 48, text: \"env variable misser turns Forgets to source .env into a habit the room already recognizes. The pages were always there; the real story is how long the room kept pretending they were optional.\", holo border, #131/150, silver accents"
+    },
+    {
+      "num": "132",
+      "name": "The reinstaller",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Uninstalls and reinstalls packages instead of figuring out what went wrong.",
+      "stats": {
+        "power": 44,
+        "speed": 52,
+        "technique": 48,
+        "endurance": 54,
+        "charisma": 44
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Uninstalls and reinstalls packages instead of figuring out what went wrong. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.",
+      "imagePrompt": "unlucky developer surrounded by disaster, The reinstaller, chaotic mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 52 TEC 48 END 54 CHR 44, text: \"Uninstalls and reinstalls packages instead of figuring out what went wrong. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.\", holo border, #132/150, silver accents"
+    },
+    {
+      "num": "133",
+      "name": "The silent error ignorer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "The program works, so the warnings don't matter. They will matter.",
+      "stats": {
+        "power": 40,
+        "speed": 50,
+        "technique": 44,
+        "endurance": 55,
+        "charisma": 42
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The program works, so the warnings don't matter. The loud part is never the bug; it is the pattern that made the bug inevitable.",
+      "imagePrompt": "tech enthusiast, The silent error ignorer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 50 TEC 44 END 55 CHR 42, text: \"The program works, so the warnings don't matter. The loud part is never the bug; it is the pattern that made the bug inevitable.\", holo border, #133/150, silver accents"
+    },
+    {
+      "num": "134",
+      "name": "The emoji reactor",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Reacts to every AI message with an emoji. Has a reaction for every occasion.",
+      "stats": {
+        "power": 38,
+        "speed": 58,
+        "technique": 42,
+        "endurance": 44,
+        "charisma": 60
+      },
+      "basePrice": 0.1,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Reacts to every AI message with an emoji. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "obsessive tech user, The emoji reactor, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 38 SPD 58 TEC 42 END 44 CHR 60, text: \"Reacts to every AI message with an emoji. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #134/150, silver accents"
+    },
+    {
+      "num": "135",
+      "name": "The cleanup procrastinator",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "'I'll clean up the code later.' The code is now 10,000 lines of spaghetti.",
+      "stats": {
+        "power": 44,
+        "speed": 48,
+        "technique": 50,
+        "endurance": 56,
+        "charisma": 42
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The cleanup procrastinator leans on \"I\" like proof. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.",
+      "imagePrompt": "tech enthusiast, The cleanup procrastinator, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 48 TEC 50 END 56 CHR 42, text: \"The cleanup procrastinator leans on \\\"I\\\" like proof. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.\", holo border, #135/150, silver accents"
+    },
+    {
+      "num": "136",
+      "name": "The split terminal lover",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Splits the terminal into 6 panes. Uses one. The other 5 show blank shells.",
+      "stats": {
+        "power": 46,
+        "speed": 54,
+        "technique": 52,
+        "endurance": 50,
+        "charisma": 46
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "split terminal lover turns Splits the terminal into 6 panes into a habit the room already recognizes. What looks like efficiency from afar is really just a very familiar performance.",
+      "imagePrompt": "tech enthusiast, The split terminal lover, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 54 TEC 52 END 50 CHR 46, text: \"split terminal lover turns Splits the terminal into 6 panes into a habit the room already recognizes. What looks like efficiency from afar is really just a very familiar performance.\", holo border, #136/150, silver accents"
+    },
+    {
+      "num": "137",
+      "name": "The overcommenter",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Comments every single line of code. // increment i by 1. i++;",
+      "stats": {
+        "power": 42,
+        "speed": 46,
+        "technique": 50,
+        "endurance": 52,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Comments every single line of code. The card feels playful, but the behavior it describes has already settled in as routine.",
+      "imagePrompt": "obsessive tech user, The overcommenter, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 46 TEC 50 END 52 CHR 48, text: \"Comments every single line of code. The card feels playful, but the behavior it describes has already settled in as routine.\", holo border, #137/150, silver accents"
+    },
+    {
+      "num": "138",
+      "name": "The domain buyer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Buys 15 domains for projects that will never exist. The renewal emails haunt them.",
+      "stats": {
+        "power": 44,
+        "speed": 50,
+        "technique": 48,
+        "endurance": 52,
+        "charisma": 50
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Buys 15 domains for projects that will never exist. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.",
+      "imagePrompt": "stubborn developer, The domain buyer, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 50 TEC 48 END 52 CHR 50, text: \"Buys 15 domains for projects that will never exist. The cursor blinks, the habit fires, and the room recognizes the ritual immediately.\", holo border, #138/150, silver accents"
+    },
+    {
+      "num": "139",
+      "name": "The log output scroller",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Scrolls through 500 lines of build output looking for the one error. Misses it every time.",
+      "stats": {
+        "power": 42,
+        "speed": 55,
+        "technique": 44,
+        "endurance": 50,
+        "charisma": 48
+      },
+      "basePrice": 0.14,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Scrolls through 500 lines of build output looking for the one error. What looks like efficiency from afar is really just a very familiar performance.",
+      "imagePrompt": "obsessive tech user, The log output scroller, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 55 TEC 44 END 50 CHR 48, text: \"Scrolls through 500 lines of build output looking for the one error. What looks like efficiency from afar is really just a very familiar performance.\", holo border, #139/150, silver accents"
+    },
+    {
+      "num": "140",
+      "name": "The \"Add it to the backlog\" Guy",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Everything goes to the backlog. The backlog has 847 items. Nothing has ever come out.",
+      "stats": {
+        "power": 44,
+        "speed": 48,
+        "technique": 46,
+        "endurance": 58,
+        "charisma": 46
+      },
+      "basePrice": 0.16,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Add it to the backlog Guy turns Everything goes to the backlog into a habit the room already recognizes. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.",
+      "imagePrompt": "obsessive tech user, The Add it to the backlog Guy, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 48 TEC 46 END 58 CHR 46, text: \"Add it to the backlog Guy turns Everything goes to the backlog into a habit the room already recognizes. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.\", holo border, #140/150, silver accents"
+    },
+    {
+      "num": "141",
+      "name": "The meeting scheduler",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Schedules meetings to discuss meetings. The AI joins all of them. It doesn't speak.",
+      "stats": {
+        "power": 40,
+        "speed": 52,
+        "technique": 44,
+        "endurance": 54,
+        "charisma": 50
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Schedules meetings to discuss meetings, then lets the calendar keep stacking the reminders. What starts as a quip ends up sounding like the unofficial operating manual.",
+      "imagePrompt": "stubborn developer, The meeting scheduler, determined mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 52 TEC 44 END 54 CHR 50, text: \"Schedules meetings to discuss meetings, then lets the calendar keep stacking the reminders. What starts as a quip ends up sounding like the unofficial operating manual.\", holo border, #141/150, silver accents"
+    },
+    {
+      "num": "142",
+      "name": "The tab completer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Presses tab 6 times for autocomplete. Types the full path anyway. Tab weeps.",
+      "stats": {
+        "power": 46,
+        "speed": 56,
+        "technique": 50,
+        "endurance": 48,
+        "charisma": 46
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Presses tab 6 times for autocomplete. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.",
+      "imagePrompt": "tech enthusiast, The tab completer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 56 TEC 50 END 48 CHR 46, text: \"Presses tab 6 times for autocomplete. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.\", holo border, #142/150, silver accents"
+    },
+    {
+      "num": "143",
+      "name": "The \"It Was Working\"claimer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "\"I didn't change anything, it was working!\" They definitely changed something.",
+      "stats": {
+        "power": 42,
+        "speed": 50,
+        "technique": 46,
+        "endurance": 52,
+        "charisma": 48
+      },
+      "basePrice": 0.15,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The It Was Workingclaimer leans on \"I didn't change anything, it was working!\" like proof. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "tech enthusiast, The It Was Workingclaimer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 42 SPD 50 TEC 46 END 52 CHR 48, text: \"The It Was Workingclaimer leans on \\\"I didn't change anything, it was working!\\\" like proof. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #143/150, silver accents"
+    },
+    {
+      "num": "144",
+      "name": "The responsive design denier",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "'Works on my monitor.' Everyone else sees a broken layout on mobile.",
+      "stats": {
+        "power": 44,
+        "speed": 48,
+        "technique": 52,
+        "endurance": 50,
+        "charisma": 44
+      },
+      "basePrice": 0.17,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The responsive design denier leans on \"Works on my monitor.\" like proof. What looks like efficiency from afar is really just a very familiar performance.",
+      "imagePrompt": "obsessive tech user, The responsive design denier, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 48 TEC 52 END 50 CHR 44, text: \"The responsive design denier leans on \\\"Works on my monitor.\\\" like proof. What looks like efficiency from afar is really just a very familiar performance.\", holo border, #144/150, silver accents"
+    },
+    {
+      "num": "145",
+      "name": "The lorem ipsum lover",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Uses lorem ipsum in production. Has been live for 2 years. Nobody noticed.",
+      "stats": {
+        "power": 40,
+        "speed": 50,
+        "technique": 44,
+        "endurance": 52,
+        "charisma": 48
+      },
+      "basePrice": 0.12,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "lorem ipsum lover turns Uses lorem ipsum in production into a habit the room already recognizes. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.",
+      "imagePrompt": "tech enthusiast, The lorem ipsum lover, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 40 SPD 50 TEC 44 END 52 CHR 48, text: \"lorem ipsum lover turns Uses lorem ipsum in production into a habit the room already recognizes. Troubleshooting feels less like a fix than a climate, and the room has already learned how to dress for it.\", holo border, #145/150, silver accents"
+    },
+    {
+      "num": "146",
+      "name": "The port 3000 guy",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Runs everything on port 3000. Has 4 apps on port 3000. None of them work.",
+      "stats": {
+        "power": 46,
+        "speed": 52,
+        "technique": 50,
+        "endurance": 50,
+        "charisma": 46
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "The port 3000 guy keeps everything on port 3000, then wonders why the neighborhood stops working. It reads like a joke until the same move shows up often enough to become routine.",
+      "imagePrompt": "obsessive tech user, The port 3000 guy, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 52 TEC 50 END 50 CHR 46, text: \"The port 3000 guy keeps everything on port 3000, then wonders why the neighborhood stops working. It reads like a joke until the same move shows up often enough to become routine.\", holo border, #146/150, silver accents"
+    },
+    {
+      "num": "147",
+      "name": "The diff checker",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Reviews every git diff line by line. Approves everything anyway.",
+      "stats": {
+        "power": 48,
+        "speed": 50,
+        "technique": 54,
+        "endurance": 52,
+        "charisma": 44
+      },
+      "basePrice": 0.2,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Reviews every git diff line by line, then approves it all anyway like the details were optional. Every merge carries the story of the habit that refused to stay neat.",
+      "imagePrompt": "obsessive tech user, The diff checker, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 48 SPD 50 TEC 54 END 52 CHR 44, text: \"Reviews every git diff line by line, then approves it all anyway like the details were optional. Every merge carries the story of the habit that refused to stay neat.\", holo border, #147/150, silver accents"
+    },
+    {
+      "num": "148",
+      "name": "The production deployer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Deploys on Friday at 5 PM. With no tests. While eating a sandwich.",
+      "stats": {
+        "power": 50,
+        "speed": 58,
+        "technique": 48,
+        "endurance": 46,
+        "charisma": 46
+      },
+      "basePrice": 0.22,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "production deployer turns Deploys on Friday at 5 PM into a habit the room already recognizes. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.",
+      "imagePrompt": "tech enthusiast, The production deployer, casual mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 50 SPD 58 TEC 48 END 46 CHR 46, text: \"production deployer turns Deploys on Friday at 5 PM into a habit the room already recognizes. Every failure leaves a breadcrumb trail, and the breadcrumbs usually point back to habit.\", holo border, #148/150, silver accents"
+    },
+    {
+      "num": "149",
+      "name": "The webhook believer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Thinks webhooks will solve everything. Has 12 webhooks that fire into the void.",
+      "stats": {
+        "power": 44,
+        "speed": 52,
+        "technique": 52,
+        "endurance": 50,
+        "charisma": 46
+      },
+      "basePrice": 0.16,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Thinks webhooks will solve everything, so the room keeps watching the callbacks fire into the void. The punchline works because everyone in the room has seen the habit before.",
+      "imagePrompt": "obsessive tech user, The webhook believer, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 44 SPD 52 TEC 52 END 50 CHR 46, text: \"Thinks webhooks will solve everything, so the room keeps watching the callbacks fire into the void. The punchline works because everyone in the room has seen the habit before.\", holo border, #149/150, silver accents"
+    },
+    {
+      "num": "150",
+      "name": "The sudo everything guy",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "Prefixes every command with sudo. Including sudo sudo ls. Has no idea why.",
+      "stats": {
+        "power": 46,
+        "speed": 50,
+        "technique": 48,
+        "endurance": 52,
+        "charisma": 44
+      },
+      "basePrice": 0.18,
+      "cardTypes": [
+        "Base"
+      ],
+      "imagePromptBackFlavor": "Prefixes every command with sudo, even when the extra privilege buys nothing. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.",
+      "imagePrompt": "obsessive tech user, The sudo everything guy, fixated mood, digital art trading card portrait, silver and white palette, Topps Chrome aesthetic, sharp focus",
+      "imagePromptBack": "Card back, silver matte finish, stats: POW 46 SPD 50 TEC 48 END 52 CHR 44, text: \"Prefixes every command with sudo, even when the extra privilege buys nothing. The terminal has become stagecraft, and the repeated command pattern reads like a ritual the room already knows by heart.\", holo border, #150/150, silver accents"
+    }
+  ],
+  "seed": null,
+  "aiGenerated": true,
+  "createdBy": "Claw",
+  "created": "2026-03-29T12:17:20.851Z",
+  "promptMode": "baked"
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "collector-mike",
+    "name": "Collector Mike",
+    "personality": "patient set builder, overvalues commons",
+    "wants": ["Common", "Uncommon"],
+    "haves": ["Star", "Superstar"],
+    "tradeStyle": "generous"
+  },
+  {
+    "id": "shark-sarah",
+    "name": "Shark Sarah",
+    "personality": "sharp dealer, always wants the better end",
+    "wants": ["Superstar", "Legendary"],
+    "haves": ["Star", "Uncommon"],
+    "tradeStyle": "stingy"
+  },
+  {
+    "id": "vintage-vince",
+    "name": "Vintage Vince",
+    "personality": "chases old sets, loves legendaries",
+    "wants": ["Legendary", "Superstar"],
+    "haves": ["Star", "Uncommon"],
+    "tradeStyle": "fair"
+  },
+  {
+    "id": "newbie-nina",
+    "name": "Newbie Nina",
+    "personality": "just started, trades anything for commons",
+    "wants": ["Common", "Uncommon", "Star"],
+    "haves": ["Superstar", "Legendary"],
+    "tradeStyle": "generous"
+  },
+  {
+    "id": "set-completion-steve",
+    "name": "Set Completion Steve",
+    "personality": "one card away from finishing, desperate",
+    "wants": ["Common", "Uncommon"],
+    "haves": ["Star", "Superstar", "Legendary"],
+    "tradeStyle": "fair"
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "day": 9,
+  "createdAt": "2026-04-07T20:54:22.447Z",
+  "bulletin": {
+    "kind": "wildcard",
+    "id": "wildcard-9-flopps-announces-controlled-discovery-format",
+    "title": "Flopps Announces Controlled Discovery Format",
+    "summary": "During Sell-Through Extraction, Flopps introduced a Controlled Discovery Format that withholds exact chase odds on select bonus inserts to preserve collector surprise.",
+    "paraphrase": "They reduced transparency and called it part of the fun.",
+    "executive": "Lillian Mercer",
+    "executiveRole": "CFO",
+    "stockDelta": 0.013,
+    "marketImpact": "Mystery around hit rates increases breaker curiosity and short-term aftermarket volatility.",
+    "collectorImpact": "Collectors buy more sealed wax to self-audit the odds the company chose not to spell out.",
+    "source": "openrouter:kimi-k2.5"
+  },
+  "releasePhase": "sellthrough",
+  "currentRelease": "Bored OpenClaw Users Flagship Series",
+  "nextRelease": "Harry Potter Collectors Set",
+  "stockPrice": 99.15
+}

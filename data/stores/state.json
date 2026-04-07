@@ -1,0 +1,358 @@
+{
+  "lastSimulation": 1774832860229,
+  "stores": {
+    "card-kingdom": {
+      "lastRestock": 1775594285815,
+      "inventory": {
+        "BOC-2026": {
+          "hobby": 19,
+          "blaster": 19,
+          "retail": 20,
+          "jumbo": 16,
+          "supplies": {
+            "sleeves-pack": {
+              "id": "sleeves-pack",
+              "name": "Card Sleeves (100ct)",
+              "basePrice": 8,
+              "category": "supplies",
+              "qty": 3
+            },
+            "team-bag": {
+              "id": "team-bag",
+              "name": "Team Bag (500ct)",
+              "basePrice": 20,
+              "category": "supplies",
+              "qty": 5
+            },
+            "magnetic-case": {
+              "id": "magnetic-case",
+              "name": "Magnetic One-Touch (10ct)",
+              "basePrice": 25,
+              "category": "supplies",
+              "qty": 6
+            },
+            "grading-holder": {
+              "id": "grading-holder",
+              "name": "Grading Card Holder",
+              "basePrice": 3,
+              "category": "supplies",
+              "qty": 5
+            }
+          },
+          "singles": [
+            {
+              "num": "104",
+              "name": "The Space-Bar Presser",
+              "starTier": "Common",
+              "price": 0.11,
+              "qty": 1
+            },
+            {
+              "num": "003",
+              "name": "The Cron Lord",
+              "starTier": "Legendary",
+              "price": 5.9,
+              "qty": 3
+            },
+            {
+              "num": "054",
+              "name": "The \"Oops Wrong Chat\"",
+              "starTier": "Uncommon",
+              "price": 0.5,
+              "qty": 3
+            },
+            {
+              "num": "007",
+              "name": "The Slash Command Surfer",
+              "starTier": "Legendary",
+              "price": 5.43,
+              "qty": 2
+            },
+            {
+              "num": "039",
+              "name": "The Node Pairer",
+              "starTier": "Star",
+              "price": 1.41,
+              "qty": 3
+            },
+            {
+              "num": "056",
+              "name": "The Log Reader Hater",
+              "starTier": "Uncommon",
+              "price": 0.61,
+              "qty": 2
+            },
+            {
+              "num": "034",
+              "name": "The Node.js Purist",
+              "starTier": "Star",
+              "price": 1.36,
+              "qty": 3
+            },
+            {
+              "num": "035",
+              "name": "The Firecrawl Fanboy",
+              "starTier": "Star",
+              "price": 1.19,
+              "qty": 1
+            },
+            {
+              "num": "008",
+              "name": "\"Just One More Thing\"",
+              "starTier": "Superstar",
+              "price": 3.29,
+              "qty": 1
+            },
+            {
+              "num": "040",
+              "name": "The NPM Global Dump Guy",
+              "starTier": "Star",
+              "price": 1.13,
+              "qty": 3
+            }
+          ],
+          "sealed": {
+            "hobby_box": {
+              "name": "Hobby Box",
+              "price": 240,
+              "qty": 3
+            },
+            "jumbo_box": {
+              "name": "Jumbo Box",
+              "price": 60,
+              "qty": 3
+            },
+            "hobby_case": {
+              "name": "Hobby Case (12 boxes)",
+              "price": 2400,
+              "qty": 0
+            }
+          }
+        }
+      },
+      "lastVisited": 1775594285836
+    },
+    "mega-mart": {
+      "lastRestock": 1774832860229,
+      "inventory": {
+        "BOC-2026": {
+          "blaster": 20,
+          "retail": 21,
+          "jumbo": 17
+        }
+      },
+      "lastVisited": 1774899929485
+    },
+    "sportcardvault": {
+      "lastRestock": 1774832860229,
+      "inventory": {
+        "BOC-2026": {
+          "hobby": 20,
+          "blaster": 16,
+          "jumbo": 11
+        }
+      },
+      "lastVisited": 1774899929553
+    },
+    "pristine-collectibles": {
+      "lastRestock": 1774832860229,
+      "inventory": {
+        "BOC-2026": {
+          "hobby": 6,
+          "blaster": 5,
+          "retail": 3,
+          "jumbo": 8
+        }
+      },
+      "lastVisited": 1774899929624
+    },
+    "bargain-bob": {
+      "lastRestock": 1774832860229,
+      "inventory": {
+        "BOC-2026": {
+          "hobby": 5,
+          "blaster": 9,
+          "retail": 7,
+          "jumbo": 14,
+          "supplies": {
+            "grading-holder": {
+              "id": "grading-holder",
+              "name": "Grading Card Holder",
+              "basePrice": 3,
+              "category": "supplies",
+              "qty": 3
+            },
+            "sleeves-pack": {
+              "id": "sleeves-pack",
+              "name": "Card Sleeves (100ct)",
+              "basePrice": 8,
+              "category": "supplies",
+              "qty": 8
+            },
+            "magnetic-case": {
+              "id": "magnetic-case",
+              "name": "Magnetic One-Touch (10ct)",
+              "basePrice": 25,
+              "category": "supplies",
+              "qty": 5
+            },
+            "team-bag": {
+              "id": "team-bag",
+              "name": "Team Bag (500ct)",
+              "basePrice": 20,
+              "category": "supplies",
+              "qty": 8
+            }
+          },
+          "singles": [
+            {
+              "num": "136",
+              "name": "The split terminal lover",
+              "starTier": "Common",
+              "price": 0.14,
+              "qty": 3
+            },
+            {
+              "num": "108",
+              "name": "The Ctrl+Z Addict",
+              "starTier": "Common",
+              "price": 0.11,
+              "qty": 1
+            },
+            {
+              "num": "088",
+              "name": "The Desktop Icon Sorter",
+              "starTier": "Common",
+              "price": 0.09,
+              "qty": 1
+            },
+            {
+              "num": "114",
+              "name": "The localhost believer",
+              "starTier": "Common",
+              "price": 0.11,
+              "qty": 1
+            },
+            {
+              "num": "092",
+              "name": "The Manual Page Reader",
+              "starTier": "Common",
+              "price": 0.14,
+              "qty": 3
+            },
+            {
+              "num": "086",
+              "name": "The Stack Overflow Loyalist",
+              "starTier": "Common",
+              "price": 0.15,
+              "qty": 2
+            },
+            {
+              "num": "083",
+              "name": "The \"Works On My Machine\" Dev",
+              "starTier": "Common",
+              "price": 0.19,
+              "qty": 3
+            },
+            {
+              "num": "100",
+              "name": "The Night Mode Enthusiast",
+              "starTier": "Common",
+              "price": 0.09,
+              "qty": 3
+            },
+            {
+              "num": "099",
+              "name": "The Backup Neglector",
+              "starTier": "Common",
+              "price": 0.14,
+              "qty": 1
+            }
+          ],
+          "sealed": {
+            "hobby_box": {
+              "name": "Hobby Box",
+              "price": 240,
+              "qty": 1
+            },
+            "jumbo_box": {
+              "name": "Jumbo Box",
+              "price": 60,
+              "qty": 3
+            },
+            "hobby_case": {
+              "name": "Hobby Case (12 boxes)",
+              "price": 2400,
+              "qty": 1
+            }
+          }
+        }
+      },
+      "lastVisited": 1775239681720
+    }
+  },
+  "relationships": {
+    "card-kingdom": {
+      "totalSpent": 0,
+      "purchaseCount": 0,
+      "tier": 0
+    },
+    "mega-mart": {
+      "totalSpent": 0,
+      "purchaseCount": 0,
+      "tier": 0
+    },
+    "sportcardvault": {
+      "totalSpent": 0,
+      "purchaseCount": 0,
+      "tier": 0
+    },
+    "pristine-collectibles": {
+      "totalSpent": 0,
+      "purchaseCount": 0,
+      "tier": 0
+    },
+    "bargain-bob": {
+      "totalSpent": 23.62,
+      "purchaseCount": 5,
+      "tier": 0
+    }
+  },
+  "purchaseHistory": [
+    {
+      "storeId": "bargain-bob",
+      "product": "retail",
+      "qty": 1,
+      "cost": 4.71,
+      "timestamp": 1774900566266
+    },
+    {
+      "storeId": "bargain-bob",
+      "product": "retail",
+      "qty": 1,
+      "cost": 4.72,
+      "timestamp": 1774944758234
+    },
+    {
+      "storeId": "bargain-bob",
+      "product": "retail",
+      "qty": 1,
+      "cost": 4.73,
+      "timestamp": 1774945176237
+    },
+    {
+      "storeId": "bargain-bob",
+      "product": "retail",
+      "qty": 1,
+      "cost": 4.73,
+      "timestamp": 1774945195513
+    },
+    {
+      "storeId": "bargain-bob",
+      "product": "retail",
+      "qty": 1,
+      "cost": 4.73,
+      "timestamp": 1774945321565
+    }
+  ]
+}

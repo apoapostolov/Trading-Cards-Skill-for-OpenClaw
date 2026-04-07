@@ -1,0 +1,50 @@
+[
+  {
+    "id": "flip-fred",
+    "name": "FlipFred",
+    "tier": "casual",
+    "emoji": "👤",
+    "aggressiveness": 0.3,
+    "markupRange": [1.2, 1.4],
+    "targetStorePreference": ["mega-mart", "bargain-bob", "card-kingdom"],
+    "cash": 500,
+    "activityPattern": "weekly",
+    "description": "Casual flipper. Buys 1-2 boxes when he spots a deal, lists at modest markup."
+  },
+  {
+    "id": "scout-sam",
+    "name": "ScoutSam",
+    "tier": "scout",
+    "emoji": "🔭",
+    "aggressiveness": 0.5,
+    "markupRange": [1.3, 1.8],
+    "targetStorePreference": ["card-kingdom", "pristine-collectibles", "sportcardvault"],
+    "cash": 2000,
+    "activityPattern": "weekly",
+    "description": "Store scout. Monitors multiple stores, knows when restocks hit. Medium markup."
+  },
+  {
+    "id": "card-cartel",
+    "name": "CardCartel",
+    "tier": "organized",
+    "emoji": "🏢",
+    "aggressiveness": 0.75,
+    "markupRange": [1.5, 2.5],
+    "targetStorePreference": ["card-kingdom", "mega-mart", "pristine-collectibles", "sportcardvault"],
+    "cash": 8000,
+    "activityPattern": "daily",
+    "description": "Organized group. Coordinated buying across multiple stores. Aggressive pricing."
+  },
+  {
+    "id": "bot-brigade",
+    "name": "BotBrigade",
+    "tier": "bot",
+    "emoji": "🤖",
+    "aggressiveness": 0.95,
+    "markupRange": [2.0, 3.5],
+    "targetStorePreference": ["sportcardvault", "mega-mart"],
+    "cash": 20000,
+    "activityPattern": "daily",
+    "description": "Bot network. Dominates online stores with instant checkout. Maximum markup."
+  }
+]

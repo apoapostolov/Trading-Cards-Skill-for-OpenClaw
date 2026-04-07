@@ -1,0 +1,107 @@
+[
+  {
+    "id": "card-kingdom",
+    "name": "Card Kingdom",
+    "type": "lcs",
+    "description": "Your friendly local card shop. Good selection, fair prices, and they remember your name.",
+    "markupBase": 0.15,
+    "markupHot": 0.25,
+    "purchaseLimit": 5,
+    "restockDays": 7,
+    "stockRange": [8, 15],
+    "emoji": "🏰",
+    "relationshipThresholds": [100, 500, 2000, 5000, 15000],
+    "relationshipBenefits": [
+      "Welcome recognized",
+      "5% loyalty discount",
+      "Early access to new releases",
+      "Priority allocation on hot product",
+      "VIP pricing + exclusive access"
+    ]
+  },
+  {
+    "id": "mega-mart",
+    "name": "MegaMart",
+    "type": "bigbox",
+    "description": "Big box retail. Massive inventory, cheap retail packs, but strict purchase limits and no hobby exclusives.",
+    "markupBase": -0.05,
+    "markupHot": 0.10,
+    "purchaseLimit": 3,
+    "restockDays": 5,
+    "stockRange": [15, 25],
+    "emoji": "🏬",
+    "sellsHobby": false,
+    "relationshipThresholds": [50, 200, 800, 2000, 8000],
+    "relationshipBenefits": [
+      "Recognized regular",
+      "3% discount",
+      "Extended purchase limits",
+      "Restock alerts",
+      "Priority queue on release days"
+    ]
+  },
+  {
+    "id": "sportcardvault",
+    "name": "SportCardVault",
+    "type": "online",
+    "description": "Online retailer with a huge catalog. Competitive pricing but shipping delays. Often cleaned out by bots.",
+    "markupBase": 0.10,
+    "markupHot": 0.20,
+    "purchaseLimit": 2,
+    "restockDays": 10,
+    "stockRange": [10, 20],
+    "emoji": "🌐",
+    "shippingDelayDays": 3,
+    "relationshipThresholds": [100, 500, 2000, 5000, 15000],
+    "relationshipBenefits": [
+      "Free shipping threshold lowered",
+      "5% loyalty discount",
+      "Early access to pre-orders",
+      "Reduced shipping time",
+      "Exclusive online-only products"
+    ]
+  },
+  {
+    "id": "pristine-collectibles",
+    "name": "Pristine Collectibles",
+    "type": "lcs",
+    "description": "Premium hobby shop. High-end product, expensive, but carries rare inventory you won't find elsewhere.",
+    "markupBase": 0.25,
+    "markupHot": 0.40,
+    "purchaseLimit": 3,
+    "restockDays": 14,
+    "stockRange": [3, 8],
+    "emoji": "💎",
+    "premiumQuality": true,
+    "relationshipThresholds": [200, 1000, 4000, 10000, 30000],
+    "relationshipBenefits": [
+      "VIP lounge access",
+      "8% loyalty discount",
+      "First look at incoming inventory",
+      "Consignment opportunities",
+      "Private showings + purchase guarantees"
+    ]
+  },
+  {
+    "id": "bargain-bob",
+    "name": "Bargain Bin Bob's",
+    "type": "lcs",
+    "description": "Discount LCS. Cold product, clearance prices, dusty shelves. Hidden gems if you dig deep enough.",
+    "markupBase": -0.15,
+    "markupHot": 0.05,
+    "purchaseLimit": 10,
+    "restockDays": 21,
+    "stockRange": [5, 18],
+    "emoji": "🏷️",
+    "coldProduct": true,
+    "hiddenGemChance": 0.15,
+    "relationshipThresholds": [50, 200, 800, 2000, 8000],
+    "relationshipBenefits": [
+      "Bob remembers your name",
+      "10% discount on clearance",
+      "First dibs on trade-ins",
+      "Bob sets aside interesting lots for you",
+      "Back room access (the good stuff)"
+    ]
+  }
+]

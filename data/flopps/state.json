@@ -1,0 +1,425 @@
+{
+  "lastNewsDay": 9,
+  "lastStockDay": 9,
+  "lastSeenDay": 9,
+  "stock": {
+    "price": 99.44,
+    "history": [
+      {
+        "day": 9,
+        "price": 99.44,
+        "macro": -0.012453783982643695,
+        "sentiment": 1.0798680572773802,
+        "phase": "sellthrough",
+        "bulletin": "wildcard-9-flopps-announces-controlled-discovery-format"
+      }
+    ]
+  },
+  "newsHistory": [
+    {
+      "day": 9,
+      "command": "wallet",
+      "id": "launch-acceleration",
+      "title": "Launch Acceleration Notice",
+      "summary": "The next drop is moving up the calendar to meet collector appetite sooner.",
+      "paraphrase": "They moved the release earlier to keep people buying.",
+      "stock": 102.21,
+      "createdAt": "2026-04-07T20:25:22.363Z"
+    },
+    {
+      "day": 9,
+      "command": "flopps-wildcard",
+      "id": "wildcard-9-flopps-wildcard-corporate-update",
+      "title": "Flopps Wildcard Corporate Update",
+      "summary": "Flopps published a surprise corporate update with immediate market implications.",
+      "paraphrase": "Something strange just hit the collector funnel and nobody was ready for it.",
+      "executive": "Marcus Reed",
+      "executiveRole": "VP of Allocation",
+      "phase": "sellthrough",
+      "releaseTitle": "Bored OpenClaw Users Flagship Series",
+      "kind": "wildcard",
+      "stock": 101.18,
+      "marketImpact": "The secondary market is repricing the news in real time.",
+      "collectorImpact": "Collectors, stores, and flippers are all trying to decode the implication.",
+      "source": "openrouter:kimi-k2.5",
+      "createdAt": "2026-04-07T20:52:21.637Z"
+    },
+    {
+      "day": 9,
+      "command": "flopps-wildcard",
+      "id": "wildcard-9-flopps-wildcard-corporate-update",
+      "title": "Flopps Wildcard Corporate Update",
+      "summary": "Flopps published a surprise corporate update with immediate market implications.",
+      "paraphrase": "Something strange just hit the collector funnel and nobody was ready for it.",
+      "executive": "Marcus Reed",
+      "executiveRole": "VP of Allocation",
+      "phase": "sellthrough",
+      "releaseTitle": "Bored OpenClaw Users Flagship Series",
+      "kind": "wildcard",
+      "stock": 100.16,
+      "marketImpact": "The secondary market is repricing the news in real time.",
+      "collectorImpact": "Collectors, stores, and flippers are all trying to decode the implication.",
+      "source": "openrouter:kimi-k2.5",
+      "createdAt": "2026-04-07T20:52:38.980Z"
+    },
+    {
+      "day": 9,
+      "command": "flopps-wildcard",
+      "id": "wildcard-9-flopps-wildcard-corporate-update",
+      "title": "Flopps Wildcard Corporate Update",
+      "summary": "Flopps published a surprise corporate update with immediate market implications.",
+      "paraphrase": "Something strange just hit the collector funnel and nobody was ready for it.",
+      "executive": "Marcus Reed",
+      "executiveRole": "VP of Allocation",
+      "phase": "sellthrough",
+      "releaseTitle": "Bored OpenClaw Users Flagship Series",
+      "kind": "wildcard",
+      "stock": 99.15,
+      "marketImpact": "The secondary market is repricing the news in real time.",
+      "collectorImpact": "Collectors, stores, and flippers are all trying to decode the implication.",
+      "source": "openrouter:kimi-k2.5",
+      "createdAt": "2026-04-07T20:53:06.212Z"
+    },
+    {
+      "day": 9,
+      "command": "flopps-wildcard",
+      "id": "wildcard-9-flopps-announces-controlled-discovery-format",
+      "title": "Flopps Announces Controlled Discovery Format",
+      "summary": "During Sell-Through Extraction, Flopps introduced a Controlled Discovery Format that withholds exact chase odds on select bonus inserts to preserve collector surprise.",
+      "paraphrase": "They reduced transparency and called it part of the fun.",
+      "executive": "Lillian Mercer",
+      "executiveRole": "CFO",
+      "phase": "sellthrough",
+      "releaseTitle": "Bored OpenClaw Users Flagship Series",
+      "kind": "wildcard",
+      "stock": 99.44,
+      "marketImpact": "Mystery around hit rates increases breaker curiosity and short-term aftermarket volatility.",
+      "collectorImpact": "Collectors buy more sealed wax to self-audit the odds the company chose not to spell out.",
+      "source": "openrouter:kimi-k2.5",
+      "createdAt": "2026-04-07T20:54:22.448Z"
+    }
+  ],
+  "latestNews": {
+    "day": 9,
+    "command": "flopps-wildcard",
+    "id": "wildcard-9-flopps-announces-controlled-discovery-format",
+    "title": "Flopps Announces Controlled Discovery Format",
+    "summary": "During Sell-Through Extraction, Flopps introduced a Controlled Discovery Format that withholds exact chase odds on select bonus inserts to preserve collector surprise.",
+    "paraphrase": "They reduced transparency and called it part of the fun.",
+    "executive": "Lillian Mercer",
+    "executiveRole": "CFO",
+    "phase": "sellthrough",
+    "releaseTitle": "Bored OpenClaw Users Flagship Series",
+    "kind": "wildcard",
+    "stock": 99.44,
+    "marketImpact": "Mystery around hit rates increases breaker curiosity and short-term aftermarket volatility.",
+    "collectorImpact": "Collectors buy more sealed wax to self-audit the odds the company chose not to spell out.",
+    "source": "openrouter:kimi-k2.5",
+    "createdAt": "2026-04-07T20:54:22.448Z"
+  },
+  "corporation": {
+    "scarcityIndex": 0.58,
+    "hypeIndex": 0.4095495227923792,
+    "extractionIndex": 0.5329189141026283,
+    "collectorStress": 0.5199743353533695,
+    "retailerStress": 0.5081632653061224,
+    "laborStress": 0.37950616110257823,
+    "lobbyingHeat": 0.2559304782839224,
+    "trustMask": 0.4240745954615269,
+    "allocationTightness": 0.673469387755102,
+    "releasePace": 0.5827639618233904,
+    "partnerHeat": 0.34,
+    "guidance": "maintaining disciplined growth through steady release sequencing",
+    "activePhase": "sellthrough",
+    "executiveFocus": "allocation"
+  },
+  "calendar": [
+    {
+      "code": "BOC-2026-01",
+      "title": "Bored OpenClaw Users Flagship Series",
+      "day": 0,
+      "partner": "Major League Baseball",
+      "category": "sports",
+      "channel": "hobby",
+      "cadenceDays": 45
+    },
+    {
+      "code": "BOC-2026-02",
+      "title": "Murrican Harry Potter Collectors Set",
+      "day": 45,
+      "partner": "patriotic wizarding reboot partner",
+      "category": "entertainment",
+      "channel": "retail",
+      "cadenceDays": 45,
+      "selectionCycle": 0,
+      "licenseName": "Murrican Harry Potter",
+      "marketability": 0.905
+    },
+    {
+      "code": "BOC-2026-03",
+      "title": "Heritage Archive 2026-03",
+      "day": 90,
+      "partner": "combat sports licensing",
+      "category": "premium",
+      "channel": "dutch-auction",
+      "cadenceDays": 45
+    },
+    {
+      "code": "BOC-2026-04",
+      "title": "Midnight Obsidian 2026-04",
+      "day": 135,
+      "partner": "prestige entertainment studio",
+      "category": "sports",
+      "channel": "instant-drop",
+      "cadenceDays": 45
+    },
+    {
+      "code": "BOC-2026-05",
+      "title": "Prism Apex 2026-05",
+      "day": 180,
+      "partner": "retro animation vault",
+      "category": "entertainment",
+      "channel": "hobby",
+      "cadenceDays": 45
+    },
+    {
+      "code": "BOC-2026-06",
+      "title": "Museum Reserve 2026-06",
+      "day": 225,
+      "partner": "streaming franchise slate",
+      "category": "premium",
+      "channel": "retail",
+      "cadenceDays": 45
+    },
+    {
+      "code": "BOC-2026-07",
+      "title": "Instant Shock Drop 2026-07",
+      "day": 270,
+      "partner": "children's fantasy estate",
+      "category": "sports",
+      "channel": "dutch-auction",
+      "cadenceDays": 45
+    },
+    {
+      "code": "BOC-2026-08",
+      "title": "Bowline Prospects 2026-08",
+      "day": 315,
+      "partner": "sci-fi action universe",
+      "category": "entertainment",
+      "channel": "instant-drop",
+      "cadenceDays": 45
+    },
+    {
+      "code": "BOC-2026-09",
+      "title": "Dynasty Reserve 2026-09",
+      "day": 360,
+      "partner": "wrestling media partner",
+      "category": "premium",
+      "channel": "hobby",
+      "cadenceDays": 45
+    }
+  ],
+  "dayHistory": [
+    {
+      "day": 9,
+      "phase": "sellthrough",
+      "title": "Bored OpenClaw Users Flagship Series",
+      "scarcityIndex": 0.58,
+      "hypeIndex": 0.4095495227923792,
+      "extractionIndex": 0.5329189141026283,
+      "collectorStress": 0.5199743353533695,
+      "retailerStress": 0.5081632653061224,
+      "laborStress": 0.37950616110257823,
+      "executiveFocus": "allocation"
+    }
+  ],
+  "trendDesk": {
+    "lastRefreshDay": 9,
+    "lastCommitteeCycle": 0,
+    "watchlist": [
+      {
+        "name": "Murrican Harry Potter",
+        "partner": "patriotic wizarding reboot partner",
+        "category": "entertainment",
+        "base": 0.88,
+        "windowMonths": [
+          4,
+          10
+        ],
+        "formatBias": "premium",
+        "trendProxy": 0.759,
+        "proximityBonus": 0.19,
+        "marketability": 0.905
+      },
+      {
+        "name": "Anime crossover event",
+        "partner": "global anime licensing desk",
+        "category": "entertainment",
+        "base": 0.79,
+        "windowMonths": [
+          1,
+          4,
+          10
+        ],
+        "formatBias": "instant-drop",
+        "trendProxy": 0.676,
+        "proximityBonus": 0.19,
+        "marketability": 0.825
+      },
+      {
+        "name": "Formula racing spotlight",
+        "partner": "global racing series office",
+        "category": "sports",
+        "base": 0.73,
+        "windowMonths": [
+          3,
+          5,
+          10
+        ],
+        "formatBias": "premium",
+        "trendProxy": 0.538,
+        "proximityBonus": 0.24,
+        "marketability": 0.821
+      },
+      {
+        "name": "Wrestling premium event",
+        "partner": "wrestling media partner",
+        "category": "sports-entertainment",
+        "base": 0.75,
+        "windowMonths": [
+          0,
+          3,
+          7,
+          10
+        ],
+        "formatBias": "hobby",
+        "trendProxy": 0.55,
+        "proximityBonus": 0.24,
+        "marketability": 0.82
+      },
+      {
+        "name": "MLB opening week",
+        "partner": "Major League Baseball",
+        "category": "sports",
+        "base": 0.81,
+        "windowMonths": [
+          3,
+          4
+        ],
+        "formatBias": "flagship",
+        "trendProxy": 0.411,
+        "proximityBonus": 0.24,
+        "marketability": 0.805
+      },
+      {
+        "name": "NFL rookie season",
+        "partner": "pro football rights office",
+        "category": "sports",
+        "base": 0.86,
+        "windowMonths": [
+          4,
+          8,
+          9
+        ],
+        "formatBias": "chrome",
+        "trendProxy": 0.445,
+        "proximityBonus": 0.19,
+        "marketability": 0.779
+      },
+      {
+        "name": "Superhero summer tentpole",
+        "partner": "major comic-film studio",
+        "category": "entertainment",
+        "base": 0.82,
+        "windowMonths": [
+          5,
+          6,
+          7
+        ],
+        "formatBias": "chrome",
+        "trendProxy": 0.543,
+        "proximityBonus": 0.14,
+        "marketability": 0.74
+      },
+      {
+        "name": "Premier football stars",
+        "partner": "global football rights desk",
+        "category": "sports",
+        "base": 0.84,
+        "windowMonths": [
+          8,
+          9
+        ],
+        "formatBias": "flagship",
+        "trendProxy": 0.792,
+        "proximityBonus": 0,
+        "marketability": 0.693
+      },
+      {
+        "name": "Fantasy streaming reboot",
+        "partner": "children's fantasy estate",
+        "category": "entertainment",
+        "base": 0.76,
+        "windowMonths": [
+          6,
+          9,
+          11
+        ],
+        "formatBias": "heritage",
+        "trendProxy": 0.636,
+        "proximityBonus": 0.09,
+        "marketability": 0.683
+      },
+      {
+        "name": "Prestige sci-fi franchise",
+        "partner": "streaming sci-fi slate",
+        "category": "entertainment",
+        "base": 0.77,
+        "windowMonths": [
+          9,
+          11
+        ],
+        "formatBias": "hobby",
+        "trendProxy": 0.395,
+        "proximityBonus": 0.04,
+        "marketability": 0.582
+      }
+    ],
+    "chosenHistory": [
+      {
+        "day": 9,
+        "cycle": 0,
+        "name": "Murrican Harry Potter",
+        "partner": "patriotic wizarding reboot partner",
+        "category": "entertainment",
+        "marketability": 0.905
+      }
+    ]
+  },
+  "announcementHistory": [
+    {
+      "day": 9,
+      "kind": "wildcard",
+      "id": "wildcard-9-flopps-wildcard-corporate-update",
+      "title": "Flopps Wildcard Corporate Update"
+    },
+    {
+      "day": 9,
+      "kind": "wildcard",
+      "id": "wildcard-9-flopps-wildcard-corporate-update",
+      "title": "Flopps Wildcard Corporate Update"
+    },
+    {
+      "day": 9,
+      "kind": "wildcard",
+      "id": "wildcard-9-flopps-wildcard-corporate-update",
+      "title": "Flopps Wildcard Corporate Update"
+    },
+    {
+      "day": 9,
+      "kind": "wildcard",
+      "id": "wildcard-9-flopps-announces-controlled-discovery-format",
+      "title": "Flopps Announces Controlled Discovery Format"
+    }
+  ]
+}
