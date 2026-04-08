@@ -15,7 +15,7 @@
  *   node ai-set-generator.js --set-code DRG           # custom set code
  * 
  * Config:
- *   OPENROUTER_API_KEY  — env variable or in ~/.openclaw/.env
+ *   OPENROUTER_API_KEY  — env variable, ./.env, or ~/.openclaw/.env
  *   Default model:      google/gemini-2.0-flash-001 (cheap, fast, good at creative)
  */
 
@@ -25,7 +25,18 @@ const https = require('https');
 const http = require('http');
 
 const DATA_DIR = process.env.TRADING_CARDS_DATA_DIR ? path.resolve(process.env.TRADING_CARDS_DATA_DIR) : path.join(__dirname, '..', 'data');
-const ENV_FILE = process.env.TRADING_CARDS_ENV_FILE ? path.resolve(process.env.TRADING_CARDS_ENV_FILE) : path.join(__dirname, '..', '..', '..', '..', '.env');
+const DEFAULT_ENV_FILES = [
+  process.env.TRADING_CARDS_ENV_FILE ? path.resolve(process.env.TRADING_CARDS_ENV_FILE) : null,
+  path.join(__dirname, '..', '.env'),
+  process.env.HOME ? path.join(process.env.HOME, '.openclaw', '.env') : null,
+].filter(Boolean);
+const ENV_FILE = DEFAULT_ENV_FILES.find((candidate) => {
+  try {
+    return fs.existsSync(candidate);
+  } catch {
+    return false;
+  }
+}) || DEFAULT_ENV_FILES[0] || path.join(__dirname, '..', '.env');
 const FLOPPS_STATE_FILE = path.join(DATA_DIR, 'flopps', 'state.json');
 const CAT = require('./categories.js');
 const { buildRichSetMetadata } = require('./set-metadata.js');
@@ -144,7 +155,7 @@ function parseArgs() {
 function loadApiKey() {
   // Check env first
   if (process.env.OPENROUTER_API_KEY) return process.env.OPENROUTER_API_KEY;
-  // Check .env file
+  // Check repo-local .env or the OpenClaw shared env file
   try {
     const envContent = fs.readFileSync(ENV_FILE, 'utf8');
     const match = envContent.match(/OPENROUTER_API_KEY\s*=\s*(.+)/);
@@ -202,6 +213,26 @@ function pickTheme(opts) {
   return { category: cat.category, themeName: theme };
 }
 
+function normalizeCategoryOptions(category, opts = {}) {
+  if (!category || category === 'character') {
+    return { category: 'character' };
+  }
+  if (typeof category === 'object') {
+    return {
+      category: category.category || 'character',
+      sport: category.sport || null,
+      seasons: category.seasons || 1,
+      cardsPerSeason: category.cardsPerSeason || 50,
+    };
+  }
+  return {
+    category,
+    sport: opts.sport || null,
+    seasons: opts.seasons || 1,
+    cardsPerSeason: opts.cardsPerSeason || 50,
+  };
+}
+
 // ── Set Code Generation ─────────────────────────────────────────
 function genSetCode() {
   const c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -212,13 +243,14 @@ function genSetCode() {
 
 // ── Build Prompt ────────────────────────────────────────────────
 function buildPrompt(themeName, category, totalCards, catOpts) {
+  const categoryConfig = normalizeCategoryOptions(catOpts);
   // If a specific category is set, use the category-specific prompt
-  if (catOpts && catOpts !== 'character') {
-    const catPrompt = CAT.buildCategoryPrompt(catOpts, {
+  if (categoryConfig.category && categoryConfig.category !== 'character') {
+    const catPrompt = CAT.buildCategoryPrompt(categoryConfig.category, {
       cards: totalCards,
-      sport: catOpts === 'sports' ? (catOpts.sport || null) : undefined,
-      seasons: catOpts.seasons,
-      cardsPerSeason: catOpts.cardsPerSeason,
+      sport: categoryConfig.sport,
+      seasons: categoryConfig.seasons,
+      cardsPerSeason: categoryConfig.cardsPerSeason,
     });
     if (catPrompt) return catPrompt;
   }
@@ -260,8 +292,26 @@ Return ONLY a valid JSON array. No markdown, no code fences, no explanation. Jus
 }
 
 // ── Build Batch Prompt ──────────────────────────────────────────
-function buildBatchPrompt(themeName, category, startNum, endNum) {
+function buildBatchPrompt(themeName, category, startNum, endNum, catOpts) {
   const count = endNum - startNum + 1;
+  const categoryConfig = normalizeCategoryOptions(catOpts);
+  if (categoryConfig.category && categoryConfig.category !== 'character') {
+    const catPrompt = CAT.buildCategoryPrompt(categoryConfig.category, {
+      cards: count,
+      sport: categoryConfig.sport,
+      seasons: categoryConfig.seasons,
+      cardsPerSeason: categoryConfig.cardsPerSeason,
+    });
+    if (catPrompt) {
+      return `${catPrompt}
+
+## Batch Continuity
+- This batch covers cards ${startNum}-${endNum} of the full set.
+- Keep the same category rules, tone, and schema for every card.
+- Number the cards for this batch range, then preserve continuity with the larger set.
+`;
+    }
+  }
   return `You are a creative trading card game designer. Continue generating cards for the set "${themeName}".
 
 ## Theme: ${themeName} (${category})
@@ -1153,7 +1203,7 @@ async function main() {
   const apiKey = (isWildcardFixtureMode || hasSetFixture || hasFloppsArticleFixture) ? (process.env.OPENROUTER_API_KEY || 'fixture-mode') : loadApiKey();
   if (!apiKey) {
     console.error('❌ OPENROUTER_API_KEY not found.');
-    console.error('   Set it in ~/.openclaw/.env:');
+    console.error('   Set it in ./.env or ~/.openclaw/.env:');
     console.error('   OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxx');
     console.error('');
     console.error('   Get a key at: https://openrouter.ai/keys');
@@ -1162,6 +1212,7 @@ async function main() {
 
   const { category: catLabel, themeName } = pickTheme(opts);
   const setCategory = opts.category || null;
+  const categoryConfig = normalizeCategoryOptions(setCategory, opts);
   const setCode = opts.setCode || genSetCode();
   const year = new Date().getFullYear();
   const floppsMode = opts.floppsMode || 'launch';
@@ -1207,13 +1258,10 @@ async function main() {
     opts.cards = allCards.length;
   } else if (opts.cards <= BATCH_SIZE) {
     // Single call
-    const prompt = buildPrompt(themeName, catLabel, opts.cards, setCategory);
+    const prompt = buildPrompt(themeName, catLabel, opts.cards, categoryConfig);
     const raw = await callLLM(opts.model, prompt, apiKey);
     // For category-specific responses (movie/tv), parse differently
-    if (setCategory === 'movie' || setCategory === 'tv') {
-      const result = CAT.parseCategoryCards(raw, setCategory);
-      allCards = result.cards;
-    } else if (setCategory && setCategory !== 'character') {
+    if (setCategory && setCategory !== 'character') {
       const result = CAT.parseCategoryCards(raw, setCategory);
       allCards = result.cards;
     } else {
@@ -1227,17 +1275,20 @@ async function main() {
     for (let start = 1; start <= opts.cards; start += BATCH_SIZE) {
       const end = Math.min(start + BATCH_SIZE - 1, opts.cards);
       console.error(`  📦 Batch ${batch}/${totalBatches} (cards ${start}-${end})...`);
-      
-      const isLast = (end >= opts.cards);
+
       const prompt = start === 1
-        ? buildPrompt(themeName, catLabel, end, setCategory)  // First batch generates 1..end
-        : buildBatchPrompt(themeName, catLabel, start, end);
+        ? buildPrompt(themeName, catLabel, end, categoryConfig)  // First batch generates 1..end
+        : buildBatchPrompt(themeName, catLabel, start, end, categoryConfig);
       
       const raw = await callLLM(opts.model, prompt, apiKey);
       
       let cards;
       try {
-        cards = parseCards(raw, true);
+        if (setCategory && setCategory !== 'character') {
+          cards = CAT.parseCategoryCards(raw, setCategory).cards;
+        } else {
+          cards = parseCards(raw, true);
+        }
         if (cards.length > 0 && start > 1) {
           // Renumber to correct sequence
           cards = cards.map((c, i) => ({ ...c, num: String(start + i).padStart(3, '0') }));

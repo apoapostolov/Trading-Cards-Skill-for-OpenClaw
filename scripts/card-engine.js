@@ -1467,7 +1467,24 @@ function saveMacroState(state){
 function fetchMacroState(){
   let raw='';
   try{
-    raw=execSync('curl -fsSL "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500"',{encoding:'utf8',timeout:8000,maxBuffer:1024*1024});
+    const fetchScript = `
+const https = require('https');
+const url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500';
+const req = https.get(url, (res) => {
+  if (res.statusCode !== 200) {
+    res.resume();
+    process.exit(1);
+    return;
+  }
+  res.setEncoding('utf8');
+  let data = '';
+  res.on('data', (chunk) => { data += chunk; });
+  res.on('end', () => process.stdout.write(data));
+});
+req.setTimeout(8000, () => req.destroy(new Error('timeout')));
+req.on('error', () => process.exit(1));
+    `.trim();
+    raw=execFileSync(process.execPath,['-e',fetchScript],{encoding:'utf8',timeout:9000,maxBuffer:1024*1024,stdio:['ignore','pipe','ignore']});
   } catch{
     return null;
   }
