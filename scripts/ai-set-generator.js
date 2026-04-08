@@ -23,6 +23,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const http = require('http');
+const crypto = require('crypto');
 
 const DATA_DIR = process.env.TRADING_CARDS_DATA_DIR ? path.resolve(process.env.TRADING_CARDS_DATA_DIR) : path.join(__dirname, '..', 'data');
 const DEFAULT_ENV_FILES = [
@@ -174,6 +175,34 @@ function loadFloppsState() {
   }
 }
 
+function hashStringSeed(str) {
+  let h = 0;
+  const input = String(str || '');
+  for (let i = 0; i < input.length; i++) {
+    h = ((h << 5) - h) + input.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h);
+}
+
+function makeSeededRng(seed) {
+  return CAT.mulberry32(hashStringSeed(seed));
+}
+
+function systemRandom() {
+  return crypto.randomInt(0, 0x100000000) / 0x100000000;
+}
+
+function shuffleWithRng(items, rng) {
+  const out = [...items];
+  const random = rng || systemRandom;
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
 // ── HTTP Client ─────────────────────────────────────────────────
 function httpsPost(url, body, headers) {
   return new Promise((resolve, reject) => {
@@ -206,10 +235,11 @@ function httpsPost(url, body, headers) {
 }
 
 // ── Theme Selection ─────────────────────────────────────────────
-function pickTheme(opts) {
+function pickTheme(opts, rng) {
+  const random = rng || systemRandom;
   if (opts.theme) return { category: "Custom", themeName: opts.theme };
-  const cat = THEME_CATEGORIES[Math.floor(Math.random() * THEME_CATEGORIES.length)];
-  const theme = cat.themes[Math.floor(Math.random() * cat.themes.length)];
+  const cat = THEME_CATEGORIES[Math.floor(random() * THEME_CATEGORIES.length)];
+  const theme = cat.themes[Math.floor(random() * cat.themes.length)];
   return { category: cat.category, themeName: theme };
 }
 
@@ -234,10 +264,11 @@ function normalizeCategoryOptions(category, opts = {}) {
 }
 
 // ── Set Code Generation ─────────────────────────────────────────
-function genSetCode() {
+function genSetCode(rng) {
+  const random = rng || systemRandom;
   const c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let s = '';
-  for (let i = 0; i < 3; i++) s += c[Math.floor(Math.random() * 26)];
+  for (let i = 0; i < 3; i++) s += c[Math.floor(random() * 26)];
   return s;
 }
 
@@ -712,7 +743,8 @@ Return ONLY a valid JSON object with exactly these keys:
 Aim for creative specificity. A good answer sounds like a company accidentally revealing the machine behind the hobby while pretending to be helpful.`;
 }
 
-function buildFallbackWildcardEvent(context) {
+function buildFallbackWildcardEvent(context, rng) {
+  const random = rng || systemRandom;
   const phase = context.release?.phaseLabel || context.release?.phase || 'Operating Window';
   const topTrend = context.trendDeskTop?.name || 'a crossover license';
   const fallbacks = [
@@ -750,10 +782,10 @@ function buildFallbackWildcardEvent(context) {
       collectorImpact: 'Collectors buy more sealed wax to self-audit the odds the company chose not to spell out.',
     },
   ];
-  return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+  return fallbacks[Math.floor(random() * fallbacks.length)];
 }
 
-async function generateFloppsWildcardEvent(opts, apiKey, floppsModel) {
+async function generateFloppsWildcardEvent(opts, apiKey, floppsModel, rng) {
   let context = {};
   if (opts.wildcardContext) {
     try {
@@ -766,6 +798,7 @@ async function generateFloppsWildcardEvent(opts, apiKey, floppsModel) {
     return safeParseJsonObject(fs.readFileSync(process.env.FLOPPS_WILDCARD_FIXTURE, 'utf8'));
   }
   const prompt = buildFloppsWildcardPrompt(context);
+  const localRng = rng || makeSeededRng(`flopps-fallback|${floppsModel}|${opts.floppsMode || 'launch'}|${opts.wildcardContext || ''}`);
   try {
     const raw = await callLLM(
       floppsModel,
@@ -775,7 +808,7 @@ async function generateFloppsWildcardEvent(opts, apiKey, floppsModel) {
     );
     const parsed = safeParseJsonObject(raw);
     if (!parsed || typeof parsed !== 'object' || !parsed.title || !parsed.summary || !parsed.paraphrase) {
-      return buildFallbackWildcardEvent(context);
+      return buildFallbackWildcardEvent(context, localRng);
     }
     return {
       title: String(parsed.title || 'Flopps Corporate Update').slice(0, 100),
@@ -790,7 +823,7 @@ async function generateFloppsWildcardEvent(opts, apiKey, floppsModel) {
     };
   } catch (error) {
     console.error(`  ⚠️  Wildcard generation fell back to local template: ${error.message}`);
-    return buildFallbackWildcardEvent(context);
+    return buildFallbackWildcardEvent(context, localRng);
   }
 }
 
@@ -905,6 +938,7 @@ function parseCards(raw, allowPartial = false) {
 // ── Save Set ────────────────────────────────────────────────────
 function saveSet(cards, setCode, setName, category, year, customTypes, extra = {}) {
   const productArchetype = extra.productArchetype || null;
+  const rng = extra.rng || makeSeededRng(extra.seed || `${setCode}|${setName}|${category}|${year}`);
   const set = {
     code: setCode,
     name: setName,
@@ -913,7 +947,7 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
     year,
     category,
     cards,
-    seed: null, // AI-generated, no PRNG seed
+    seed: extra.seed || null,
     aiGenerated: true,
     created: new Date().toISOString(),
   };
@@ -927,9 +961,9 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
 
   if (customTypes) {
     // Generate themed parallels, card types, and inserts
-    set.parallels = generateThemedParallels(setName, category);
-    set.cardTypes = generateThemedCardTypes(setName, category);
-    set.inserts = generateThemedInserts(setName, category, cards.length);
+    set.parallels = generateThemedParallels(setName, category, rng);
+    set.cardTypes = generateThemedCardTypes(setName, category, rng);
+    set.inserts = generateThemedInserts(setName, category, cards.length, rng);
   }
 
   set.metadata = buildRichSetMetadata({
@@ -940,7 +974,7 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
     year,
     code: setCode,
     cards,
-    seed: null,
+    seed: extra.seed || null,
     source: 'ai-generated',
     parallels: set.parallels || [],
     cardTypes: set.cardTypes || [],
@@ -1065,9 +1099,10 @@ const THEME_PARALLEL_NAMES = {
   'Culinary': ['Spicy','Sweet','Savory','Umami','Bitter','Sour','Smoky','Zesty','Rich','Fresh','Toasted','Fermented'],
 };
 
-function generateThemedParallels(setName, category) {
+function generateThemedParallels(setName, category, rng) {
+  const random = rng || systemRandom;
   const names = THEME_PARALLEL_NAMES[category] || THEME_PARALLEL_NAMES['Sci-Fi / Space'];
-  const shuffled = [...names].sort(() => Math.random() - 0.5).slice(0, 14);
+  const shuffled = shuffleWithRng(names, random).slice(0, 14);
   const tiers = [
     {name:'Base',tier:1,odds:1,num:false,ser:null,pm:1},
     ...shuffled.slice(0,6).map((n,i) => ({
@@ -1086,7 +1121,8 @@ function generateThemedParallels(setName, category) {
   return tiers;
 }
 
-function generateThemedCardTypes(setName, category) {
+function generateThemedCardTypes(setName, category, rng) {
+  const random = rng || systemRandom;
   // Start with default types and add theme-flavored variations
   const themedDescs = {
     'Sci-Fi / Space': ['Zero-G Material','Holographic Fragment','Nebula Shard'],
@@ -1109,16 +1145,17 @@ function generateThemedCardTypes(setName, category) {
     types.push({
       id: desc.toLowerCase().replace(/[^a-z0-9]/g,'-').slice(0,20),
       name: desc,
-      rarity: 0.01 + Math.random() * 0.02,
-      priceMultiplier: 3 + Math.random() * 5,
-      format: ['standard','die-cut','acetate','mini'][Math.floor(Math.random()*4)],
+      rarity: 0.01 + random() * 0.02,
+      priceMultiplier: 3 + random() * 5,
+      format: ['standard','die-cut','acetate','mini'][Math.floor(random()*4)],
       desc: `✨ ${desc}`,
     });
   }
   return types;
 }
 
-function generateThemedInserts(setName, category, setCardCount) {
+function generateThemedInserts(setName, category, setCardCount, rng) {
+  const random = rng || systemRandom;
   const insertThemes = {
     'Sci-Fi / Space': [{name:'Galactic Commanders',desc:'Leaders of the galactic armada'},{name:'Deep Space Anomalies',desc:'Strange phenomena from the void'}],
     'Fantasy / Myth': [{name:'Dragon Lords',desc:'Ancient wyrm riders of legend'},{name:'Artifact Hunters',desc:'Seekers of powerful relics'}],
@@ -1126,12 +1163,12 @@ function generateThemedInserts(setName, category, setCardCount) {
     'Sports Alt': [{name:'Rookie Showcase',desc:'First-year player spotlights'},{name:'Championship Moments',desc:'Clutch plays that defined seasons'}],
   };
   const candidates = insertThemes[category] || [{name:'Hidden Gems',desc:'Secret characters and lore'}];
-  const count = 1 + Math.floor(Math.random() * 2);
+  const count = 1 + Math.floor(random() * 2);
   return candidates.slice(0, count).map(t => ({
     name: t.name,
-    size: 10 + Math.floor(Math.random() * 15),
-    odds: 25 + Math.floor(Math.random() * 75),
-    basePrice: [Math.round((3 + Math.random() * 7) * 100) / 100, Math.round((10 + Math.random() * 20) * 100) / 100],
+    size: 10 + Math.floor(random() * 15),
+    odds: 25 + Math.floor(random() * 75),
+    basePrice: [Math.round((3 + random() * 7) * 100) / 100, Math.round((10 + random() * 20) * 100) / 100],
     parallels: null, // inherits set parallels
     description: t.desc,
   }));
@@ -1198,6 +1235,23 @@ async function main() {
   const isWildcardFixtureMode = opts.flopps && (opts.floppsMode || 'launch') === 'wildcard-event' && !!process.env.FLOPPS_WILDCARD_FIXTURE;
   const hasSetFixture = !!process.env.AI_SET_GENERATOR_FIXTURE_FILE;
   const hasFloppsArticleFixture = !!process.env.FLOPPS_ARTICLE_FIXTURE;
+  const themeSelectionSeed = [
+    opts.theme || '',
+    opts.category || '',
+    opts.model || '',
+    opts.sport || '',
+    opts.seasons || '',
+    opts.cards || '',
+    opts.customTypes ? 'custom' : 'standard',
+  ].join('|');
+  const themeSelectionRng = makeSeededRng(`theme|${themeSelectionSeed}`);
+  const wildcardSeed = [
+    opts.floppsMode || 'launch',
+    opts.floppsModel || DEFAULT_FLOPPS_MODEL,
+    opts.wildcardContext || '',
+    opts.jsonOutput ? 'json' : 'plain',
+  ].join('|');
+  const wildcardRng = makeSeededRng(`wildcard|${wildcardSeed}`);
 
   // Load API key
   const apiKey = (isWildcardFixtureMode || hasSetFixture || hasFloppsArticleFixture) ? (process.env.OPENROUTER_API_KEY || 'fixture-mode') : loadApiKey();
@@ -1210,17 +1264,16 @@ async function main() {
     process.exit(1);
   }
 
-  const { category: catLabel, themeName } = pickTheme(opts);
+  const { category: catLabel, themeName } = pickTheme(opts, themeSelectionRng);
   const setCategory = opts.category || null;
   const categoryConfig = normalizeCategoryOptions(setCategory, opts);
-  const setCode = opts.setCode || genSetCode();
   const year = new Date().getFullYear();
   const floppsMode = opts.floppsMode || 'launch';
   const floppsModel = opts.floppsModel || DEFAULT_FLOPPS_MODEL;
   const floppsState = loadFloppsState();
 
   if (opts.flopps && floppsMode === 'wildcard-event') {
-    const event = await generateFloppsWildcardEvent(opts, apiKey, floppsModel);
+    const event = await generateFloppsWildcardEvent(opts, apiKey, floppsModel, wildcardRng);
     if (opts.wildcardOutputFile) {
       fs.mkdirSync(path.dirname(opts.wildcardOutputFile), { recursive: true });
       fs.writeFileSync(opts.wildcardOutputFile, JSON.stringify(event, null, 2));
@@ -1247,6 +1300,34 @@ async function main() {
     opts.cards = await aiDecideSetSize(themeName, setCategory || 'character', opts.model, apiKey);
     console.error(`  📏 AI decided: ${opts.cards} cards`);
   }
+
+  const setCodeSeed = [
+    themeName,
+    catLabel,
+    setCategory || '',
+    opts.cards,
+    opts.model || '',
+    opts.sport || '',
+    opts.seasons || '',
+    opts.cardsPerSeason || '',
+    opts.customTypes ? 'custom' : 'standard',
+    opts.flopps ? 'flopps' : 'normal',
+  ].join('|');
+  const setCode = opts.setCode || genSetCode(makeSeededRng(`set-code|${setCodeSeed}`));
+  const generationSeed = [
+    themeName,
+    catLabel,
+    setCategory || '',
+    setCode,
+    opts.cards,
+    opts.model || '',
+    opts.sport || '',
+    opts.seasons || '',
+    opts.cardsPerSeason || '',
+    opts.customTypes ? 'custom' : 'standard',
+    opts.flopps ? 'flopps' : 'normal',
+  ].join('|');
+  const generationRng = makeSeededRng(`set-gen|${generationSeed}`);
 
   // Build prompt and call LLM — use batching for 150+ cards
   const BATCH_SIZE = 50; // 80 cards per API call is safe for most models
@@ -1327,6 +1408,8 @@ async function main() {
     sport: opts.sport || null,
     collectionTheme: setCategory === 'collection' ? themeName : null,
     cadenceDays: 45,
+    seed: generationSeed,
+    rng: generationRng,
   });
   // If category-specific, update the set JSON with category info
   if (setCategory && setCategory !== 'character') {
