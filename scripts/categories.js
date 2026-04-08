@@ -216,9 +216,10 @@ const MOVIE_NAME_PARTS = {
 // ─── HELPERS ────────────────────────────────────────────────────
 
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-function ri(rng,a,b){const r=rng||Math.random;return Math.floor(r()*(b-a+1))+a;}
-function pick(rng,arr){return arr[Math.floor((rng||Math.random)()*arr.length)];}
-function pwK(arr,k,rng){const t=arr.reduce((s,x)=>s+x[k],0);let r=(rng||Math.random)()*t;for(const x of arr){r-=x[k];if(r<=0)return x}return arr[arr.length-1];}
+function systemRandom(){return require('crypto').randomInt(0,0x100000000)/0x100000000;}
+function ri(rng,a,b){const r=rng||systemRandom;return Math.floor(r()*(b-a+1))+a;}
+function pick(rng,arr){return arr[Math.floor((rng||systemRandom)()*arr.length)];}
+function pwK(arr,k,rng){const t=arr.reduce((s,x)=>s+x[k],0);let r=(rng||systemRandom)()*t;for(const x of arr){r-=x[k];if(r<=0)return x}return arr[arr.length-1];}
 function normalizeSeed(seed,fallback=Date.now()){
   const n=Number(seed);
   return Number.isFinite(n) ? Math.trunc(n) : fallback;
