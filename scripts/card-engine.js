@@ -2204,6 +2204,19 @@ function recordFloppsBulletin(state, ctx, bulletin, currentDay, commandName){
   saveFloppsState(state);
 }
 
+function formatFloppsNewsSuffix(state){
+  const latest=state?.latestNews;
+  if(!latest) return '';
+  const parts=[
+    'FLOPPS_NEWS',
+    `day=${latest.day}`,
+    `kind=${latest.kind||'bulletin'}`,
+    latest.title,
+  ];
+  if(latest.paraphrase) parts.push(latest.paraphrase);
+  return `\n[${parts.join(' | ')}]`;
+}
+
 function maybeAnnounceFloppsNews(set, market, commandName){
   if(!set||!market) return;
   const state=loadFloppsState();
@@ -2234,11 +2247,11 @@ function maybeAnnounceFloppsNews(set, market, commandName){
   }
   if(!bulletin){
     saveFloppsState(state);
-    return;
+    return null;
   }
 
   recordFloppsBulletin(state,ctx,bulletin,currentDay,commandName);
-  console.log(`\n${formatFloppsNewsBlast(bulletin,state,ctx)}\n`);
+  return bulletin;
 }
 
 function getSpeculationWeight(starTier){
@@ -7900,6 +7913,7 @@ function cmdMarketOrder(){
 
 // Main
 const args=process.argv.slice(2);const cmd=args[0];
+let floppsSuffix='';
 {
   const seedArg=args.indexOf('--seed');
   const seed=seedArg>=0&&args[seedArg+1]?normalizeSeed(args[seedArg+1]):process.env.TRADING_CARDS_SEED;
@@ -7910,7 +7924,10 @@ const args=process.argv.slice(2);const cmd=args[0];
   if(cfg.activeSet){
     const set=loadSet();
     const market=set?loadMarket(cfg.activeSet):null;
-    if(set&&market&&cmd!=='flopps-wildcard') maybeAnnounceFloppsNews(set,market,cmd||'');
+    if(set&&market&&cmd!=='flopps-wildcard'){
+      const bulletin=maybeAnnounceFloppsNews(set,market,cmd||'');
+      if(bulletin) floppsSuffix=formatFloppsNewsSuffix(loadFloppsState());
+    }
   }
 }
 switch(cmd){
@@ -8071,3 +8088,4 @@ switch(cmd){
     generate-set-ai --flopps --theme "Arena of Broken Promises"
     flopps --theme "Arena of Broken Promises" --set-code FPP`);break;
 }
+if(floppsSuffix) process.stdout.write(floppsSuffix+'\n');
