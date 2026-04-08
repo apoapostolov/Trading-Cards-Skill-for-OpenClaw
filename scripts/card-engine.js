@@ -2207,14 +2207,8 @@ function recordFloppsBulletin(state, ctx, bulletin, currentDay, commandName){
 function formatFloppsNewsSuffix(state){
   const latest=state?.latestNews;
   if(!latest) return '';
-  const parts=[
-    'FLOPPS_NEWS',
-    `day=${latest.day}`,
-    `kind=${latest.kind||'bulletin'}`,
-    latest.title,
-  ];
-  if(latest.paraphrase) parts.push(latest.paraphrase);
-  return `\n[${parts.join(' | ')}]`;
+  const note=latest.paraphrase||latest.summary||latest.title||'Flopps had news';
+  return `\nP.S. Flopps just moved: ${note}`;
 }
 
 function maybeAnnounceFloppsNews(set, market, commandName){
