@@ -2,6 +2,7 @@
 'use strict';
 const fs=require('fs'),path=require('path');
 const {execSync,execFileSync}=require('child_process');
+const crypto=require('crypto');
 const DATA_DIR=process.env.TRADING_CARDS_DATA_DIR?path.resolve(process.env.TRADING_CARDS_DATA_DIR):path.join(__dirname,'..','data');
 const FLOPPS_DIR=path.join(DATA_DIR,'flopps');
 const FLOPPS_STATE_FILE=path.join(FLOPPS_DIR,'state.json');
@@ -10,6 +11,18 @@ const CAT=require('./categories.js');
 const { buildRichSetMetadata } = require('./set-metadata.js');
 
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+let ENGINE_BASE_SEED=null;
+let GLOBAL_RNG=()=>crypto.randomInt(0,0x100000000)/0x100000000;
+function RNG(){return GLOBAL_RNG();}
+function setEngineSeed(seed){
+  if(seed===undefined||seed===null||seed===''){
+    ENGINE_BASE_SEED=null;
+    GLOBAL_RNG=()=>crypto.randomInt(0,0x100000000)/0x100000000;
+    return;
+  }
+  ENGINE_BASE_SEED=normalizeSeed(seed);
+  GLOBAL_RNG=mulberry32(ENGINE_BASE_SEED);
+}
 
 // ─── CARD FORMAT SYSTEM ──────────────────────────────────────────
 const CARD_FORMATS={
@@ -56,14 +69,14 @@ const RELIC_QUALITY=[
 
 // Build a composed auto name + price modifier
 function composeAuto(){
-  const type=pwK(AUTO_TYPES,'mult',Math.random); // weighted toward lower mult
-  const variant=pwK(AUTO_VARIANTS,'weight',Math.random);
+  const type=pwK(AUTO_TYPES,'mult',RNG); // weighted toward lower mult
+  const variant=pwK(AUTO_VARIANTS,'weight',RNG);
   return {name:variant.name+type.name, mult:type.mult*variant.mult, emoji:type.emoji+variant.name.replace(/ /g,'').slice(0,1),
     autoType:type.id, autoVariant:variant.id};
 }
 function composeRelic(){
-  const type=pwK(RELIC_TYPES,'mult',Math.random);
-  const quality=pwK(RELIC_QUALITY,'mult',Math.random);
+  const type=pwK(RELIC_TYPES,'mult',RNG);
+  const quality=pwK(RELIC_QUALITY,'mult',RNG);
   return {name:quality.name+type.name+' Relic', mult:type.mult*quality.mult, emoji:type.emoji,
     relicType:type.id, relicQuality:quality.id};
 }
@@ -172,7 +185,7 @@ function saveGradingState(s){wJ(GRADING_STATE_FILE,s);}
 function loadPopulation(){return rJ(POP_FILE)||{};}
 function savePopulation(p){wJ(POP_FILE,p);}
 
-function gaussRand(mean,std){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)*std+mean;}
+function gaussRand(mean,std){let u=0,v=0;while(!u)u=RNG();while(!v)v=RNG();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)*std+mean;}
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
 
 function generateCondition(tier){
@@ -204,7 +217,7 @@ function conditionToGrade(cond,company){
   const cSurface=cond.surface;
   // Weighted average with slight variance
   const avg=(cCentering*0.25+cCorners*0.25+cEdges*0.25+cSurface*0.25);
-  const variance=(Math.random()-0.5)*0.5; // ±0.25
+  const variance=(RNG()-0.5)*0.5; // ±0.25
   let score=avg+variance+strict*0.15; // strictness shifts score
   score=clamp(score,1,10);
   // Map to grade scale
@@ -263,12 +276,12 @@ function bumpPopulation(setKey,cardNum,company,grade){
   card[company][grade]=(card[company][grade]||0)+1;
   card.totalGraded++;
   // Simulate NPC grading (add some noise to population)
-  const npcChance=Math.random();
+  const npcChance=RNG();
   if(npcChance<0.3){
     const npcCompanies=['PSA','BGS','SGC'];
-    const npcCompany=npcCompanies[Math.floor(Math.random()*npcCompanies.length)];
+    const npcCompany=npcCompanies[Math.floor(RNG()*npcCompanies.length)];
     const npcGrades=[10,9,8.5,8,7];
-    const npcGrade=npcGrades[Math.floor(Math.random()*npcGrades.length)];
+    const npcGrade=npcGrades[Math.floor(RNG()*npcGrades.length)];
     if(!card[npcCompany])card[npcCompany]={};
     card[npcCompany][npcGrade]=(card[npcCompany][npcGrade]||0)+1;
     card.totalGraded++;
@@ -282,15 +295,15 @@ function simNpcPopulationGrowth(setKey,cardNum){
   if(!pop[setKey]||!pop[setKey][cardNum])return;
   const card=pop[setKey][cardNum];
   const currentTotal=card.totalGraded;
-  const growth=Math.floor(Math.random()*Math.min(3,Math.max(1,currentTotal*0.05)));
+  const growth=Math.floor(RNG()*Math.min(3,Math.max(1,currentTotal*0.05)));
   for(let i=0;i<growth;i++){
     const npcCompanies=['PSA','BGS','SGC'];
     const weights=[0.5,0.3,0.2];
-    let r=Math.random();let npcCompany='PSA';
+    let r=RNG();let npcCompany='PSA';
     let acc=0;for(let j=0;j<npcCompanies.length;j++){acc+=weights[j];if(r<=acc){npcCompany=npcCompanies[j];break;}}
     const npcGrades=[10,9,8.5,8,7];
     const npcWeights=[0.08,0.3,0.25,0.22,0.15];
-    let r2=Math.random();let npcGrade=9;let acc2=0;
+    let r2=RNG();let npcGrade=9;let acc2=0;
     for(let j=0;j<npcGrades.length;j++){acc2+=npcWeights[j];if(r2<=acc2){npcGrade=npcGrades[j];break;}}
     if(!card[npcCompany])card[npcCompany]={};
     card[npcCompany][npcGrade]=(card[npcCompany][npcGrade]||0)+1;
@@ -496,7 +509,7 @@ const HINT_APPEAL={
 
 function rollGrade(){
   const t=GRADES.reduce((s,g)=>s+g.w,0);
-  let r=Math.random()*t;
+  let r=RNG()*t;
   for(const g of GRADES){r-=g.w;if(r<=0)return g}
   return GRADES[2]; // fallback to PSA 8
 }
@@ -506,7 +519,7 @@ function generateQuality(gradeInput){
   // Pick 2-3 visible hints that a collector would casually notice
   // Higher grades: fewer/weaker hints. Lower grades: more/obvious hints.
   const hintCount = grade>=9 ? 1 : grade>=7 ? 2 : grade>=5 ? 3 : 4;
-  const pick=(pool)=>pool[Math.floor(Math.random()*pool.length)];
+  const pick=(pool)=>pool[Math.floor(RNG()*pool.length)];
   const gradeHints=HINT_CENTERING[grade]||HINT_CENTERING[8];
   const cornerHints=HINT_CORNERS[grade]||HINT_CORNERS[8];
   const edgeHints=HINT_EDGES[grade]||HINT_EDGES[8];
@@ -519,7 +532,7 @@ function generateQuality(gradeInput){
   const cats=[{pool:gradeHints,cat:'centering'},{pool:cornerHints,cat:'corners'},
               {pool:edgeHints,cat:'edges'},{pool:surfaceHints,cat:'surface'}];
   // Shuffle and pick
-  const shuffled=cats.sort(()=>Math.random()-0.5);
+  const shuffled=cats.sort(()=>RNG()-0.5);
   for(let i=0;i<Math.min(hintCount,shuffled.length);i++){
     hints.push(pick(shuffled[i].pool));
   }
@@ -573,7 +586,7 @@ const CATS=[
 function rJ(p){try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return null}}
 function wJ(p,d){fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(d,null,2))}
 function pwK(arr,k,rng){const t=arr.reduce((s,x)=>s+x[k],0);let r=rng()*t;for(const x of arr){r-=x[k];if(r<=0)return x}return arr[arr.length-1]}
-function ri(rng,a,b){const r=rng||Math.random;return Math.floor(r()*(b-a+1))+a}
+function ri(rng,a,b){const r=rng||RNG;return Math.floor(r()*(b-a+1))+a}
 function fm$(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
 function pR(s,w){return s.length<w?s+' '.repeat(w-s.length):s.slice(0,w)}
 
@@ -723,7 +736,7 @@ function genCard(num,cat,theme,rng){
 function genSetCode(rng){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ';let s='';for(let i=0;i<3;i++)s+=c[ri(rng,0,25)];return s}
 
 function generateSet(category, options) {
-  const seed=normalizeSeed(options?.seed);
+  const seed=normalizeSeed(options?.seed, ENGINE_BASE_SEED ?? Date.now());
   const rng=mulberry32(seed);
   
   if (category && category !== 'character') {
@@ -827,7 +840,7 @@ function rollParallel(maxT,set){
     const pm=p.pm||p.priceMultiplier||1; // support both field names
     const odds=p.odds;
     if(p.tier===1)return{parallel:p,sn:null,plate:null};
-    if(Math.random()<1/odds){
+    if(RNG()<1/odds){
       let sn=null,plate=null;
       const ser=p.ser||p.serial;
       if(ser===1&&p.name==="Printing Plate"){plate=PLATES[ri(null,0,3)]}
@@ -842,7 +855,7 @@ function rollParallel(maxT,set){
 function rollSpecial(set){
   const types=resolveCardTypes(set);
   const total=types.reduce((s,x)=>s+x.rarity,0);
-  let r=Math.random()*total;
+  let r=RNG()*total;
   for(const t of types){r-=t.rarity;if(r<=0)return t}
   return types[0];
 }
@@ -862,7 +875,7 @@ function rollCardType(set,card){
     return def||{id:'base',name:name,rarity:0.85,priceMultiplier:1,format:'standard',desc:'🃏 '+name};
   });
   const total=allowed.reduce((s,t)=>s+(t.rarity||1),0);
-  let r=Math.random()*total;
+  let r=RNG()*total;
   let picked=allowed[0];
   for(const t of allowed){r-=(t.rarity||1);if(r<=0){picked=t;break}}
   return composeCardTypeResult(picked,globalTypes);
@@ -895,7 +908,7 @@ function selectCard(set,forHit){
   const w=set.cards.map(c=>{switch(c.starTier){
     case"Common":return forHit?0.5:3;case"Uncommon":return forHit?1:2;case"Star":return forHit?2:1.5;
     case"Superstar":return forHit?4:0.8;case"Legendary":return forHit?8:0.3;default:return 1;}});
-  const t=w.reduce((s,v)=>s+v,0);let r=Math.random()*t;
+  const t=w.reduce((s,v)=>s+v,0);let r=RNG()*t;
   for(let i=0;i<set.cards.length;i++){r-=w[i];if(r<=0)return set.cards[i]}
   return set.cards[0];
 }
@@ -937,7 +950,7 @@ function pullCards(set,col,packType,openCtx={}){
     const slot=pt.slots[si%pt.slots.length];
     let sp={name:"None",mult:1,desc:"",priceMultiplier:1,format:"standard",formatMult:1},bc,isHit=false;
     if(slot.hit){
-      if(Math.random()<(PACKS[packType].hitRate||0)){
+      if(RNG()<(PACKS[packType].hitRate||0)){
         bc=selectCard(set,true);sp=rollCardType(set,bc);isHit=true;hc++;
       } else {bc=selectCard(set,false)}
     } else bc=selectCard(set,false);
@@ -1848,11 +1861,11 @@ function pickFloppsBulletin(state, ctx, day){
   } else if(ctx.sentiment<0.95||ctx.changePct<0){
     pool.sort((a,b)=>a.stockDelta-b.stockDelta);
   } else {
-    pool.sort(() => Math.random() - 0.5);
+    pool.sort(() => RNG() - 0.5);
   }
   const weighted=pool.map((item, idx) => ({item, w:Math.max(0.2, item.weight * (idx < 8 ? 1.3 : 1))}));
   const total=weighted.reduce((sum, entry)=>sum+entry.w,0);
-  let roll=Math.random()*total;
+  let roll=RNG()*total;
   for(const entry of weighted){
     roll-=entry.w;
     if(roll<=0) return entry.item;
@@ -1865,7 +1878,7 @@ function pickFloppsBulletinByCategory(ctx, category){
   if(!pool.length) return pickFloppsBulletin(null,ctx,0);
   const weighted=pool.map((item)=>({item,w:Math.max(0.2,item.weight||1)}));
   const total=weighted.reduce((sum,entry)=>sum+entry.w,0);
-  let roll=Math.random()*total;
+  let roll=RNG()*total;
   for(const entry of weighted){
     roll-=entry.w;
     if(roll<=0) return entry.item;
@@ -2054,13 +2067,13 @@ function buildExceptionalFloppsAnnouncement(state, ctx, day){
   if(corp.laborStress>0.68){
     return buildAnnouncementFromBulletin(pickFloppsBulletinByCategory(ctx,'labor'),ctx,day,'corporate');
   }
-  if(corp.extractionIndex>0.72 && Math.random()<0.25){
+  if(corp.extractionIndex>0.72 && RNG()<0.25){
     return buildAnnouncementFromBulletin(pickFloppsBulletinByCategory(ctx,'pricing'),ctx,day,'pricing');
   }
-  if(corp.lobbyingHeat>0.58 && Math.random()<0.2){
+  if(corp.lobbyingHeat>0.58 && RNG()<0.2){
     return buildAnnouncementFromBulletin(pickFloppsBulletinByCategory(ctx,'lobbying'),ctx,day,'policy');
   }
-  if(corp.hypeIndex>0.66 && Math.random()<0.2){
+  if(corp.hypeIndex>0.66 && RNG()<0.2){
     return buildAnnouncementFromBulletin(pickFloppsBulletinByCategory(ctx,'community'),ctx,day,'consumer-blog');
   }
   const wildcard=maybeGenerateFloppsWildcardBulletin(state,ctx,day,{daysSinceLast});
@@ -2115,7 +2128,7 @@ function saveFloppsWildcardArtifact(bulletin, day, ctx){
 function maybeGenerateFloppsWildcardBulletin(state, ctx, day, {daysSinceLast=null,force=false}={}){
   const since=daysSinceLast==null?daysSinceLastFloppsAnnouncement(state):daysSinceLast;
   const chance=getFloppsWildcardChance(state,ctx,since);
-  if(!force && (chance<=0 || Math.random()>=chance)) return null;
+  if(!force && (chance<=0 || RNG()>=chance)) return null;
   const trendTop=state.trendDesk?.watchlist?.[0]||null;
   const outputFile=path.join(FLOPPS_WILDCARD_DIR,`tmp-${process.pid}-${Date.now()}.json`);
   const context={
@@ -2286,13 +2299,13 @@ function assignChaseScore(card){
   const st=card.stats;
   if(st){const avg=(st.power+st.speed+st.technique+st.endurance+(st.charisma||0))/(st.charisma?5:4);
     if(avg>85)s=Math.max(s,0.6);else if(avg>75)s=Math.max(s,0.45);}
-  if(Math.random()<0.08) s=0.4+Math.random()*0.25;
+  if(RNG()<0.08) s=0.4+RNG()*0.25;
   return Math.min(1,s);
 }
 
 function weightedPick(items){
   const total=items.reduce((s,i)=>s+i.w,0);
-  let r=Math.random()*total;
+  let r=RNG()*total;
   for(const i of items){r-=i.w;if(r<=0)return i.t}
   return items[0].t;
 }
@@ -2536,7 +2549,7 @@ function buildMarketEvent(type, tick, stackCount = 1){
     type,
     tick,
     duration: ri(null, profile.duration[0], profile.duration[1]),
-    magnitude: Math.round((profile.magnitude[0] + Math.random() * (profile.magnitude[1] - profile.magnitude[0])) * 1000) / 1000 * stack,
+    magnitude: Math.round((profile.magnitude[0] + RNG() * (profile.magnitude[1] - profile.magnitude[0])) * 1000) / 1000 * stack,
     label: profile.label,
     icon: profile.icon,
     effect: profile.effect,
@@ -2575,7 +2588,7 @@ function resimulateMarketSnapshot(set, market, col, pending){
   const macro=getMacroState();
   const tick=market.tick+pending;
   market.tick=tick;
-  market.sentiment=Math.max(0.5,Math.min(1.5,(market.sentiment||1)+((Math.random()-0.5)*0.25*Math.min(1,pending/12))));
+  market.sentiment=Math.max(0.5,Math.min(1.5,(market.sentiment||1)+((RNG()-0.5)*0.25*Math.min(1,pending/12))));
   market.events=(market.events||[]).filter(e=>tick-e.tick<(e.duration||14));
 
   const pullChance={Common:0.6,Uncommon:0.5,Star:0.35,Superstar:0.2,Legendary:0.1};
@@ -2608,16 +2621,16 @@ function resimulateMarketSnapshot(set, market, col, pending){
     const macroMove=(macro.signal||0)*0.025*getSpeculationWeight(starTier);
     const fairValue=intrinsic*momentum*(1+macroMove);
     const vol=0.008*(tierVol[starTier]||1);
-    const noise=(Math.random()-0.5)*2*vol;
+    const noise=(RNG()-0.5)*2*vol;
     const target=Math.max(basePrice*0.3, fairValue+noise);
 
     mc.trendVelocity=target-currentPrice;
     mc.currentPrice=target;
     mc.floorPrice=Math.min(mc.floorPrice||target,mc.currentPrice);
     mc.peakPrice=Math.max(mc.peakPrice||target,mc.currentPrice);
-    mc.sales24h=Math.floor(Math.random()*3*demand);
+    mc.sales24h=Math.floor(RNG()*3*demand);
     if(mc.sales24h>0){
-      const salePrice=mc.currentPrice*(0.95+Math.random()*0.1);
+      const salePrice=mc.currentPrice*(0.95+RNG()*0.1);
       mc.salesHistory.push({tick, price:salePrice, parallel:'Base'});
       if(mc.salesHistory.length>20) mc.salesHistory=mc.salesHistory.slice(-20);
       const recent=mc.salesHistory.slice(-7);
@@ -2631,10 +2644,10 @@ function resimulateMarketSnapshot(set, market, col, pending){
     }
   }
 
-  if(Math.random()<0.08){
+  if(RNG()<0.08){
     applyMarketEvent(market, pickMarketEventType(), tick);
   }
-  if(Math.random()<0.03){
+  if(RNG()<0.03){
     const firstType = market.events[market.events.length - 1]?.type;
     applyMarketEvent(market, pickMarketEventType(firstType ? [firstType] : []), tick);
   }
@@ -2779,16 +2792,16 @@ function runMarketTicks(set,market,col,nTicks){
     const tick=market.tick;
 
     // Sentiment: slow random walk
-    market.sentiment+=(Math.random()-0.48)*0.04;
+    market.sentiment+=(RNG()-0.48)*0.04;
     market.sentiment=Math.max(0.5,Math.min(1.5,market.sentiment));
 
     for(let idx=0; idx<cards.length; idx++){
       const mc=cards[idx];
-      if(Math.random()<(pullChance[mc.starTier]||0.5)){
+      if(RNG()<(pullChance[mc.starTier]||0.5)){
         mc.totalPulled++;
         mc.supplyInMarket++;
       }
-      if(mc.supplyInMarket>0&&Math.random()<0.008) mc.supplyInMarket--;
+      if(mc.supplyInMarket>0&&RNG()<0.008) mc.supplyInMarket--;
 
       // ── Demand calculation ──
       let demand=tierDemand[mc.starTier]||0.1;
@@ -2815,11 +2828,11 @@ function runMarketTicks(set,market,col,nTicks){
       mc.demandScore=demand;
 
       // ── Popularity update (5% event chance per tick) ──
-      if(Math.random()<0.05){
+      if(RNG()<0.05){
         const ev=weightedPick([{t:'hot',w:3},{t:'viral',w:1},{t:'injury',w:1},{t:'milestone',w:0.5}]);
-        if(ev==='hot') mc.popScore=Math.min(1,mc.popScore+0.03+Math.random()*0.06);
-        else if(ev==='viral') mc.popScore=Math.min(1,mc.popScore+0.1+Math.random()*0.1);
-        else if(ev==='injury') mc.popScore=Math.max(0.05,mc.popScore-0.05-Math.random()*0.05);
+        if(ev==='hot') mc.popScore=Math.min(1,mc.popScore+0.03+RNG()*0.06);
+        else if(ev==='viral') mc.popScore=Math.min(1,mc.popScore+0.1+RNG()*0.1);
+        else if(ev==='injury') mc.popScore=Math.max(0.05,mc.popScore-0.05-RNG()*0.05);
         else mc.popScore=Math.min(1,mc.popScore+0.05);
       }
       mc.popScore+=(meanPop[mc.starTier]-mc.popScore)*0.01;
@@ -2832,7 +2845,7 @@ function runMarketTicks(set,market,col,nTicks){
 
       // ── Volatility ──
       const vol=0.008*(tierVol[mc.starTier]||1);
-      const noise=(Math.random()-0.5)*2*vol;
+      const noise=(RNG()-0.5)*2*vol;
 
       const target=Math.max(mc.basePrice*0.3, fairValue+noise);
       mc.trendVelocity=(target-mc.currentPrice)*0.08;
@@ -2841,9 +2854,9 @@ function runMarketTicks(set,market,col,nTicks){
       mc.peakPrice=Math.max(mc.peakPrice,mc.currentPrice);
 
       // Simulate sales
-      mc.sales24h=Math.floor(Math.random()*3*mc.demandScore);
+      mc.sales24h=Math.floor(RNG()*3*mc.demandScore);
       if(mc.sales24h>0){
-        const salePrice=mc.currentPrice*(0.95+Math.random()*0.1);
+        const salePrice=mc.currentPrice*(0.95+RNG()*0.1);
         mc.salesHistory.push({tick, price:salePrice, parallel:'Base'});
         if(mc.salesHistory.length>20) mc.salesHistory=mc.salesHistory.slice(-20);
         const recent=mc.salesHistory.slice(-7);
@@ -2859,10 +2872,10 @@ function runMarketTicks(set,market,col,nTicks){
     }
 
     // ── Market events (random) ──
-    if(Math.random()<0.08){
+    if(RNG()<0.08){
       applyMarketEvent(market, pickMarketEventType(), tick);
     }
-    if(Math.random()<0.03){
+    if(RNG()<0.03){
       const firstType = market.events[market.events.length - 1]?.type;
       applyMarketEvent(market, pickMarketEventType(firstType ? [firstType] : []), tick);
     }
@@ -4506,8 +4519,8 @@ function restockIfNeeded(state, store, setKey){
       if(store.sellsHobby===false&&type==='hobby') continue;
       if(store.type==='online'&&type==='retail') continue;
       let restockQty=calcStoreInventoryQty(store, setKey, type, null, range);
-      if(Math.random()<profile.distributorLagRisk){
-        restockQty=Math.max(0,Math.round(restockQty*(0.35+Math.random()*0.4)));
+      if(RNG()<profile.distributorLagRisk){
+        restockQty=Math.max(0,Math.round(restockQty*(0.35+RNG()*0.4)));
       }
       inv[type]=(inv[type]||0)+restockQty;
     }
@@ -4802,8 +4815,8 @@ function generateStoreSales(setKey){
   // Expire old sales
   sales.active=sales.active.filter(s=>now-s.startedAt<s.durationHrs*60*60*1000)
   // 15% chance to spawn a new sale
-  if(Math.random()<0.15&&sales.active.length<2){
-    const template=SALE_TYPES[Math.floor(Math.random()*SALE_TYPES.length)]
+  if(RNG()<0.15&&sales.active.length<2){
+    const template=SALE_TYPES[Math.floor(RNG()*SALE_TYPES.length)]
     const sale={...template, setKey, startedAt:now, announced:false}
     sales.active.push(sale)
     // Announce in market events
@@ -4850,7 +4863,7 @@ function ensureFullInventory(state, store, setKey){
     si.supplies={}
     const supplyCount=store.type==='lcs'?6:store.type==='bigbox'?4:3
     for(let i=0;i<supplyCount;i++){
-      const sup=SUPPLIES[Math.floor(Math.random()*SUPPLIES.length)]
+      const sup=SUPPLIES[Math.floor(RNG()*SUPPLIES.length)]
       si.supplies[sup.id]={...sup, qty:ri(rng,2,8)}
     }
   }
@@ -4863,7 +4876,7 @@ function ensureFullInventory(state, store, setKey){
       const rng=mulberry32(Date.now()+store.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0)+777)
       si.singles=[]
       const count=ri(rng,3,12)
-      const cards=[...set.cards].sort(()=>Math.random()-0.5).slice(0,count)
+      const cards=[...set.cards].sort(()=>RNG()-0.5).slice(0,count)
       for(const c of cards){
         const mc=market?.cards?.[c.num]
         const price=mc?mc.currentPrice*(1+(store.markupBase||0.15)):c.basePrice*1.3
@@ -5222,7 +5235,7 @@ function simulateScalpersEnhanced(setKey){
       // Buy on dips (crash/bearish)
       const preferred=def.targetStorePreference.filter(id=>storeMap[id])
       if(!preferred.length) continue
-      const targetId=preferred[Math.floor(Math.random()*preferred.length)]
+      const targetId=preferred[Math.floor(RNG()*preferred.length)]
       const targetStore=storeMap[targetId]
       const recentStorePressure=getRecentScalperBuyQty(targetId, 7)
       const pressureBoost=Math.min(0.5, recentStorePressure/24)
@@ -5232,7 +5245,7 @@ function simulateScalpersEnhanced(setKey){
       if(marketDirection==='bearish'&&strategy==='flip_quick') buyChance*=0.3 // avoid dropping market
       if(marketDirection==='bullish') buyChance*=1.3 // fomo
 
-      if(Math.random()>buyChance) continue
+      if(RNG()>buyChance) continue
 
       ensureFullInventory(storeState, targetStore, setKey)
       const inv=storeState.stores[targetId]?.inventory?.[setKey]
@@ -5240,11 +5253,11 @@ function simulateScalpersEnhanced(setKey){
 
       const allowedTypes=Object.entries(PACKS).filter(([t])=>
         !(targetStore.sellsHobby===false&&t==='hobby')&&!(targetStore.type==='online'&&t==='retail'))
-      const[type, pt]=allowedTypes[Math.floor(Math.random()*allowedTypes.length)]
+      const[type, pt]=allowedTypes[Math.floor(RNG()*allowedTypes.length)]
       const stock=inv[type]||0
 
       let buyQty=1
-      if(def.aggressiveness>0.7) buyQty=Math.min(3, Math.floor(Math.random()*4)+1)
+      if(def.aggressiveness>0.7) buyQty=Math.min(3, Math.floor(RNG()*4)+1)
       if(def.aggressiveness>0.9) buyQty=Math.min(5, buyQty+2)
       if(def.tier==='bot') buyQty=Math.min(stock, buyQty+2)
       if(hot) buyQty=Math.min(stock, buyQty+1)
@@ -5268,13 +5281,13 @@ function simulateScalpersEnhanced(setKey){
       })
 
       // ── LIST & UNDERCUT ──
-      if(market&&Math.random()<0.6){
+      if(market&&RNG()<0.6){
         if(hotCards.length>0){
-          const card=hotCards[Math.floor(Math.random()*hotCards.length)]
+          const card=hotCards[Math.floor(RNG()*hotCards.length)]
           // Check for undercutting
           const otherListings=(recentListingsByCard[card.num]||[]).filter(e=>e.scalperId!==sid)
           const undercut=otherListings.length>0?0.95:1.0
-          const markup=def.markupRange[0]+Math.random()*(def.markupRange[1]-def.markupRange[0])
+          const markup=def.markupRange[0]+RNG()*(def.markupRange[1]-def.markupRange[0])
           const listPrice=Math.round(card.currentPrice*markup*undercut*100)/100
 
           log.push({
@@ -5295,9 +5308,9 @@ function simulateScalpersEnhanced(setKey){
     // ── STUCK INVENTORY CHECK ──
     // If scalper has listings older than 7 days and market is bearish, force discount
     const oldListings=(scalper.listings||[]).filter(l=>Date.now()-l.listedAt>7*24*60*60*1000)
-    if(oldListings.length>0&&marketDirection!=='bullish'&&Math.random()<0.4){
-      const stuck=oldListings[Math.floor(Math.random()*oldListings.length)]
-      const discount=0.8+Math.random()*0.1
+    if(oldListings.length>0&&marketDirection!=='bullish'&&RNG()<0.4){
+      const stuck=oldListings[Math.floor(RNG()*oldListings.length)]
+      const discount=0.8+RNG()*0.1
       const oldPrice=stuck.listPrice
       stuck.listPrice=Math.round(stuck.listPrice*discount*100)/100
       log.push({
@@ -5417,12 +5430,12 @@ function simulateScalpers(setKey){
     for(let c=0;c<cycles;c++){
       // Decide whether to buy (based on aggressiveness × demand)
       const buyChance=def.aggressiveness*(hot?1.5:0.7)*demandFactor;
-      if(Math.random()>buyChance) continue;
+      if(RNG()>buyChance) continue;
 
       // Pick a store from preferences
       const preferred=def.targetStorePreference.filter(id=>storeMap[id]);
       if(!preferred.length) continue;
-      const targetId=preferred[Math.floor(Math.random()*preferred.length)];
+      const targetId=preferred[Math.floor(RNG()*preferred.length)];
       const targetStore=storeMap[targetId];
 
       // Ensure store has inventory for this set
@@ -5433,12 +5446,12 @@ function simulateScalpers(setKey){
       // Pick a product type to buy
       const allowedTypes=Object.entries(PACKS).filter(([t])=>
         !(targetStore.sellsHobby===false&&t==='hobby')&&!(targetStore.type==='online'&&t==='retail'));
-      const[type, pt]=allowedTypes[Math.floor(Math.random()*allowedTypes.length)];
+      const[type, pt]=allowedTypes[Math.floor(RNG()*allowedTypes.length)];
       const stock=inv[type]||0;
 
       // Buy quantity based on aggressiveness and type
       let buyQty=1;
-      if(def.aggressiveness>0.7) buyQty=Math.min(3, Math.floor(Math.random()*4)+1);
+      if(def.aggressiveness>0.7) buyQty=Math.min(3, Math.floor(RNG()*4)+1);
       if(def.aggressiveness>0.9) buyQty=Math.min(5, buyQty+2);
       if(def.tier==='bot') buyQty=Math.min(stock, buyQty+2); // bots buy more
       buyQty=Math.min(buyQty, stock);
@@ -5463,12 +5476,12 @@ function simulateScalpers(setKey){
 
       // Simulate scalper opening and listing some cards
       const set=loadSet();
-      if(set&&Math.random()<0.6){
+      if(set&&RNG()<0.6){
         // Pick a random high-value card from set to "list"
         const hotCards=set.cards.filter(c=>c.starTier==='Superstar'||c.starTier==='Legendary');
         if(hotCards.length>0){
-          const card=hotCards[Math.floor(Math.random()*hotCards.length)];
-          const markup=def.markupRange[0]+Math.random()*(def.markupRange[1]-def.markupRange[0]);
+          const card=hotCards[Math.floor(RNG()*hotCards.length)];
+          const markup=def.markupRange[0]+RNG()*(def.markupRange[1]-def.markupRange[0]);
           const listPrice=Math.round(card.basePrice*markup*100)/100;
           log.push({
             timestamp:now, scalperId:sid, scalperName:def.name, emoji:def.emoji,
@@ -5919,23 +5932,23 @@ function cmdGradeCrack(){
   console.log(`${'═'.repeat(56)}`);
   console.log(`  ⚠️  Risk: Card condition may degrade during removal`);
   console.log(`  Rolling the dice...\n`);
-  const degrade=Math.random()<0.2;
+  const degrade=RNG()<0.2;
   let newCond;
   if(degrade){
     console.log(`  🎲 Result: Condition degraded!`);
     newCond={
-      centering:clamp(gr.condition.centering-Math.round(Math.random()*8),50,100),
-      corners:Math.round(clamp(gr.condition.corners-Math.random()*1.5,1,10)*10)/10,
-      edges:Math.round(clamp(gr.condition.edges-Math.random()*1.0,1,10)*10)/10,
-      surface:Math.round(clamp(gr.condition.surface-Math.random()*2.0,1,10)*10)/10,
+      centering:clamp(gr.condition.centering-Math.round(RNG()*8),50,100),
+      corners:Math.round(clamp(gr.condition.corners-RNG()*1.5,1,10)*10)/10,
+      edges:Math.round(clamp(gr.condition.edges-RNG()*1.0,1,10)*10)/10,
+      surface:Math.round(clamp(gr.condition.surface-RNG()*2.0,1,10)*10)/10,
     };
   } else {
     console.log(`  🎲 Result: Condition preserved!`);
     newCond={...gr.condition};
     // Tiny random variance even on success
-    newCond.corners=Math.round(clamp(newCond.corners+(Math.random()-0.5)*0.3,1,10)*10)/10;
-    newCond.edges=Math.round(clamp(newCond.edges+(Math.random()-0.5)*0.3,1,10)*10)/10;
-    newCond.surface=Math.round(clamp(newCond.surface+(Math.random()-0.5)*0.3,1,10)*10)/10;
+    newCond.corners=Math.round(clamp(newCond.corners+(RNG()-0.5)*0.3,1,10)*10)/10;
+    newCond.edges=Math.round(clamp(newCond.edges+(RNG()-0.5)*0.3,1,10)*10)/10;
+    newCond.surface=Math.round(clamp(newCond.surface+(RNG()-0.5)*0.3,1,10)*10)/10;
   }
   card.condition=newCond;
   card.gradingResult={status:'cracked',company:gr.company,grade:gr.grade,cracked:true,crackedAt:Date.now()};
@@ -6033,7 +6046,7 @@ function cmdBuySingle(){
   if(wantBest){
     // Bias toward higher grades — weighted roll favoring 9-10
     const bestPool=[{grade:10,w:15},{grade:9,w:40},{grade:8,w:30},{grade:7,w:10},{grade:6,w:5}]
-    let r=Math.random()*bestPool.reduce((s,g)=>s+g.w,0)
+    let r=RNG()*bestPool.reduce((s,g)=>s+g.w,0)
     for(const g of bestPool){r-=g.w;if(r<=0){grade=GRADES.find(x=>x.grade===g.grade);break}}
     if(!grade)grade=GRADES.find(g=>g.grade===9)
   } else {
@@ -6135,7 +6148,7 @@ function showTraderInventory(trader,set,market,col){
   console.log(`${'═'.repeat(52)}`);
   const availCards=set.cards.filter(c=>trader.haves.includes(c.starTier));
   if(!availCards.length){console.log('  (no cards available for trade)\n');return}
-  const shuffled=[...availCards].sort(()=>Math.random()-0.5).slice(0,10);
+  const shuffled=[...availCards].sort(()=>RNG()-0.5).slice(0,10);
   for(const c of shuffled){
     const mc=market.cards[c.num];
     const price=mc?mc.currentPrice:c.basePrice;
@@ -6198,12 +6211,12 @@ function cmdTradeOffer(){
   } else if(fairness>=1.0-thresh&&fairness<=1.05+thresh){
     // Roughly fair
     const acceptChance=trader.tradeStyle==='generous'?0.8:trader.tradeStyle==='stingy'?0.4:0.6;
-    accepted=Math.random()<acceptChance;
+    accepted=RNG()<acceptChance;
     reason=accepted?'Fair trade accepted!':'Trader wants slightly better value.';
   } else if(fairness>=0.7){
     // Slightly unfair to NPC
     const acceptChance=trader.tradeStyle==='generous'?0.4:trader.tradeStyle==='stingy'?0.05:0.2;
-    accepted=Math.random()<acceptChance;
+    accepted=RNG()<acceptChance;
     reason=accepted?'Trader was feeling generous!':'Trade undervalues their card.';
   } else {
     // Very unfair to NPC — always reject
@@ -6351,21 +6364,21 @@ function refreshLots(set,market){
   const traders=loadTraders();
   const sellers=traders.slice(0,3);
   const newLots=[];
-  const count=3+Math.floor(Math.random()*3);
+  const count=3+Math.floor(RNG()*3);
   for(let i=0;i<count;i++){
     const seller=sellers[i%sellers.length];
-    const cardCount=5+Math.floor(Math.random()*10);
+    const cardCount=5+Math.floor(RNG()*10);
     const contents=[];
     const usedNums=new Set();
     let estValue=0;
     // Pick random cards from the set
-    const allCards=[...set.cards].sort(()=>Math.random()-0.5).slice(0,cardCount);
+    const allCards=[...set.cards].sort(()=>RNG()-0.5).slice(0,cardCount);
     // 15% chance of a hidden gem (high tier card)
     let hasGem=false;
-    if(Math.random()<0.15){
+    if(RNG()<0.15){
       const gems=set.cards.filter(c=>c.starTier==='Legendary'||c.starTier==='Superstar');
       if(gems.length){
-        const gem=gems[Math.floor(Math.random()*gems.length)];
+        const gem=gems[Math.floor(RNG()*gems.length)];
         contents.push({num:gem.num,name:gem.name,starTier:gem.starTier});
         usedNums.add(gem.num);
         estValue+=market.cards[gem.num]?market.cards[gem.num].currentPrice:gem.basePrice;
@@ -6379,7 +6392,7 @@ function refreshLots(set,market){
         estValue+=market.cards[c.num]?market.cards[c.num].currentPrice:c.basePrice;
       }
     }
-    const discount=0.3+Math.random()*0.2; // 30-50% off
+    const discount=0.3+RNG()*0.2; // 30-50% off
     const price=Math.round(estValue*(1-discount)*100)/100;
     newLots.push({
       id:String(lots.nextId+i),seller:seller.name,sellerId:seller.id,
@@ -6508,7 +6521,7 @@ function tickListings(col,set,market){
     else if(priceRatio<=1.0) sellChance=0.08;
     else if(priceRatio<=1.2) sellChance=0.04;
     else sellChance=0.01;
-    if(Math.random()<sellChance){
+    if(RNG()<sellChance){
       const fee=listing.price*0.10;
       const net=listing.price-fee;
       const cfg=loadCfg();
@@ -6756,11 +6769,11 @@ function tickAuctions(col,set,market){
       const marketVal=mc.currentPrice*2; // NPC values card at 2x base
       const highestBid=auction.bids.length>0?Math.max(...auction.bids.map(b=>b.amount)):auction.minBid;
       const npcMaxBid=marketVal*0.8;
-      if(highestBid<npcMaxBid&&Math.random()<0.15){
-        const npcBid=Math.min(npcMaxBid,highestBid+marketVal*0.05*(1+Math.random()));
+      if(highestBid<npcMaxBid&&RNG()<0.15){
+        const npcBid=Math.min(npcMaxBid,highestBid+marketVal*0.05*(1+RNG()));
         const rounded=Math.round(npcBid*100)/100;
         const npcs=loadTraders();
-        const npc=npcs[Math.floor(Math.random()*npcs.length)];
+        const npc=npcs[Math.floor(RNG()*npcs.length)];
         auction.bids.push({bidder:npc.name,amount:rounded,time:Date.now()});
         auction.highestBid=rounded;
       }
@@ -6958,9 +6971,9 @@ function tickAuctionsEnhanced(col,set,market){
       const npcMax=baseVal*npc.maxMult*(auction.isRare?1.3:1);
       if(highestBid>=npcMax) continue;
       let bidChance=npc.aggression*0.12;
-      if(isLastHour&&Math.random()<npc.snipeChance) bidChance=0.8; // snipe!
-      if(bidChance<Math.random()) continue;
-      const increment=baseVal*0.05*(1+Math.random());
+      if(isLastHour&&RNG()<npc.snipeChance) bidChance=0.8; // snipe!
+      if(bidChance<RNG()) continue;
+      const increment=baseVal*0.05*(1+RNG());
       const newBid=Math.round(Math.min(npcMax,highestBid+increment)*100)/100;
       auction.bids.push({bidder:npc.name,amount:newBid,time:Date.now(),style:npc.style});
       auction.highestBid=Math.max(auction.highestBid||0,newBid);
@@ -6970,11 +6983,11 @@ function tickAuctionsEnhanced(col,set,market){
     }
 
     // NPC shill escalation (drive up price near end)
-    if(isLastHour&&auction.hot&&Math.random()<0.3){
+    if(isLastHour&&auction.hot&&RNG()<0.3){
       const shill=NPC_BIDDERS.filter(n=>n.style==='shill'&&!bidderSet.has(n.name));
       if(shill.length){
         const s=shill[0];
-        const snipe=baseVal*2.2*(1+Math.random()*0.3);
+        const snipe=baseVal*2.2*(1+RNG()*0.3);
         if(snipe>auction.highestBid){
           const amt=Math.round(snipe*100)/100;
           auction.bids.push({bidder:s.name,amount:amt,time:Date.now(),style:'shill'});
@@ -7073,21 +7086,21 @@ function ensureNpcAuctions(set,market){
   if(npcAuctions.length>=3) return;
   const needed=3-npcAuctions.length;
   for(let i=0;i<needed;i++){
-    const card=set.cards[Math.floor(Math.random()*set.cards.length)];
+    const card=set.cards[Math.floor(RNG()*set.cards.length)];
     const mc=market.cards[card.num];
     if(!mc) continue;
     const isRare=card.starTier==='Legendary'||card.starTier==='Superstar';
     const startBid=Math.round(mc.currentPrice*(isRare?0.8:0.5)*100)/100;
     const reserve=isRare?Math.round(startBid*1.2*100)/100:null;
     const buyNow=isRare?Math.round(mc.currentPrice*2.5*100)/100:null;
-    const npc=NPC_BIDDERS[Math.floor(Math.random()*NPC_BIDDERS.length)];
+    const npc=NPC_BIDDERS[Math.floor(RNG()*NPC_BIDDERS.length)];
     const id=String(auctions.nextId++);
     auctions.auctions.push({
       id,cardId:`npc-${id}`,cardNum:card.num,name:card.name,parallel:'Base',
       starTier:card.starTier,startingBid:startBid,reserve,buyItNow:buyNow,
-      marketPrice:mc.currentPrice,durationDays:[1,3,7][Math.floor(Math.random()*3)],
-      seller:npc.name,startedAt:Date.now()-Math.random()*48*60*60*1000,
-      bids:[{bidder:'CardKing_Mike',amount:startBid,time:Date.now()-Math.random()*24*60*60*1000,style:'genuine'}],
+      marketPrice:mc.currentPrice,durationDays:[1,3,7][Math.floor(RNG()*3)],
+      seller:npc.name,startedAt:Date.now()-RNG()*48*60*60*1000,
+      bids:[{bidder:'CardKing_Mike',amount:startBid,time:Date.now()-RNG()*24*60*60*1000,style:'genuine'}],
       highestBid:startBid,isRare,hot:false,status:'active',
     });
   }
@@ -7354,10 +7367,10 @@ function simNpcPopulationGrowth(setKey,cardNum){
   for(const comp of['PSA','BGS','SGC']){
     if(!cardPop[comp]) cardPop[comp]={}
     // Chance of new graded copies appearing (simulates other collectors)
-    const newGrades=Math.floor(Math.random()*3)
+    const newGrades=Math.floor(RNG()*3)
     for(let i=0;i<newGrades;i++){
       // Weight towards lower grades (bell curve centered around 8)
-      const r=Math.random()
+      const r=RNG()
       let grade
       if(r<0.01) grade=10
       else if(r<0.05) grade=9.5
@@ -7576,7 +7589,7 @@ function cmdGradeCrackRisk(){
 
   // Degrade (20%)
   const degradedCond={
-    centering:clamp(cond.centering-Math.round(Math.random()*8),50,100),
+    centering:clamp(cond.centering-Math.round(RNG()*8),50,100),
     corners:Math.round(clamp(cond.corners-1.5,1,10)*10)/10,
     edges:Math.round(clamp(cond.edges-1.0,1,10)*10)/10,
     surface:Math.round(clamp(cond.surface-2.0,1,10)*10)/10,
@@ -7616,8 +7629,8 @@ const ORIGIN_PRESETS=[
 function assignOrigin(card,source){
   const preset=ORIGIN_PRESETS.find(p=>p.type===source)||ORIGIN_PRESETS[0]
   // Rare chance of special origin
-  if(Math.random()<0.02) return ORIGIN_PRESETS.find(p=>p.type==='viral-break')
-  if(Math.random()<0.01) return ORIGIN_PRESETS.find(p=>p.type==='first-pack')
+  if(RNG()<0.02) return ORIGIN_PRESETS.find(p=>p.type==='viral-break')
+  if(RNG()<0.01) return ORIGIN_PRESETS.find(p=>p.type==='first-pack')
   return preset
 }
 
@@ -7705,24 +7718,24 @@ function generateOrderBook(setKey,market){
     // Market maker orders
     for(const mm of marketMakers){
       for(let i=0;i<mm.depth;i++){
-        const offset=price*mm.spread*(i+1)*(0.8+Math.random()*0.4)
+        const offset=price*mm.spread*(i+1)*(0.8+RNG()*0.4)
         const bidPrice=Math.round((price-offset)*100)/100
         const askPrice=Math.round((price+offset)*100)/100
-        const qty=Math.max(1,Math.floor(Math.random()*3*vol*5))
+        const qty=Math.max(1,Math.floor(RNG()*3*vol*5))
         newBids.push({cardNum:mc.num,name:mc.name,price:bidPrice,qty,maker:mm.name,orderType:'limit'})
         newAsks.push({cardNum:mc.num,name:mc.name,price:askPrice,qty,maker:mm.name,orderType:'limit'})
       }
     }
 
     // Random retail orders
-    if(Math.random()<0.3){
-      const qty=Math.floor(Math.random()*2)+1
-      const bidPrice=Math.round(price*(0.85+Math.random()*0.1)*100)/100
+    if(RNG()<0.3){
+      const qty=Math.floor(RNG()*2)+1
+      const bidPrice=Math.round(price*(0.85+RNG()*0.1)*100)/100
       newBids.push({cardNum:mc.num,name:mc.name,price:bidPrice,qty,maker:'retail',orderType:'limit'})
     }
-    if(Math.random()<0.3){
-      const qty=Math.floor(Math.random()*2)+1
-      const askPrice=Math.round(price*(1.05+Math.random()*0.15)*100)/100
+    if(RNG()<0.3){
+      const qty=Math.floor(RNG()*2)+1
+      const askPrice=Math.round(price*(1.05+RNG()*0.15)*100)/100
       newAsks.push({cardNum:mc.num,name:mc.name,price:askPrice,qty,maker:'retail',orderType:'limit'})
     }
   }
@@ -7887,6 +7900,11 @@ function cmdMarketOrder(){
 
 // Main
 const args=process.argv.slice(2);const cmd=args[0];
+{
+  const seedArg=args.indexOf('--seed');
+  const seed=seedArg>=0&&args[seedArg+1]?normalizeSeed(args[seedArg+1]):process.env.TRADING_CARDS_SEED;
+  setEngineSeed(seed);
+}
 {
   const cfg=loadCfg();
   if(cfg.activeSet){
