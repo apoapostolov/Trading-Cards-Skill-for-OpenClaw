@@ -8,6 +8,8 @@ Trading Cards Skill for OpenClaw drops you into an alternate universe where trad
 </p>
 <!-- markdownlint-enable MD033 -->
 
+The skill supports multiple players — each Discord/Telegram user gets their own wallet, collection, and trade history. Daily $5 stipends are tracked per-player with no double payments. Trading between players is built in.
+
 This skill is built for collectors and breakers who want the fantasy to feel real. It treats a virtual hobby like a living market: sealed product, chase tiers, grading pressure, resale spread, social hype, speculative liquidity, and the long emotional arc of chasing one more hit. The joke is that it is all fake. The joke also has a ledger.
 
 This repo is the public mirror of the skill. It bundles the runtime scripts, reference notes, and seeded simulation data needed to inspect, install, and extend the skill as a real OpenClaw package.
@@ -68,6 +70,7 @@ The repo includes the underlying scripts used by the skill. These are what the c
 | Script | Purpose |
 | --- | --- |
 | `scripts/card-engine.js` | Main simulation engine, pack opening, market logic, Flopps status, collection state |
+| `scripts/player-manager.js` | Multi-player system — register players, manage wallets, handle daily stipends, trade cards |
 | `scripts/ai-set-generator.js` | OpenRouter-backed AI set generation and Flopps launch content |
 | `scripts/card-image-prompts.js` | Build structured front/back image prompt bundles for cards |
 | `scripts/card-image-system.js` | Prompt synthesis helpers and set prompt persistence |

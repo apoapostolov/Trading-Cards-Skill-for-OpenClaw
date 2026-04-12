@@ -3989,7 +3989,9 @@ function cmdUndo(n){
   // process each set
   for(const[sk,ents] of Object.entries(bySet)){
     const col=loadCol(sk);if(!col){console.log(`  ⚠ Collection not found: ${sk}`);continue}
-    const set=rJ(path.join(DATA_DIR,'sets',sk+'.json'));if(!set){console.log(`  ⚠ Set not found: ${sk}`);continue}
+    let set=rJ(path.join(DATA_DIR,'sets',sk+'.json'));
+    if(!set){const entries=fs.readdirSync(path.join(DATA_DIR,'sets')).filter(f=>f.endsWith('.json'));const match=entries.find(f=>f.replace('.json','').startsWith(sk+'-'));if(match)set=rJ(path.join(DATA_DIR,'sets',match))}
+    if(!set){console.log(`  ⚠ Set not found: ${sk}`);continue}
     const cfg=loadCfg()
     let totalCards=0,totalSpent=0,totalPacks=0,totalBoxes=0
     for(const e of ents){

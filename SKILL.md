@@ -1,15 +1,61 @@
 ---
-name: trading_cards
 description: Virtual trading card pack breaks, collection system, and Flopps corporate parody layer. Generate AI-themed card sets, open packs, collect cards, track portfolio value, write fake corporate blog posts, and build satirical set-launch copy. Use when the user wants to open packs, check their collection, see card values, start a new set, write Flopps release notes/articles, or do anything related to virtual trading cards.
 ---
-
-<!-- markdownlint-disable -->
 
 # Trading Cards — Virtual Pack Breaks & Collection
 
 > Compartmentalized trading card system that generates modern artificial scarcity card sets with random AI themes. Open packs, collect cards, track portfolio value.
 
-## Player Defaults
+## Multi-User System
+
+The trading card system supports multiple players. Each Discord/Telegram user gets their own wallet, collection, and trade history.
+
+### Player Manager (scripts/player-manager.js)
+
+```
+player-manager register <name> [display-name]   # Register new player
+player-manager player <name>                      # Switch active player
+player-manager players                            # List all players
+player-manager me                                 # Show active player
+player-manager dir                               # Get active player data dir
+player-manager stipend <name>                    # Check/grant daily $5 stipend
+player-manager stipend all                       # Grant stipend to all players
+```
+
+### Daily Stipend
+
+Every registered player gets **$5/day** automatically. The stipend is tracked per-player by date — no double payments.
+
+- **Before any card-engine action for a player**, run `player-manager.js stipend <name>`
+- Returns `$5.00` if granted, or nothing if already received today
+- **`stipend all`** checks all registered players at once
+- The cron job (`daily-pocket-money`) calls `stipend all` at 10 AM Sofia time and announces paydays
+- **Do NOT use `card-engine.js add-money 5` for daily stipend** — that bypasses the dedup and causes double payments
+
+### Running Card Engine for a Specific Player
+
+**Before any action, check stipend:** `node player-manager.js stipend <name>` — auto-grants $5 if it's a new day.
+
+Set `TRADING_CARDS_DATA_DIR` to the player's directory:
+```
+TRADING_CARDS_DATA_DIR=$(node player-manager.js dir) node card-engine.js <command>
+```
+
+### Trading Between Players
+
+```
+player-manager trade offer <player> <my_card#> for <their_card#>
+player-manager trade accept <trade_id>
+player-manager trade reject <trade_id>
+player-manager trade pending
+player-manager trade list <player>   # Browse their collection
+```
+
+### Identifying Users
+
+When someone speaks in #trading-cards, check their Discord/Telegram name against registered players. If not registered, register them automatically with their display name.
+
+### Player Defaults
 
 - **Default pack type:** Retail ($5, 5 cards, no guaranteed hits). Always use `retail` unless Apo explicitly asks for hobby/blaster/jumbo. He's on a budget.
 - **Real by default:** Always run pack openings with `--real` unless Apo explicitly asks for a dry run or says "just looking" / "simulate".
