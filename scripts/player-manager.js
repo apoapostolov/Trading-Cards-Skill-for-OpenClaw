@@ -29,6 +29,9 @@ function checkStipend(playerName){
   if(!cfg)return null;
   cfg.wallet+=STIPEND_AMOUNT;
   wJ(cfgPath,cfg);
+  // Also sync wallet into all collection files so card-engine doesn't clobber it
+  const colsDir=path.join(playerDir(playerName),'collections');
+  try{for(const f of fs.readdirSync(colsDir)){if(!f.endsWith('.json'))continue;const col=JSON.parse(fs.readFileSync(path.join(colsDir,f),'utf8'));if(col.wallet!==undefined){col.wallet=cfg.wallet;fs.writeFileSync(path.join(colsDir,f),JSON.stringify(col,null,2))}}}catch{}
   player.lastStipend=today;
   savePlayers(reg);
   return STIPEND_AMOUNT;
@@ -481,6 +484,66 @@ function cmdTradeBrowse(playerName){
   console.log(`${'═'.repeat(52)}\n`);
 }
 
+function cmdGift(fromPlayer, toPlayer, cardNumStr){
+  const reg=loadPlayers();
+  const from=fromPlayer.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
+  const to=toPlayer.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
+  if(!reg.players[from]){console.log(`  ⚠ Player "${fromPlayer}" not found.`);return}
+  if(!reg.players[to]){console.log(`  ⚠ Player "${toPlayer}" not found.`);return}
+  if(from===to){console.log(`  ⚠ Cannot gift to yourself.`);return}
+  const cardNum=parseInt(cardNumStr);
+  if(isNaN(cardNum)){console.log('  ⚠ Invalid card number.');return}
+
+  // Find the card (prefer dupes, keep first copy)
+  const fromDir=playerDir(from);
+  const colDir=path.join(fromDir,'collections');
+  let giftCard=null,giftCol=null,giftFile=null;
+  if(fs.existsSync(colDir)){
+    for(const f of fs.readdirSync(colDir)){
+      if(!f.endsWith('.json'))continue;
+      const col=rJ(path.join(colDir,f));
+      if(!col||!col.cards)continue;
+      const matches=col.cards.filter(c=>String(c.cardNum)===String(cardNum));
+      if(!matches.length)continue;
+      // If multiple copies, gift the cheapest/dup; otherwise gift the only copy
+      if(matches.length>1){
+        matches.sort((a,b)=>a.price-b.price);
+        giftCard=matches[0];giftCol=col;giftFile=path.join(colDir,f);
+      }else if(!giftCard){
+        giftCard=matches[0];giftCol=col;giftFile=path.join(colDir,f);
+      }
+    }
+  }
+  if(!giftCard){console.log(`  ⚠ Card #${cardNum} not found in ${reg.players[from].displayName}'s collection.`);return}
+
+  // Remove from source
+  const idx=giftCol.cards.indexOf(giftCard);
+  giftCol.cards.splice(idx,1);
+  wJ(giftFile,giftCol);
+
+  // Add to target (create collection if needed)
+  const toColDir=path.join(playerDir(to),'collections');
+  fs.mkdirSync(toColDir,{recursive:true});
+  let toColFile=path.join(toColDir,giftCard.setKey+'.json');
+  let toCol=rJ(toColFile);
+  if(!toCol){
+    toCol={setKey:giftCard.setKey,cards:[],pulls:{},stats:{total:0,value:0,spent:0,boxes:0,packs:0,hits:0,oneOfOnes:0},bestPull:null,parallelCounts:{},wallet:0,sealedInventory:{}};
+  }
+  giftCard.acquired=new Date().toISOString();
+  giftCard.source=`gift from ${reg.players[from].displayName}`;
+  toCol.cards.push(giftCard);
+  wJ(toColFile,toCol);
+
+  // Sync wallet from config
+  const toCfg=rJ(path.join(playerDir(to),'config.json'));
+  if(toCfg){toCol.wallet=toCfg.wallet;wJ(toColFile,toCol)}
+
+  console.log(`\n${'═'.repeat(52)}`);
+  console.log(`  🎁 GIFTED: #${giftCard.cardNum} ${giftCard.name}${giftCard.parallel&&giftCard.parallel!=='Base'?' '+giftCard.parallel:''}`);
+  console.log(`  ${reg.players[from].displayName} → ${reg.players[to].displayName}`);
+  console.log(`${'═'.repeat(52)}\n`);
+}
+
 // ─── MAIN ─────────────────────────────────────────────────────
 const args=process.argv.slice(2);
 const cmd=args[0];
@@ -540,6 +603,10 @@ switch(cmd){
     cfg.wallet=amount;
     wJ(cfgPath,cfg);
     console.log(`  💰 ${pName}'s wallet set to ${fm$(amount)}`);
+    break;
+  case 'gift':
+    if(args.length<4){console.log('Usage: player-manager gift <from> <to> <card#>');break}
+    cmdGift(args[1],args[2],args[3]);
     break;
   case 'migrate':
     console.log('  Migration already handled automatically.');

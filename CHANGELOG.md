@@ -2,6 +2,19 @@
 
 All notable changes to this repository are documented here.
 
+## [1.1.1] - 2026-04-16
+
+### Added
+- **Card gifting** — `player-manager gift <from> <to> <card#>` transfers a card between players. If the sender has duplicates, gifts the cheapest copy (keeps the best one).
+
+### Fixed
+- **Stipend wallet sync** — daily stipend now writes to both `config.json` and all collection files, preventing the card-engine from clobbering the stipend with stale wallet values.
+- **Undo set lookup** — undo function now prefix-matches set files (e.g. `BOC` → `BOC-2026.json`), fixing a bug where history entries with short set codes failed to resolve.
+- **Gift card lookup** — fixed card matching to use `cardNum` (string) instead of `number`.
+
+### Changed
+- Cron job (`daily-pocket-money`) uses `stipend all` instead of raw `add-money` for built-in dedup.
+
 ## [1.1.0] - 2026-04-12
 
 ### Added

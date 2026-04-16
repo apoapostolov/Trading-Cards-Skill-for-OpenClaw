@@ -70,7 +70,7 @@ The repo includes the underlying scripts used by the skill. These are what the c
 | Script | Purpose |
 | --- | --- |
 | `scripts/card-engine.js` | Main simulation engine, pack opening, market logic, Flopps status, collection state |
-| `scripts/player-manager.js` | Multi-player system — register players, manage wallets, handle daily stipends, trade cards |
+| `scripts/player-manager.js` | Multi-player system — register players, manage wallets, handle daily stipends, trade and gift cards |
 | `scripts/ai-set-generator.js` | OpenRouter-backed AI set generation and Flopps launch content |
 | `scripts/card-image-prompts.js` | Build structured front/back image prompt bundles for cards |
 | `scripts/card-image-system.js` | Prompt synthesis helpers and set prompt persistence |

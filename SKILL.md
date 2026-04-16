@@ -49,6 +49,16 @@ player-manager trade accept <trade_id>
 player-manager trade reject <trade_id>
 player-manager trade pending
 player-manager trade list <player>   # Browse their collection
+
+### Gifting Cards
+
+```
+player-manager gift <from> <to> <card#>   # Gift a card to another player
+```
+- If the sender has duplicates, gifts the cheapest copy (keeps the best)
+- If only one copy, gifts the only copy
+- The card's `source` is updated to "gift from <player>"
+- No money changes hands — it's a gift!
 ```
 
 ### Identifying Users
