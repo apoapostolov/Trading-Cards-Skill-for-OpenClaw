@@ -22,9 +22,8 @@
 - **Hermes Agent compatibility** — Full support; runs identically on OpenClaw and Hermes Agent
 
 **Fixes:**
-- Network cache bug for SP500 FRED fetch (9s timeout on every command)
-- OpenRouter wildcard hang (disabled key caused 8s delay)
-- Flopps catch-up history duplication (inflation from 25 to 40+ entries)
+- **Slot-based portfolio display** — Collection count now uses unique card numbers ("slots") with a separate variant count, instead of counting every parallel as a distinct card. Portfolio shows: `125/150 slots (+86 variants)`
+- **Real calendar days for Flopps** — Simulation day tracking switched from manual day counter to `Math.floor((Date.now() - createdAt) / 86400000)`, matching real-world elapsed days. Flopps status now shows actual dates: `Sim day: 39 (8 May 2026)`
 - Collection file auto-creation on first pack open
 
 ## v1.1.1 — 2026-05-06
