@@ -3,986 +3,91 @@
 const fs=require('fs'),path=require('path');
 const {execSync,execFileSync}=require('child_process');
 const crypto=require('crypto');
-const DATA_DIR=process.env.TRADING_CARDS_DATA_DIR?path.resolve(process.env.TRADING_CARDS_DATA_DIR):path.join(__dirname,'..','data');
-const FLOPPS_DIR=path.join(DATA_DIR,'flopps');
-const FLOPPS_STATE_FILE=path.join(FLOPPS_DIR,'state.json');
-const FLOPPS_WILDCARD_DIR=path.join(FLOPPS_DIR,'wildcards');
-const CAT=require('./categories.js');
+const {createTradingLogger,summarize:logSummarize}=require('./trading-logger.js');
+const CAT = require('./categories.js');
+
+const {
+  getDataDir, CARD_FORMATS, AUTO_TYPES, AUTO_VARIANTS, RELIC_TYPES, RELIC_QUALITY,
+  composeAuto, composeRelic, mulberry32, ENGINE_BASE_SEED, GLOBAL_RNG, RNG, pwK,
+  PACK_CONFIG_PATH, loadPackConfig, getDefaultParallels, PACKS, DEFAULT_PARALLELS,
+  PARALLELS, DEFAULT_CARD_TYPES, SPECIALS, resolveParallels, resolveCardTypes,
+  resolveInserts, TIERS, SUBS, GRADES, PSA_TIERS, PLATES, GRADING_DIR,
+  COMPANIES_FILE, GRADING_STATE_FILE, POP_FILE, TIER_EMOJI, TIER_COLOR, PAR_EMOJI,
+  SUB_EMOJI, SP_EMOJI, FLOPPS_BULLETINS, FLOPPS_EXECUTIVES, FLOPPS_PRODUCT_LINES,
+  FLOPPS_PARTNERS, FLOPPS_PHASES, FLOPPS_TREND_CANDIDATES, HINT_CENTERING,
+  HINT_CORNERS, HINT_EDGES, HINT_SURFACE, HINT_APPEAL, CATS,
+} = require('./lib/constants');
+const {
+  LOG, setEngineSeed, rJ, wJ, fm$, pR, ri,
+  loadCfg, saveCfg, isPlayerScopedDataDir, requirePlayerContext,
+  loadSet, createEmptyCollection, loadCol, saveCol, rebuildPulls,
+  nextAcquisitionBatchId, createAcquisitionTracker, annotateAcquiredCard,
+  setLastAcquisitionBatch, getLatestAcquisitionBatch,
+  ensureSealedInventory, getSealedInventoryEntry, getSealedQty, addSealedProduct,
+  consumeSealedProduct, getSealedInventoryValue, formatSealedInventorySummary,
+  isReal, normalizeSeed, genCard, genSetCode, gaussRand, clamp,
+  generateCondition, ensureCondition,
+  FLOPPS_DIR, FLOPPS_STATE_FILE, FLOPPS_WILDCARD_DIR,
+  loadCompanies, loadGradingState, saveGradingState, loadPopulation, savePopulation,
+  psaTierForValue, conditionToGrade, isBlackLabel, gradeMultiplier,
+  estimateGradeProbability, gradeLabel, progressStr, bumpPopulation,
+  simNpcPopulationGrowth, rollGrade, generateQuality, getCond,
+} = require('./lib/helpers');
+const {
+  rollParallel, rollSpecial, rollCardType, composeCardTypeResult,
+  selectCard, calcPrice, fmtCard, pullCards, ensureSet,
+} = require('./lib/pack-engine');
+const {
+  loadMarket, getMarketCardList, saveMarket, normalizeMarketEvents,
+  getMacroState, loadMacroState, saveMacroState, fetchMacroState,
+  MARKET_EVENT_TYPES, MARKET_EVENT_PROFILES,
+  formatMarketEventDesc, getMarketEventProfile, isBullishMarketEvent, isBearishMarketEvent,
+  pickMarketEventType, buildMarketEvent, applyMarketEvent, addMarketEvent,
+  marketEventDemandMultiplier, activeMarketEvents,
+  calcPendingTicks, runMarketTicks, resimulateMarketSnapshot, catchUpMarketToNow,
+  getSimulationDay, computeSetAggregates, syncMarketToCollection,
+  enforceTierOrdering, tickMarketOnChange,
+  initMarket, assignChaseScore,
+  weightedPick, getSpeculationWeight, clamp01, hashStringSeed,
+} = require('./lib/market-engine');
+const {
+  floppsDefaultCorporation, ensureFloppsStateShape, loadFloppsState, saveFloppsState,
+  slugifyFloppsText, getFloppsPriceForDay, getSimulationDate,
+  buildFloppsReleaseCalendar, ensureFloppsReleaseCalendar, getFloppsReleaseWindow,
+  scoreFloppsTrendCandidate, ensureFloppsTrendDesk, getFloppsEcosystemSnapshot,
+  pickFloppsExecutive, advanceFloppsCorporationState, getFloppsSimulationContext,
+  pickFloppsBulletin, pickFloppsBulletinByCategory, buildAnnouncementFromBulletin,
+  buildQuarterlyFloppsAnnouncement, buildScheduledFloppsAnnouncement,
+  buildExceptionalFloppsAnnouncement, daysSinceLastFloppsAnnouncement,
+  updateFloppsStockPrice, getFloppsWildcardChance, normalizeFloppsWildcardEvent,
+  saveFloppsWildcardArtifact, maybeGenerateFloppsWildcardBulletin,
+  recordFloppsBulletin, formatFloppsNewsBlast, formatFloppsNewsSuffix,
+  maybeAnnounceFloppsNews, getFloppsOverlayLines,
+} = require('./lib/flopps-engine');
+const {
+  loadDefaultStores, loadStoreState, saveStoreState,
+  loadDefaultScalpers, loadScalperState, saveScalperState,
+  isSetHot, getDemandFactor,
+  getRelationshipTier, getRelationshipDiscount, getRecentScalperBuyQty,
+  getStoreInventoryProfile, calcStoreInventoryQty, ensureStoreInventory,
+  calcStorePrice, restockIfNeeded,
+  loadStoreSales, saveStoreSales, generateStoreSales, getStoreSaleDiscount,
+  ensureFullInventory,
+  simulateScalpersEnhanced, simulateScalpers,
+  loadListings, saveListings, loadLots, saveLots,
+  loadAuctions, saveAuctions, loadTraders, loadTradeHistory, saveTradeHistory,
+  tickListings, tickAuctionsEnhanced, tickAuctions, ensureNpcAuctions,
+  SUPPLIES, SALE_TYPES, ORIGIN_PRESETS, NPC_BIDDERS,
+  assignOrigin,
+} = require('./lib/economy-engine');
+const {
+  gradeRarityBonus, gradeflationPressure, processCompletedSubmissions,
+} = require('./lib/grading-engine');
+
+const {applyStipendSweep}=require('./stipend-sweeper.js');
+// getDataDir() is called afresh each time — respects TRADING_CARDS_DATA_DIR set at runtime
 const { buildRichSetMetadata } = require('./set-metadata.js');
 
-function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-let ENGINE_BASE_SEED=null;
-let GLOBAL_RNG=()=>crypto.randomInt(0,0x100000000)/0x100000000;
-function RNG(){return GLOBAL_RNG();}
-function setEngineSeed(seed){
-  if(seed===undefined||seed===null||seed===''){
-    ENGINE_BASE_SEED=null;
-    GLOBAL_RNG=()=>crypto.randomInt(0,0x100000000)/0x100000000;
-    return;
-  }
-  ENGINE_BASE_SEED=normalizeSeed(seed);
-  GLOBAL_RNG=mulberry32(ENGINE_BASE_SEED);
-}
-
-// ─── CARD FORMAT SYSTEM ──────────────────────────────────────────
-const CARD_FORMATS={
-  standard:  {name:'Standard (2.5×3.5)', mult:1,   rarityMod:1,   emoji:'🃏'},
-  mini:      {name:'Mini (1.5×2.5)',     mult:0.6, rarityMod:1.3, emoji:'🎫'},
-  landscape: {name:'Landscape (3.5×2.5)', mult:1.3, rarityMod:0.9, emoji:'🖼️'},
-  booklet:   {name:'Booklet (4×6 open)', mult:2.5, rarityMod:0.5, emoji:'📖'},
-  'die-cut': {name:'Die-Cut (custom)',   mult:1.8, rarityMod:0.7, emoji:'✂️'},
-  oversized: {name:'Oversized (5×7)',    mult:3,   rarityMod:0.3, emoji:'📋'},
-  acetate:   {name:'Acetate (clear)',    mult:2,   rarityMod:0.6, emoji:'💎'},
-};
-
-// ─── AUTO/RELIC COMPOSABLE MODIFIERS ────────────────────────────
-const AUTO_TYPES=[
-  {id:'on-card',  name:'On-Card',         mult:1,   emoji:'✍️'},
-  {id:'sticker',  name:'Sticker Auto',    mult:0.7, emoji:'📌'},
-  {id:'cut',      name:'Cut Signature',   mult:1.5, emoji:'✂️'},
-  {id:'facsimile',name:'Facsimile Auto',  mult:0.3, emoji:'📝'},
-];
-const AUTO_VARIANTS=[
-  {id:'single', name:'',           mult:1,  weight:60},
-  {id:'dual',   name:'Dual ',      mult:2.2,weight:20},
-  {id:'triple', name:'Triple ',    mult:4,  weight:5},
-  {id:'quad',   name:'Quad ',      mult:7,  weight:1.5},
-  {id:'multi',  name:'Multi ',     mult:5,  weight:3},
-];
-const RELIC_TYPES=[
-  {id:'jersey',  name:'Jersey',     mult:1,   emoji:'👕'},
-  {id:'patch',   name:'Patch',      mult:1.8, emoji:'🧩'},
-  {id:'bat',     name:'Bat',        mult:1.2, emoji:'🏏'},
-  {id:'ball',    name:'Ball',       mult:1.1, emoji:'⚽'},
-  {id:'base',    name:'Base',       mult:1.3, emoji:'🏠'},
-  {id:'coin',    name:'Coin',       mult:2,   emoji:'🪙'},
-  {id:'medal',   name:'Medal',      mult:1.5, emoji:'🏅'},
-  {id:'logoman', name:'Logoman',    mult:5,   emoji:'🏷️'},
-];
-const RELIC_QUALITY=[
-  {id:'standard',    name:'',          mult:1},
-  {id:'prime',       name:'Prime ',    mult:1.8},
-  {id:'super-prime', name:'Super ',    mult:3.5},
-  {id:'tag',         name:'Tag ',      mult:1.3},
-  {id:'nameplate',   name:'Nameplate', mult:6},
-];
-
-// Build a composed auto name + price modifier
-function composeAuto(){
-  const type=pwK(AUTO_TYPES,'mult',RNG); // weighted toward lower mult
-  const variant=pwK(AUTO_VARIANTS,'weight',RNG);
-  return {name:variant.name+type.name, mult:type.mult*variant.mult, emoji:type.emoji+variant.name.replace(/ /g,'').slice(0,1),
-    autoType:type.id, autoVariant:variant.id};
-}
-function composeRelic(){
-  const type=pwK(RELIC_TYPES,'mult',RNG);
-  const quality=pwK(RELIC_QUALITY,'mult',RNG);
-  return {name:quality.name+type.name+' Relic', mult:type.mult*quality.mult, emoji:type.emoji,
-    relicType:type.id, relicQuality:quality.id};
-}
-
-// ─── DEFAULT PARALLEL TEMPLATE (backward compat) ─────────────────
-const DEFAULT_PARALLELS=[
-  {name:"Base",tier:1,odds:1,num:false,ser:null,pm:1},
-  {name:"Chrome",tier:2,odds:3,num:false,ser:null,pm:1.3},
-  {name:"Purple Shimmer",tier:3,odds:6,num:false,ser:null,pm:1.8},
-  {name:"Blue Crackle",tier:4,odds:12,num:false,ser:null,pm:2.5},
-  {name:"Tie-Dye",tier:5,odds:18,num:false,ser:null,pm:3.5},
-  {name:"Pink Neon",tier:6,odds:24,num:false,ser:null,pm:5},
-  {name:"Gold",tier:7,odds:36,num:true,ser:2026,pm:8},
-  {name:"Green Lava",tier:8,odds:60,num:true,ser:499,pm:12},
-  {name:"Cyan Ice",tier:9,odds:80,num:true,ser:299,pm:18},
-  {name:"Magenta Pulse",tier:10,odds:100,num:true,ser:199,pm:25},
-  {name:"Orange Blaze",tier:11,odds:130,num:true,ser:99,pm:35},
-  {name:"Teal Surge",tier:12,odds:160,num:true,ser:75,pm:45},
-  {name:"Red Magma",tier:13,odds:200,num:true,ser:50,pm:60},
-  {name:"Black Shattered",tier:14,odds:350,num:true,ser:25,pm:100},
-  {name:"White Rainbow",tier:15,odds:500,num:true,ser:10,pm:180},
-  {name:"Gold Superfractor",tier:16,odds:5000,num:true,ser:1,pm:400},
-  {name:"Black Infinite",tier:17,odds:5000,num:true,ser:1,pm:600},
-  {name:"Printing Plate",tier:18,odds:5000,num:true,ser:1,pm:350},
-];
-
-// Alias for backward compat
-const PARALLELS=DEFAULT_PARALLELS;
-
-// ─── DEFAULT CARD TYPES (backward compat) ────────────────────────
-const DEFAULT_CARD_TYPES=[
-  {id:'variation',name:'Variation',rarity:0.35,priceMultiplier:1.5,format:'standard',desc:'🎨 Alt Art Variation'},
-  {id:'novelty',name:'Novelty',rarity:0.20,priceMultiplier:1.2,format:'standard',desc:'🍕 Novelty/Food Issue'},
-  {id:'relic',name:'Relic',rarity:0.20,priceMultiplier:4,format:'standard',desc:'🏅 Relic'},
-  {id:'autograph',name:'Autograph',rarity:0.15,priceMultiplier:6,format:'standard',desc:'✍️ Autograph'},
-  {id:'booklet',name:'Booklet',rarity:0.06,priceMultiplier:3,format:'booklet',desc:'📖 Booklet'},
-  {id:'error',name:'Error Variant',rarity:0.025,priceMultiplier:2,format:'standard',desc:'❌ Error Variant'},
-  {id:'dual-auto',name:'Dual Auto',rarity:0.012,priceMultiplier:12,format:'standard',desc:'✍️✍️ Dual Autograph'},
-  {id:'auto-patch',name:'Auto Patch',rarity:0.003,priceMultiplier:18,format:'standard',desc:'✍️🏅 Auto Patch'},
-];
-
-// Backward compat alias
-const SPECIALS=DEFAULT_CARD_TYPES.map(ct=>({name:ct.name,odds:ct.rarity*100,mult:ct.priceMultiplier,desc:ct.desc}));
-
-// Resolve parallels for a set (custom or default)
-function resolveParallels(set){return set&&set.parallels&&set.parallels.length?set.parallels:DEFAULT_PARALLELS}
-// Resolve card types for a set (custom or default)
-function resolveCardTypes(set){return set&&set.cardTypes&&set.cardTypes.length?set.cardTypes:DEFAULT_CARD_TYPES}
-// Resolve inserts for a set
-function resolveInserts(set){return set&&set.inserts||[]}
-
-// Pack hit rates: % chance each pack has a hit slot that fires
-// Hobby: ~42% hit rate → ~5 hits per 12-pack box (realistic)
-// Blaster: ~17% → ~1 hit per 6-pack box
-// Retail: 3% → occasional hit
-// Jumbo: 50% per hit slot, 2 hit slots
-const PACKS={
-  hobby:{name:"Hobby Box",packs:12,cpp:5,price:120,hitRate:0.42,slots:[{mt:2},{mt:6},{mt:10},{mt:15},{hit:true}]},
-  blaster:{name:"Blaster Box",packs:6,cpp:5,price:50,hitRate:0.17,slots:[{mt:2},{mt:2},{mt:8},{mt:12},{hit:true}]},
-  retail:{name:"Retail Pack",packs:1,cpp:5,price:5,hitRate:0.03,slots:[{mt:2},{mt:2},{mt:6},{mt:10},{mt:10}]},
-  jumbo:{name:"Jumbo Pack",packs:1,cpp:10,price:30,hitRate:0.50,slots:[{mt:2},{mt:2},{mt:4},{mt:6},{mt:8},{mt:10},{mt:10},{mt:12},{hit:true},{hit:true}]},
-};
-
-const TIERS=[
-  {name:"Common",w:55,st:[40,75],pr:[0.10,0.30]},
-  {name:"Uncommon",w:18,st:[50,80],pr:[0.30,0.75]},
-  {name:"Star",w:14,st:[60,90],pr:[0.75,1.50]},
-  {name:"Superstar",w:9,st:[70,95],pr:[1.50,3.00]},
-  {name:"Legendary",w:4,st:[80,98],pr:[3.00,5.00]},
-];
-const SUBS=[{name:"Base",w:50,m:1},{name:"Rookie",w:20,m:1.3},{name:"Legend",w:8,m:1.5},{name:"AllStar",w:12,m:1.2},{name:"Flashback",w:10,m:1.1}];
-const GRADES=[
-  {grade:10,name:"PSA 10 Gem Mint", w:8,  mult:1.35},
-  {grade:9, name:"PSA 9 Mint",       w:28, mult:1.15},
-  {grade:8, name:"PSA 8 NM-MT",      w:32, mult:1.0},
-  {grade:7, name:"PSA 7 NM",         w:17, mult:0.85},
-  {grade:6, name:"PSA 6 EX-MT",      w:8,  mult:0.65},
-  {grade:5, name:"PSA 5 EX",         w:4,  mult:0.50},
-  {grade:4, name:"PSA 4 VG-EX",      w:1.5,mult:0.35},
-  {grade:3, name:"PSA 3 VG",         w:1,  mult:0.25},
-  {grade:2, name:"PSA 2 GD",         w:0.4,mult:0.15},
-  {grade:1, name:"PSA 1 PR-FR",      w:0.1,mult:0.08},
-];
-
-// PSA grading tiers — cost depends on declared card value
-const PSA_TIERS=[
-  {name:"Value",        maxVal:500,   fee:28},
-  {name:"Value Max",    maxVal:1000,  fee:60},
-  {name:"Regular",      maxVal:2500,  fee:75},
-  {name:"Express",      maxVal:5000,  fee:150},
-  {name:"Super Express",maxVal:10000, fee:300},
-  {name:"Walk Through", maxVal:Infinity, fee:600},
-];
-function psaTierForValue(v){return PSA_TIERS.find(t=>v<=t.maxVal)||PSA_TIERS[PSA_TIERS.length-1];}
-const PLATES=["Cyan","Magenta","Yellow","Black"];
-
-// ─── GRADING ECONOMY ──────────────────────────────────────────────
-const GRADING_DIR=path.join(DATA_DIR,'grading');
-const COMPANIES_FILE=path.join(GRADING_DIR,'companies.json');
-const GRADING_STATE_FILE=path.join(GRADING_DIR,'state.json');
-const POP_FILE=path.join(GRADING_DIR,'population.json');
-
-function loadCompanies(){return rJ(COMPANIES_FILE)||{};}
-function loadGradingState(){let s=rJ(GRADING_STATE_FILE);if(!s)s={submissions:[],history:[]};return s;}
-function saveGradingState(s){wJ(GRADING_STATE_FILE,s);}
-function loadPopulation(){return rJ(POP_FILE)||{};}
-function savePopulation(p){wJ(POP_FILE,p);}
-
-function gaussRand(mean,std){let u=0,v=0;while(!u)u=RNG();while(!v)v=RNG();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)*std+mean;}
-function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
-
-function generateCondition(tier){
-  // Higher tier cards get slightly better condition
-  const tierBoost=(tier==='Legendary')?1.2:(tier==='Superstar')?0.8:(tier==='Star')?0.4:0;
-  return {
-    centering: Math.round(clamp(gaussRand(85+tierBoost,8),50,100)),
-    corners: Math.round(clamp(gaussRand(8+tierBoost*0.1,1.2),1,100))/10,
-    edges: Math.round(clamp(gaussRand(8.5+tierBoost*0.05,1.0),1,100))/10,
-    surface: Math.round(clamp(gaussRand(8+tierBoost*0.08,1.5),1,100))/10,
-  };
-}
-
-function ensureCondition(card){
-  if(card.condition)return card.condition;
-  const cond=generateCondition(card.starTier||'Common');
-  card.condition=cond;
-  return cond;
-}
-
-function conditionToGrade(cond,company){
-  const comp=loadCompanies()[company];
-  if(!comp)return conditionToGrade(cond,'PSA');
-  const strict=comp.strictness||0;
-  // Normalize all to 0-10 scale
-  const cCentering=cond.centering/10;
-  const cCorners=cond.corners;
-  const cEdges=cond.edges;
-  const cSurface=cond.surface;
-  // Weighted average with slight variance
-  const avg=(cCentering*0.25+cCorners*0.25+cEdges*0.25+cSurface*0.25);
-  const variance=(RNG()-0.5)*0.5; // ±0.25
-  let score=avg+variance+strict*0.15; // strictness shifts score
-  score=clamp(score,1,10);
-  // Map to grade scale
-  if(score>=9.5)return 10;
-  if(score>=8.75)return 9;
-  if(score>=8.0)return 8.5;
-  if(score>=7.0)return 8;
-  if(score>=6.0)return 7;
-  if(score>=5.0)return 6;
-  if(score>=4.0)return 5;
-  if(score>=3.0)return 4;
-  if(score>=2.0)return 3;
-  if(score>=1.0)return 2;
-  return 1;
-}
-
-function isBlackLabel(cond){
-  return cond.centering>=95&&cond.corners>=9.8&&cond.edges>=9.8&&cond.surface>=9.8;
-}
-
-function gradeMultiplier(grade,company,cond){
-  const base={10:3,9:2.5,8.5:1.8,8:1.3,7:1.0,6:0.85,5:0.7,4:0.5,3:0.35,2:0.2,1:0.1}[grade]||1;
-  let mult=base;
-  if(company==='BGS'&&grade===10&&isBlackLabel(cond))mult*=2.5; // Black Label premium
-  if(company==='PSA')mult*=1.1; // PSA highest resale
-  if(company==='SGC')mult*=0.9;
-  return mult;
-}
-
-function estimateGradeProbability(cond,company,targetGrade){
-  // Monte Carlo estimate
-  let hits=0;const trials=200;
-  for(let i=0;i<trials;i++){
-    if(conditionToGrade(cond,company)>=targetGrade)hits++;
-  }
-  return hits/trials;
-}
-
-function gradeLabel(grade,company,cond){
-  if(company==='BGS'&&grade===10&&isBlackLabel(cond))return 'BGS 10 Black Label 💎';
-  return `${company} ${grade}`;
-}
-
-function progressStr(elapsed,total){
-  const pct=Math.min(elapsed/total,1);
-  const filled=Math.round(pct*15);
-  return '█'.repeat(filled)+'░'.repeat(15-filled);
-}
-
-function bumpPopulation(setKey,cardNum,company,grade){
-  const pop=loadPopulation();
-  if(!pop[setKey])pop[setKey]={};
-  if(!pop[setKey][cardNum])pop[setKey][cardNum]={totalGraded:0};
-  const card=pop[setKey][cardNum];
-  if(!card[company])card[company]={};
-  card[company][grade]=(card[company][grade]||0)+1;
-  card.totalGraded++;
-  // Simulate NPC grading (add some noise to population)
-  const npcChance=RNG();
-  if(npcChance<0.3){
-    const npcCompanies=['PSA','BGS','SGC'];
-    const npcCompany=npcCompanies[Math.floor(RNG()*npcCompanies.length)];
-    const npcGrades=[10,9,8.5,8,7];
-    const npcGrade=npcGrades[Math.floor(RNG()*npcGrades.length)];
-    if(!card[npcCompany])card[npcCompany]={};
-    card[npcCompany][npcGrade]=(card[npcCompany][npcGrade]||0)+1;
-    card.totalGraded++;
-  }
-  savePopulation(pop);
-}
-
-function simNpcPopulationGrowth(setKey,cardNum){
-  // Called on grade pop/status to simulate NPC grading over time
-  const pop=loadPopulation();
-  if(!pop[setKey]||!pop[setKey][cardNum])return;
-  const card=pop[setKey][cardNum];
-  const currentTotal=card.totalGraded;
-  const growth=Math.floor(RNG()*Math.min(3,Math.max(1,currentTotal*0.05)));
-  for(let i=0;i<growth;i++){
-    const npcCompanies=['PSA','BGS','SGC'];
-    const weights=[0.5,0.3,0.2];
-    let r=RNG();let npcCompany='PSA';
-    let acc=0;for(let j=0;j<npcCompanies.length;j++){acc+=weights[j];if(r<=acc){npcCompany=npcCompanies[j];break;}}
-    const npcGrades=[10,9,8.5,8,7];
-    const npcWeights=[0.08,0.3,0.25,0.22,0.15];
-    let r2=RNG();let npcGrade=9;let acc2=0;
-    for(let j=0;j<npcGrades.length;j++){acc2+=npcWeights[j];if(r2<=acc2){npcGrade=npcGrades[j];break;}}
-    if(!card[npcCompany])card[npcCompany]={};
-    card[npcCompany][npcGrade]=(card[npcCompany][npcGrade]||0)+1;
-    card.totalGraded++;
-  }
-  savePopulation(pop);
-}
-
-// Display mappings
-const TIER_EMOJI={Common:"",Uncommon:"🔶",Star:"⭐",Superstar:"🌟",Legendary:"👑"};
-const TIER_COLOR={Common:"",Uncommon:"🟢",Star:"🔵",Superstar:"🟣",Legendary:"🟡"};
-const PAR_EMOJI={Base:"",Chrome:"💎","Purple Shimmer":"💜","Blue Crackle":"🔷","Tie-Dye":"🌈","Pink Neon":"💗",
-  "Gold":"🥇","Green Lava":"🟢","Cyan Ice":"🧊","Magenta Pulse":"🍓","Orange Blaze":"🔥","Teal Surge":"🌊",
-  "Red Magma":"🌋","Black Shattered":"🖤","White Rainbow":"🌈","Gold Superfractor":"🏆","Black Infinite":"♾️","Printing Plate":"⚙️"};
-const SUB_EMOJI={Base:"🃏",Rookie:"🔰",Legend:"📜",AllStar:"🏅",Flashback:"⏪"};
-const FLOPPS_BULLETINS=[
-  {id:'premium-alignment',title:'Premium Alignment Initiative',summary:'Flopps says its premium pricing now better reflects collector aspiration.',paraphrase:'They are raising prices and calling it alignment.',stockDelta:-0.05,weight:1.2},
-  {id:'organizational-focus',title:'Organizational Focus Update',summary:'A small number of roles are being removed so the company can focus on growth.',paraphrase:'They are firing people and calling it focus.',stockDelta:-0.09,weight:1.1},
-  {id:'allocation-recalibration',title:'Allocation Recalibration',summary:'Retailers will receive product in a more disciplined, highly selective way.',paraphrase:'They are cutting supply and pretending it is fairness.',stockDelta:-0.04,weight:1.0},
-  {id:'collector-experience',title:'Collector Experience Enhancement',summary:'Flopps is lowering odds on certain chase items to improve long-term excitement.',paraphrase:'They lowered drop chances and called it excitement.',stockDelta:-0.06,weight:1.1},
-  {id:'roadmap-clarity',title:'Roadmap Clarity Note',summary:'Management reaffirmed that more sets, more often, remains the operating norm.',paraphrase:'They are speeding up the release cycle.',stockDelta:0.03,weight:0.9},
-  {id:'margin-discipline',title:'Margin Discipline Review',summary:'The company is reviewing every line for premium alignment and margin integrity.',paraphrase:'They are squeezing every last cent out of the hobby.',stockDelta:-0.03,weight:0.95},
-  {id:'community-transparency',title:'Community Transparency Bulletin',summary:'Flopps assures collectors that all product decisions are made with them in mind.',paraphrase:'They are whitewashing a harder business decision.',stockDelta:-0.02,weight:0.85},
-  {id:'warehouse-rationalization',title:'Warehouse Rationalization Program',summary:'Logistics will be consolidated to better support the modern collector journey.',paraphrase:'They are centralizing logistics to keep product tighter.',stockDelta:-0.04,weight:0.9},
-  {id:'retail-partner-reset',title:'Retail Partner Reset',summary:'The company is asking partners to accept a leaner, more premium product mix.',paraphrase:'They are squeezing stores and calling it partnership.',stockDelta:-0.03,weight:0.9},
-  {id:'investor-day',title:'Investor Day Preview',summary:'Leadership will explain why scarcity, velocity, and demand are all good news.',paraphrase:'They are prepping a Wall Street performance about greed.',stockDelta:0.07,weight:1.0},
-  {id:'shareholder-letter',title:'Shareholder Letter',summary:'The board praised disciplined scarcity and the ongoing strength of the hobby economy.',paraphrase:'They are bragging about squeezing collectors for shareholders.',stockDelta:0.06,weight:1.0},
-  {id:'buyback-window',title:'Share Repurchase Window',summary:'Flopps authorized a buyback of its own shares while leaving product tight.',paraphrase:'They are using money to prop up the ticker.',stockDelta:0.08,weight:0.8},
-  {id:'anti-regulation',title:'Collector Choice Advocacy',summary:'The company expanded its advocacy efforts around collector freedom and market flexibility.',paraphrase:'They are lobbying against rules without saying the quiet part.',stockDelta:0.02,weight:0.85},
-  {id:'trade-group',title:'Industry Participation Update',summary:'Flopps joined a coalition focused on growth, access, and responsible business clarity.',paraphrase:'They are funding generic dark-money style influence.',stockDelta:0.01,weight:0.85},
-  {id:'pricing-study',title:'Pricing Study Results',summary:'Internal research suggests the audience remains extremely responsive to premium language.',paraphrase:'They learned collectors will pay more if you smile while asking.',stockDelta:-0.03,weight:0.95},
-  {id:'odds-refinement',title:'Odds Refinement Notice',summary:'Hit ratios will be tuned for a better, more balanced collector arc.',paraphrase:'They are lowering hit rates and pretending it is balance.',stockDelta:-0.07,weight:1.15},
-  {id:'shortage-lab',title:'Shortage Lab Launch',summary:'A new operations initiative will better match printed supply to collector demand.',paraphrase:'They are engineering scarcity on purpose.',stockDelta:-0.05,weight:1.0},
-  {id:'price-hike',title:'Price Architecture Adjustment',summary:'MSRP will rise to reflect premium positioning across select product lines.',paraphrase:'They raised the price again and called it architecture.',stockDelta:-0.08,weight:1.15},
-  {id:'line-optimization',title:'Product Line Optimization',summary:'Several legacy SKUs will be retired to make room for a sharper assortment.',paraphrase:'They are killing products that do not squeeze hard enough.',stockDelta:0.02,weight:0.9},
-  {id:'support-automation',title:'Support Modernization Update',summary:'Customer support will be streamlined through a more efficient digital-first model.',paraphrase:'They are automating the complaints department.',stockDelta:-0.03,weight:0.85},
-  {id:'launch-acceleration',title:'Launch Acceleration Notice',summary:'The next drop is moving up the calendar to meet collector appetite sooner.',paraphrase:'They moved the release earlier to keep people buying.',stockDelta:0.04,weight:0.95},
-  {id:'chase-refresh',title:'Chase Architecture Refresh',summary:'High-end hits will receive a refreshed structure to better sustain engagement.',paraphrase:'They are changing the chases to keep the addiction loop fresh.',stockDelta:-0.04,weight:1.0},
-  {id:'marketing-pivot',title:'Marketing Pivot Brief',summary:'Flopps is testing a warmer tone while preserving the same aggressive product stack.',paraphrase:'They are smiling harder while doing the same thing.',stockDelta:0.01,weight:0.8},
-  {id:'compliance-note',title:'Compliance and Conduct Note',summary:'The company reminded employees that all public language should remain collector-positive.',paraphrase:'They told staff to keep the cruelty polite.',stockDelta:-0.01,weight:0.7},
-  {id:'margin-expansion',title:'Margin Expansion Program',summary:'Leadership believes the hobby can support slightly higher prices without losing momentum.',paraphrase:'They think the market will tolerate more greed.',stockDelta:0.03,weight:1.0},
-  {id:'exclusive-rights',title:'Exclusive Rights Celebration',summary:'Flopps renewed a major rights agreement and called it a win for fans.',paraphrase:'They are celebrating another gatekeeping victory.',stockDelta:0.06,weight:0.9},
-  {id:'creator-partnership',title:'Creator Partnership Rollout',summary:'A new live-content partnership will turn more breaks into event media.',paraphrase:'They are turning commerce into content to sell faster.',stockDelta:0.05,weight:0.95},
-  {id:'recall-management',title:'Recall Management Update',summary:'A small subset of product is being reviewed for presentation consistency.',paraphrase:'They are hiding a problem in bureaucracy.',stockDelta:-0.08,weight:0.75},
-  {id:'collector-fatigue',title:'Collector Fatigue Acknowledgment',summary:'Leadership noted that some collectors may need a stronger reason to stay engaged.',paraphrase:'They noticed the audience is tired and plan to push harder.',stockDelta:-0.06,weight:0.85},
-  {id:'holiday-briefing',title:'Holiday Briefing',summary:'Seasonal demand will be supported by a tighter, more premium giftable lineup.',paraphrase:'They are gearing up for the annual spending trap.',stockDelta:0.04,weight:0.9},
-  {id:'earnings-call',title:'Earnings Call Preview',summary:'Management will present another quarter of disciplined execution and collectible enthusiasm.',paraphrase:'They are preparing a call where greed gets translated into confidence.',stockDelta:0.07,weight:1.0},
-  {id:'street-response',title:'Street Response Note',summary:'Flopps is monitoring market reaction and remains confident in the current valuation story.',paraphrase:'They are watching the stock and pretending nothing is wrong.',stockDelta:0.02,weight:0.8},
-  {id:'allocation-tightening',title:'Allocation Tightening Advisory',summary:'Some regions will see tighter drop allocations while core markets receive priority.',paraphrase:'They are rationing product by geography.',stockDelta:-0.05,weight:0.95},
-  {id:'aftermarket-fee',title:'Aftermarket Fee Update',summary:'Platform fees and consignment terms are being adjusted for a more sustainable ecosystem.',paraphrase:'They are taking a bigger cut from the secondary market.',stockDelta:-0.04,weight:0.9},
-  {id:'ethics-whitewash',title:'Community Responsibility Statement',summary:'Flopps reaffirmed its commitment to collector trust, transparency, and responsible excitement.',paraphrase:'They are laundering the vibe in corporate language.',stockDelta:0.0,weight:0.9},
-  {id:'calendar-discipline',category:'cadence',title:'Calendar Discipline Memo',summary:'Flopps said the release slate will be managed with stricter sequencing to reduce idle demand periods.',paraphrase:'They found a more disciplined way to keep customers from cooling off.',stockDelta:0.03,weight:0.8},
-  {id:'preorder-governance',category:'pricing',title:'Preorder Governance Update',summary:'Preorder access will move to a more curated framework that better rewards highly engaged collectors.',paraphrase:'They are gating preorders harder and calling it loyalty.',stockDelta:0.02,weight:0.8},
-  {id:'bundle-optimization',category:'pricing',title:'Bundle Optimization Initiative',summary:'Selected products will now ship in higher-value bundles designed to simplify the collector decision journey.',paraphrase:'They are forcing customers into bigger carts.',stockDelta:0.04,weight:0.9},
-  {id:'breaker-ecosystem',category:'community',title:'Breaker Ecosystem Support Plan',summary:'Flopps is increasing support for live breakers as key storytelling partners in the collector economy.',paraphrase:'They are feeding the people who turn sales into spectacle.',stockDelta:0.04,weight:0.85},
-  {id:'factory-modernization',category:'operations',title:'Factory Modernization Brief',summary:'Capital investment in print operations will improve premium consistency and protect future launch velocity.',paraphrase:'They are buying equipment so they can squeeze harder at higher volume.',stockDelta:0.05,weight:0.75},
-  {id:'security-protocol',category:'operations',title:'Collector Security Protocol Notice',summary:'Enhanced anti-leak controls are being introduced across packaging, logistics, and partner handling.',paraphrase:'They are locking down the pipeline because leaks disrupt the hype calendar.',stockDelta:0.01,weight:0.7},
-  {id:'waitlist-enhancement',category:'allocation',title:'Waitlist Enhancement Program',summary:'Flopps is introducing a more sophisticated waitlist flow for high-demand drops and premium windows.',paraphrase:'They are industrializing disappointment.',stockDelta:0.02,weight:0.9},
-  {id:'lottery-access',category:'allocation',title:'Fair Access Lottery Pilot',summary:'A randomized access pilot will help distribute limited products across a broader collector base.',paraphrase:'They are making scarcity feel participatory.',stockDelta:0.01,weight:0.85},
-  {id:'regional-tiering',category:'allocation',title:'Regional Tiering Framework',summary:'Priority regions will receive stronger support while emerging zones are managed through a disciplined allocation curve.',paraphrase:'They are deciding which geographies matter this quarter.',stockDelta:-0.03,weight:0.85},
-  {id:'shelf-rationalization',category:'operations',title:'Shelf Rationalization Program',summary:'Retail presentation standards are being tightened so fewer products occupy more premium shelf moments.',paraphrase:'They are shrinking the visible choice set to steer demand.',stockDelta:0.02,weight:0.8},
-  {id:'channel-harmonization',category:'operations',title:'Channel Harmonization Note',summary:'Pricing and availability will become more consistent across stores, breakers, and direct channels.',paraphrase:'They are making sure every channel squeezes in the same direction.',stockDelta:0.03,weight:0.8},
-  {id:'fulfillment-priority',category:'operations',title:'Fulfillment Priority Matrix',summary:'Priority handling is being extended to key products, top partners, and premium customer segments.',paraphrase:'They are formalizing favoritism as operations.',stockDelta:0.02,weight:0.8},
-  {id:'return-friction',category:'pricing',title:'Returns Experience Revision',summary:'Flopps is refining the returns journey to protect product integrity and long-term ecosystem health.',paraphrase:'They are making returns more annoying.',stockDelta:0.01,weight:0.75},
-  {id:'packaging-heritage',category:'community',title:'Packaging Heritage Statement',summary:'The company is preserving iconic packaging cues while elevating the unboxing moment for modern collectors.',paraphrase:'They are using nostalgia to justify the next premium box.',stockDelta:0.02,weight:0.75},
-  {id:'print-run-opacity',category:'community',title:'Print-Run Confidence Note',summary:'Flopps says collectors should focus on quality, not speculative estimates about print volumes.',paraphrase:'They are asking people not to look too closely at supply.',stockDelta:0.0,weight:0.9},
-  {id:'serial-storytelling',category:'pricing',title:'Serial Storytelling Expansion',summary:'Limited numbering will be embedded more intentionally into future product narratives and collector journeys.',paraphrase:'They are turning scarcity labels into plot devices.',stockDelta:0.03,weight:0.8},
-  {id:'vip-corridor',category:'allocation',title:'VIP Corridor Rollout',summary:'A new premium access corridor will improve service for Flopps highest-conviction customers and partners.',paraphrase:'They are building a velvet rope for whales.',stockDelta:0.04,weight:0.85},
-  {id:'slab-synergy',category:'marketplace',title:'Slab Synergy Initiative',summary:'Grading, marketplace, and release timing will be aligned more closely to support healthier price discovery.',paraphrase:'They want every part of the machine compounding the same frenzy.',stockDelta:0.05,weight:0.8},
-  {id:'consignment-confidence',category:'marketplace',title:'Consignment Confidence Refresh',summary:'Higher-value consignment inventory will be curated more aggressively to protect market tone and premium outcomes.',paraphrase:'They are curating the resale market so prices stay flattering.',stockDelta:0.03,weight:0.75},
-  {id:'direct-channel-growth',category:'marketplace',title:'Direct Channel Growth Update',summary:'More high-profile products will be routed through Flopps-owned channels to improve the end-to-end collector experience.',paraphrase:'They want a bigger share of the whole stack.',stockDelta:0.05,weight:0.85},
-  {id:'break-calendar',category:'community',title:'Event Break Calendar Announcement',summary:'The company is formalizing a break-event calendar to better synchronize releases, media, and collector anticipation.',paraphrase:'They are scheduling the hype as a service.',stockDelta:0.04,weight:0.8},
-  {id:'forum-listening',category:'community',title:'Forum Listening Initiative',summary:'Community teams will expand passive listening across hobby forums, creator channels, and resale chatter.',paraphrase:'They are monitoring the audience more carefully.',stockDelta:0.01,weight:0.7},
-  {id:'ambassador-refresh',category:'community',title:'Collector Ambassador Refresh',summary:'Flopps is updating its ambassador roster to better reflect the modern voice of the hobby.',paraphrase:'They are hiring new hype intermediaries.',stockDelta:0.02,weight:0.8},
-  {id:'overtime-alignment',category:'labor',title:'Overtime Alignment Notice',summary:'Operational teams will enter a short-term extended-hours posture to secure launch readiness across priority products.',paraphrase:'They are squeezing staff through launch week.',stockDelta:0.01,weight:0.8},
-  {id:'headcount-rebalancing',category:'labor',title:'Headcount Rebalancing Update',summary:'Corporate support layers are being rebalanced to keep resources close to execution and premium demand moments.',paraphrase:'They are cutting back-office people to protect launch budgets.',stockDelta:0.03,weight:0.9},
-  {id:'benefits-modernization',category:'labor',title:'Benefits Modernization Bulletin',summary:'Employee offerings will move to a more modern framework aligned with the companys next phase of growth.',paraphrase:'They are taking things away and calling it modernization.',stockDelta:-0.02,weight:0.8},
-  {id:'campus-consolidation',category:'labor',title:'Campus Consolidation Plan',summary:'Flopps will centralize more teams into a smaller number of strategic offices over the next cycle.',paraphrase:'They want fewer offices and more control.',stockDelta:0.02,weight:0.75},
-  {id:'contractor-flexibility',category:'labor',title:'Flexible Talent Model Update',summary:'The company is broadening its use of flexible specialist talent to remain responsive to market rhythms.',paraphrase:'They are leaning harder on contractors.',stockDelta:0.03,weight:0.8},
-  {id:'policy-education',category:'lobbying',title:'Policy Education Campaign',summary:'Flopps will expand policy education efforts around market flexibility, collector choice, and modern commerce.',paraphrase:'They are lobbying with friendlier stationery.',stockDelta:0.02,weight:0.75},
-  {id:'grassroots-simulation',category:'lobbying',title:'Grassroots Advocacy Activation',summary:'Collectors will have new opportunities to make their voices heard on issues shaping the future of the hobby.',paraphrase:'They are manufacturing a grassroots campaign.',stockDelta:0.01,weight:0.7},
-  {id:'compliance-reframing',category:'lobbying',title:'Regulatory Clarity Working Group',summary:'Flopps joined a working group focused on proportional rules for modern collectibles commerce.',paraphrase:'They are trying to soften oversight before it arrives.',stockDelta:0.02,weight:0.75},
-  {id:'licensing-optionality',category:'licensing',title:'Licensing Optionality Update',summary:'Management is pursuing a wider set of flexible licensing pathways to support future product moments.',paraphrase:'They are shopping for whatever fandom prices best next cycle.',stockDelta:0.04,weight:0.8},
-  {id:'franchise-readiness',category:'licensing',title:'Franchise Readiness Review',summary:'Flopps says several entertainment properties are being assessed for release-window fit, collector resonance, and premium viability.',paraphrase:'They are focus-testing fandoms for extraction potential.',stockDelta:0.05,weight:0.85},
-  {id:'trend-desk',category:'licensing',title:'Marketability Committee Brief',summary:'The trend desk has elevated a shortlist of culturally ascendant properties after reviewing search momentum, release windows, and monetization fit.',paraphrase:'They are picking the next set by testing what the internet is currently obsessed with.',stockDelta:0.04,weight:0.9},
-  {id:'franchise-stack',category:'licensing',title:'Franchise Stack Expansion',summary:'Future sets will balance evergreen licenses, release-window spikes, and prestige nostalgia opportunities across the calendar.',paraphrase:'They are building a conveyor belt of monetizable IP.',stockDelta:0.05,weight:0.85},
-  {id:'investor-narrative',category:'investor',title:'Narrative Quality Update',summary:'Flopps says the market increasingly understands its disciplined release architecture and premium collectibles thesis.',paraphrase:'They think the stock story is finally polished enough for institutions.',stockDelta:0.05,weight:0.75},
-  {id:'guidance-tightening',category:'investor',title:'Guidance Tightening Statement',summary:'Management is tightening guidance language to reflect stronger visibility into releases, pricing, and partner monetization.',paraphrase:'They are managing expectations with better spreadsheet theater.',stockDelta:0.04,weight:0.75},
-  {id:'synergy-realization',category:'investor',title:'Synergy Realization Update',summary:'Cross-functional alignment between licensing, marketplace, and product teams is producing more coherent premium outcomes.',paraphrase:'They found another way to say the machine is feeding itself.',stockDelta:0.04,weight:0.75},
-  {id:'cash-deployment',category:'investor',title:'Capital Deployment Note',summary:'Flopps will prioritize capital deployment toward formats, licenses, and channels with the highest long-term collector yield.',paraphrase:'They are investing where the squeeze is cleanest.',stockDelta:0.05,weight:0.75},
-  {id:'customer-lifetime',category:'pricing',title:'Collector Lifetime Value Review',summary:'The company has refined its view of lifetime collector engagement across sealed, grading, and resale touchpoints.',paraphrase:'They are measuring exactly how much one person can be worth over time.',stockDelta:0.03,weight:0.85},
-  {id:'bundle-ethics',category:'community',title:'Accessibility and Value Note',summary:'Flopps says curated bundles remain one of the most accessible ways for collectors to participate at scale.',paraphrase:'They are pretending forced bundles are generous.',stockDelta:0.01,weight:0.8},
-  {id:'microdrop-governance',category:'cadence',title:'Microdrop Governance Memo',summary:'Short-form drops will be used more strategically to maintain relevance between major releases without overwhelming the calendar.',paraphrase:'They are creating smaller excuses to keep the funnel warm.',stockDelta:0.03,weight:0.8},
-  {id:'surprise-window',category:'cadence',title:'Surprise Window Activation',summary:'Management has reserved optional surprise windows to capture moments of elevated cultural attention.',paraphrase:'They want the right to opportunistically monetize a sudden trend spike.',stockDelta:0.04,weight:0.85},
-  {id:'deceleration-denial',category:'investor',title:'Demand Normalization Commentary',summary:'Flopps believes recent moderation in some categories reflects healthy normalization, not softness in the hobby model.',paraphrase:'They are calling weaker demand healthy.',stockDelta:-0.01,weight:0.7},
-  {id:'heritage-extraction',category:'pricing',title:'Nostalgia Monetization Update',summary:'Legacy design language will be deployed more deliberately in premium formats where collector memory supports stronger realized value.',paraphrase:'They are weaponizing nostalgia with sharper margins.',stockDelta:0.03,weight:0.8},
-  {id:'queue-experience',category:'allocation',title:'Queue Experience Improvement',summary:'Digital queues will be refreshed to improve fairness, clarity, and anticipation during high-traffic release moments.',paraphrase:'They are redesigning the line so waiting feels like a feature.',stockDelta:0.02,weight:0.8},
-  {id:'mystery-box',category:'pricing',title:'Discovery Format Pilot',summary:'A new discovery-led format will blend curated uncertainty with premium storytelling and limited availability.',paraphrase:'They invented a fancier loot box sentence.',stockDelta:0.04,weight:0.9},
-  {id:'reputation-defense',category:'community',title:'Collector Trust Defense',summary:'Flopps said online criticism often misses the complexity required to sustain a modern premium collectibles ecosystem.',paraphrase:'They are defending the company by blaming the audience for not understanding the machine.',stockDelta:0.0,weight:0.75},
-];
-const FLOPPS_EXECUTIVES=[
-  {role:'CEO',name:'Adrian Vale',domain:'portfolio'},
-  {role:'CFO',name:'Lillian Mercer',domain:'margin'},
-  {role:'President of Product',name:'Grant Bell',domain:'cadence'},
-  {role:'CMO',name:'Elena Cross',domain:'hype'},
-  {role:'VP of Allocation',name:'Marcus Reed',domain:'allocation'},
-  {role:'Head of Community',name:'Noelle Park',domain:'community'},
-  {role:'Chief People Officer',name:'Dana Sloane',domain:'labor'},
-  {role:'Head of Government Affairs',name:'Reed Harlan',domain:'lobbying'},
-  {role:'Investor Relations',name:'Mira North',domain:'ticker'},
-];
-const FLOPPS_PRODUCT_LINES=[
-  'Flagship Series','Chrome Velocity','Heritage Archive','Midnight Obsidian',
-  'Prism Apex','Museum Reserve','Instant Shock Drop','Bowline Prospects',
-  'Dynasty Reserve','Cosmic Crossover'
-];
-const FLOPPS_PARTNERS=[
-  'Major League Baseball','global football rights desk','combat sports licensing',
-  'prestige entertainment studio','retro animation vault','streaming franchise slate',
-  'children\'s fantasy estate','sci-fi action universe','wrestling media partner','racing series office'
-];
-const FLOPPS_PHASES=[
-  {id:'planning',label:'Long-Range Planning'},
-  {id:'licensing',label:'Licensing Negotiation'},
-  {id:'prelaunch',label:'Prelaunch Tease Cycle'},
-  {id:'launch',label:'Launch Window'},
-  {id:'sellthrough',label:'Sell-Through Extraction'},
-  {id:'cooldown',label:'Collector Fatigue Management'},
-];
-const FLOPPS_TREND_CANDIDATES=[
-  {name:'Harry Potter',partner:'Warner-style fantasy partner',category:'entertainment',base:0.88,windowMonths:[4,10],formatBias:'premium'},
-  {name:'Superhero summer tentpole',partner:'major comic-film studio',category:'entertainment',base:0.82,windowMonths:[5,6,7],formatBias:'chrome'},
-  {name:'Prestige sci-fi franchise',partner:'streaming sci-fi slate',category:'entertainment',base:0.77,windowMonths:[9,11],formatBias:'hobby'},
-  {name:'Anime crossover event',partner:'global anime licensing desk',category:'entertainment',base:0.79,windowMonths:[1,4,10],formatBias:'instant-drop'},
-  {name:'Premier football stars',partner:'global football rights desk',category:'sports',base:0.84,windowMonths:[8,9],formatBias:'flagship'},
-  {name:'MLB opening week',partner:'Major League Baseball',category:'sports',base:0.81,windowMonths:[3,4],formatBias:'flagship'},
-  {name:'NFL rookie season',partner:'pro football rights office',category:'sports',base:0.86,windowMonths:[4,8,9],formatBias:'chrome'},
-  {name:'Formula racing spotlight',partner:'global racing series office',category:'sports',base:0.73,windowMonths:[3,5,10],formatBias:'premium'},
-  {name:'Wrestling premium event',partner:'wrestling media partner',category:'sports-entertainment',base:0.75,windowMonths:[0,3,7,10],formatBias:'hobby'},
-  {name:'Fantasy streaming reboot',partner:'children\'s fantasy estate',category:'entertainment',base:0.76,windowMonths:[6,9,11],formatBias:'heritage'},
-];
-// Quality hint pools — what a collector casually notices inspecting a card
-const HINT_CENTERING={
-  10:["Perfectly centered","Flawless centering","Dead-on borders"],
-  9: ["Slight tilt barely visible","One border a touch narrow","Almost perfect centering"],
-  8: ["Slightly off-center on the left","Borders mostly even","Tiny centering variance"],
-  7: ["Visibly off-center left","Top border noticeably narrow","A bit lopsided"],
-  6: ["Off-center, left-heavy","Uneven borders","Top border is thin"],
-  5: ["Notably off-center","Borders clearly uneven","Significant tilt"],
-  4: ["Very off-center","Major centering issue","One border barely exists"],
-  3: ["Severely off-center","Border nearly gone on one side"],
-  2: ["Extreme centering issues","Card image shifted badly"],
-  1: ["Comically off-center","Image practically touching edge"],
-};
-const HINT_CORNERS={
-  10:["Razor sharp corners","Pristine corners","Four perfect points"],
-  9: ["Three perfect, one tiny touch","Almost razor sharp","One micro-fuzz under magnification"],
-  8: ["One slightly soft corner","Minor wear on top-right","One corner just barely touched"],
-  7: ["Two soft corners","Rounding on top-left visible","Corners losing their edge"],
-  6: ["Rounded corners visible","Ding on bottom-right corner","Wear on multiple corners"],
-  5: ["Noticeably rounded corners","Dinged corners","Fraying on corners"],
-  4: ["Heavily rounded","Corner fuzzing obvious","Multiple dings"],
-  3: ["Very rounded corners","Corners worn down","Significant fraying"],
-  2: ["Severely rounded corners","Corner damage","Battered corners"],
-  1: ["Destroyed corners","Corners basically gone","Massive corner wear"],
-};
-const HINT_EDGES={
-  10:["Clean edges","Pristine edges","No edge wear"],
-  9: ["One micro-chip on close inspection","Edges look clean","Tiny rough spot on one edge"],
-  8: ["Slight chipping on one edge","Minor edge wear visible","One rough edge"],
-  7: ["Chipping on two edges","Edge whitening starting","Rough spot on bottom"],
-  6: ["Multiple edge chips","White showing on edges","Noticeable chipping"],
-  5: ["Chipped edges","Edge wear visible","Rough edges"],
-  4: ["Heavy edge chipping","Edges showing white","Worn edges"],
-  3: ["Very rough edges","Significant edge damage"],
-  2: ["Tattered edges","Edges badly worn"],
-  1: ["Destroyed edges","Edges frayed and torn"],
-};
-const HINT_SURFACE={
-  10:["Glossy and clean","Pristine surface","Surface is perfect"],
-  9: ["Barely visible print line","Surface looks great","One tiny mark under angled light"],
-  8: ["Faint print line visible","Minor surface mark in light","One small surface scratch"],
-  7: ["Print line across the card","Slight surface scuffing","Loss of gloss beginning"],
-  6: ["Visible print defect","Scratch catches the light","Surface wear visible"],
-  5: ["Scratching visible","Print defect obvious","Surface losing its shine"],
-  4: ["Multiple surface scratches","Loss of gloss","Surface wear obvious"],
-  3: ["Heavy surface wear","Scratched up","Dull surface"],
-  2: ["Severely scratched","Surface staining","Very worn surface"],
-  1: ["Surface destroyed","Heavy staining and scratching"],
-};
-const HINT_APPEAL={
-  10:["Looks pristine 🔍","Eye-catching","Flawless presentation"],
-  9: ["Looks fantastic","Near-perfect eye appeal","Beautiful card"],
-  8: ["Looks great in the sleeve","Nice overall","Solid eye appeal"],
-  7: ["Looks good overall","Some minor issues but nice","Decent presentation"],
-  6: ["Some visible wear","Fair eye appeal","Acceptable condition"],
-  5: ["Wear is noticeable","Below average condition","Decent from a distance"],
-  4: ["Worn but presentable","Heavy wear visible","Condition is an issue"],
-  3: ["Very worn","Poor eye appeal","Well-loved"],
-  2: ["Poor condition","Heavily worn","Significant damage"],
-  1: ["Terrible condition","Very heavily damaged","Extreme wear"],
-};
-
-function rollGrade(){
-  const t=GRADES.reduce((s,g)=>s+g.w,0);
-  let r=RNG()*t;
-  for(const g of GRADES){r-=g.w;if(r<=0)return g}
-  return GRADES[2]; // fallback to PSA 8
-}
-
-function generateQuality(gradeInput){
-  const grade = typeof gradeInput === 'object' ? gradeInput.grade : gradeInput;
-  // Pick 2-3 visible hints that a collector would casually notice
-  // Higher grades: fewer/weaker hints. Lower grades: more/obvious hints.
-  const hintCount = grade>=9 ? 1 : grade>=7 ? 2 : grade>=5 ? 3 : 4;
-  const pick=(pool)=>pool[Math.floor(RNG()*pool.length)];
-  const gradeHints=HINT_CENTERING[grade]||HINT_CENTERING[8];
-  const cornerHints=HINT_CORNERS[grade]||HINT_CORNERS[8];
-  const edgeHints=HINT_EDGES[grade]||HINT_EDGES[8];
-  const surfaceHints=HINT_SURFACE[grade]||HINT_SURFACE[8];
-  const appealHints=HINT_APPEAL[grade]||HINT_APPEAL[8];
-  const hints=[];
-  // Always include one appeal hint
-  hints.push(pick(appealHints));
-  // Build from other categories
-  const cats=[{pool:gradeHints,cat:'centering'},{pool:cornerHints,cat:'corners'},
-              {pool:edgeHints,cat:'edges'},{pool:surfaceHints,cat:'surface'}];
-  // Shuffle and pick
-  const shuffled=cats.sort(()=>RNG()-0.5);
-  for(let i=0;i<Math.min(hintCount,shuffled.length);i++){
-    hints.push(pick(shuffled[i].pool));
-  }
-  // For grades 1-4, add one extra harsh hint
-  if(grade<=4) hints.push(pick(cornerHints));
-  return {grade, hints, graded:false};
-}
-
-function getCond(){
-  // Legacy compat: returns {name, m} for calcPrice
-  // Replaced by rollGrade()+generateQuality() but kept for transition
-  const g=rollGrade();
-  return {name:g.name, m:g.mult, grade:g.grade};
-}
-const SP_EMOJI={Variation:"🎨",Novelty:"🍕",Relic:"🏅",Autograph:"✍️",Booklet:"📖","Error Variant":"❌","Dual Auto":"✍️✍️","Auto Patch":"✍️🏅"};
-
-const CATS=[
-  {n:"Sci-Fi/Space",w:20,th:["Deep Space Rangers","Nebula Nomads","Orbital Pirates","Void Walkers","Stellar Cartographers"],
-   f:["Zara","Kael","Nova","Rex","Lyra","Orion","Vex","Nyx","Atlas","Cleo","Dax","Iris","Finn","Echo","Sage","Titan","Aura","Blaze","Kai","Luna","Sol","Zen","Arco","Vega","Rune","Ember","Ash","Drift","Cipher","Stella","Phoenix"],
-   l:["Starweaver","Voidborn","Lightfoot","Ironclad","Moonsbane","Skyrender","Duskwalker","Deepforge","Starseed","Ironfin","Nighthollow","Solborn","Windrider","Flamecrest","Dawnbringer","Stormseeker","Sunforge","Thornback","Riftwalker","Starfall","Nightshade","Coldsteel","Emberheart","Voidwalker","Brightblade","Steelsong","Ashborne","Moonshadow","Deepcurrent","Gravewhisper"]},
-  {n:"Fantasy/Myth",w:15,th:["Realm of Eldoria","Dragonfire Legends","Elven Twilight","Dwarven Forge Kings","Arcane Bloodlines"],
-   f:["Theron","Isolde","Grimbold","Elara","Fenris","Seraphina","Bran","Morgana","Draven","Lirien","Gwendolyn","Alaric","Rowan","Freya","Cedric","Ysolde","Leoric","Elowen","Gareth","Nimue","Finnian","Brynn","Torin","Maeve","Callum","Sylas","Rhea","Talon","Aria","Oberon"],
-   l:["Ashwood","Stormborn","Ironheart","Duskfire","Frostweaver","Bloodbane","Shadowmere","Goldspire","Thornwood","Moonblade","Flamekin","Ravencrest","Deepwater","Stonehelm","Starweave","Wildroot","Emberfall","Nightbloom","Dawnkeeper","Runeforged","Briarcliff","Wolfsbane","Ironveil","Sunstrike","Brightspear","Darkhollow","Silverthorn","Oakhaven","Mistwalker","Bonecrusher"]},
-  {n:"Sports Alt",w:10,th:["Thunder League","Velocity Circuit","Apex Arena","Titan Bowl","Gravity Games"],
-   f:["Marcus","Tyson","Raven","Blitz","Diesel","Flash","Ace","Rumble","Spark","Bolt","Crush","Dynamo","Viper","Slash","Brawler","Storm","Fury","Rush","Tank","Rico","Jett","Duke","Havoc","Beast","Knockout","Rocket","Max","Zane","Clutch","Savage"],
-   l:["McCrush","Steelarm","Blitzberg","Thunder","Breaker","Rushmore","Powerhouse","Ironwill","Bonecrusher","Speedster","Slamdunk","Gravedigger","Wrecking","Bonebreak","Skullcrack","Bodycheck","Haymaker","Thunderbolt","Rampage","Demolition","Overtime","Knockdown","Firestorm","Shockwave","Battering","Striker","Endzone","Wildcard","Bulldozer","Smasher"]},
-  {n:"Historical",w:10,th:["Empires Collide","Revolutionary Spirits","Ancient Dynasties","Renaissance Minds","Age of Discovery"],
-   f:["Alexander","Cleopatra","Augustus","Boudica","Leonardo","Napoleon","Genghis","Elizabeth","Julius","Hypatia","Charlemagne","Theodora","Constantine","Joan","Saladin","Ashoka","Nefertiti","Spartacus","Lysandra","Pericles","Hatshepsut","Ramesses","Darius","Themistocles","Zenobia","Trajan","Cyrus","Brutus","Marcus","Octavian"],
-   l:["the Great","of Macedon","Augusta","Ironside","da Firenze","Bonaparte","Khan","Tudor","Caesar","of Alexandria","Magnus","the Bold","the Wise","of Arc","Ayyubid","Maurya","the Radiant","Thracian","the Just","of Athens","the Golden","the Second","of Palmyra","the Conqueror","the Elder","of Iceni","Aurelius","Barca","Scipio","Sulla"]},
-  {n:"Nature/Animals",w:10,th:["Untamed Wilds","Ocean Depths","Canopy Kingdom","Savanna Pride","Arctic Tundra"],
-   f:["Fang","Claw","Shadow","Storm","Blaze","Ember","Frost","River","Mountain","Thorn","Moss","Coral","Luna","Breeze","Canyon","Reef","Tundra","Dusk","Petal","Crest","Bark","Brook","Fern","Boulder","Misty","Sage","Pebble","Willow","Feather","Zephyr"],
-   l:["Mane","Whisper","Runner","Heart","Fang","Pelt","Claw","Roar","Tail","Wing","Paw","Howl","Horn","Fur","Beak","Scale","Bloom","Shade","Dive","Swoop","Leap","Growl","Track","Flyer","Splash","Call","Song","Trunk","Stripe","Prowl"]},
-  {n:"Urban/Modern",w:10,th:["Street Legends","Neon District","Concrete Jungle","Metro Underground","Skyline Syndicate"],
-   f:["Marcus","Zara","Vince","Luna","Dex","Nikki","Rico","Mika","Trey","Sasha","Kai","Raven","Milo","Jade","Leo","Nova","Quinn","Viper","Echo","Blade","Jax","Roxy","Flint","Aria","Tank","Silk","Dusty","Celeste","Nero","Pixie"],
-   l:["DaSilva","Moreno","Blackwood","Storm","Cruz","Kim","O'Brien","Stone","Reyes","Chen","Walsh","Frost","Rivera","Cross","Santos","Volkov","Park","Davis","Kowalski","Santini","Bradley","Foster","Hayes","Morgan","Sullivan","Petrov","Lane","Sinclair","Wright","Mercer"]},
-  {n:"Horror/Gothic",w:8,th:["Crimson Hollow","Grimm Estates","Shadowsfall","Whispering Pines","Blackwood Asylum"],
-   f:["Morticia","Raven","Damien","Lilith","Vlad","Edgar","Ophelia","Lucius","Mabel","Barnabas","Rosalind","Silas","Hecate","Dorian","Annabel","Gideon","Morwenna","Alistair","Lenore","Phineas","Tabitha","Montague","Desdemona","Balthazar","Elspeth","Cornelius","Cassandra","Septimus","Perdita","Roderick"],
-   l:["Blackwood","Nightshade","Graves","Hollow","Croft","Ashmore","Wraith","Crimson","Thorne","Grimshaw","Bloodworth","Shadows","Ravencroft","Dreadmoor","Sable","Mortis","Winters","Gloom","Barrow","Sinister","Obsidian","Shadwell","Bonehill","Phantom","Doom","Darke","Specter","Frost","Holloway","Nethercott"]},
-  {n:"Pop Culture Parody",w:7,th:["Meme Legends","Stream Warriors","Viral Nation","Internet Hall of Fame","Digital Icons"],
-   f:["Pixel","Glitch","Bit","Ninja","Turbo","Sigma","Flux","Nova","Viral","Meme","Cloud","Byte","Spark","Neo","Echo","Hype","Buzzy","Retro","Rage","Toast","Loot","Grind","AFK","Buff","Nerf","Crit","DPS","Meta","Pog","Yolo"],
-   l:["Master","Overlord","Slayer","Lord","King","Queen","Chef","Boss","Hero","Legend","Prime","God","Machine","Walker","Rider","Hunter","Maker","Chief","Guru","Wizard","Crasher","Runner","Farmer","Dancer","Star","Craft","Theory","Breaker","Hacker","Stacker"]},
-  {n:"Mecha/Tech",w:5,th:["Steel Vanguard","Circuit Breakers","Neural Ops","Chrome Titans","Robo Force"],
-   f:["Unit-7","AXION","PRISM","Volt","Cache","Logic","Binary","Vector","Flux","Cipher","Kernel","Socket","Proxy","Daemon","Render","Core","Pulse","Spark","Frame","Sync","Hex","Node","Codec","Fiber","Patch","Query","Debug","Stack","Array","Matrix"],
-   l:["Prime","Omega","Sigma","Alpha","Delta","Zero","One","Core","X","Ultima","Nova","Vex","Ion","Arc","Bolt","Grid","Link","Wire","Chip","Disk","Byte","Bit","Flow","Tech","Mech","Drone","Bot","Lab","Net","Sys"]},
-  {n:"Culinary",w:5,th:["Iron Chef Arena","Pastry Wars","Street Food Kings","Fermentation Masters","Spice Road"],
-   f:["Gordon","Julia","Marco","Auguste","Alain","Thomas","Rene","Alice","Jose","Wolfgang","Nigella","Bobby","Cat","Paul","Jamie","Dominique","Yotam","Daniel","Emeril","Grant","Ferran","Heston","David","Lidia","Jacques","Anne","Morimoto","Nayeli","Ramsay","Sanjeev"],
-   l:["Flambe","Saute","Blanch","Paprika","Truffle","Saffron","Caramel","Brioche","Miso","Umami","Cardamom","Vanilla","Espresso","Sriracha","Kimchi","Gochujang","Risotto","Tartare","Brulee","Terrine","Ganache","Bouillon","Julienne","Mignon","Prosciutto","Parmesan","Fontina","Zest","Crumb","Gratin"]},
-];
-
-// Utils
-function rJ(p){try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return null}}
-function wJ(p,d){fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(d,null,2))}
-function pwK(arr,k,rng){const t=arr.reduce((s,x)=>s+x[k],0);let r=rng()*t;for(const x of arr){r-=x[k];if(r<=0)return x}return arr[arr.length-1]}
-function ri(rng,a,b){const r=rng||RNG;return Math.floor(r()*(b-a+1))+a}
-function fm$(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
-function pR(s,w){return s.length<w?s+' '.repeat(w-s.length):s.slice(0,w)}
-
-// Virtual vs Real mode:
-//   Virtual (default): no wallet deduction, no cards saved to collection — just simulates the break
-//   Real: deducts from wallet, saves cards to collection (personal assets for wealth tracking)
-//   Pass --real flag to open-pack/open-box to commit cards to collection.
-//   The wallet starts at $50 — roughly one blaster or ten retail packs.
-//   A broke collector scraping by on retail packs is the default lifestyle.
-
-function loadCfg(){return rJ(path.join(DATA_DIR,'config.json'))||{wallet:50,activeSet:null,archivedSets:[],mode:'virtual',pocketMoney:5}}
-function saveCfg(c){wJ(path.join(DATA_DIR,'config.json'),c)}
-function loadSet(){
-  const c=loadCfg();
-  if(!c.activeSet)return null;
-  const p=path.join(DATA_DIR,'sets',c.activeSet+'.json');
-  const s=rJ(p);
-  if(!s){c.activeSet=null;saveCfg(c);return null}
-  return s;
-}
-function loadCol(sk){const c=loadCfg();const k=sk||c.activeSet;if(!k)return null;const cp=path.join(DATA_DIR,'collections',k+'.json');let col=rJ(cp);if(!col){if(c.activeSet===k){c.activeSet=null;saveCfg(c);return null}col={setKey:k,cards:[],pulls:{},stats:{total:0,value:0,spent:0,boxes:0,packs:0,hits:0,oneOfOnes:0},bestPull:null,parallelCounts:{},wallet:c.wallet,sealedInventory:{}};wJ(cp,col)}if(!col.sealedInventory) col.sealedInventory={};return col}
-function saveCol(col){wJ(path.join(DATA_DIR,'collections',col.setKey+'.json'),col)}
-function rebuildPulls(col){col.pulls={};col.cards.forEach(c=>col.pulls[c.cardNum]=(col.pulls[c.cardNum]||0)+1)}
-function nextAcquisitionBatchId(col){
-  if(!col.acquisitionSeq) col.acquisitionSeq=0;
-  col.acquisitionSeq+=1;
-  return `${Date.now()}-${col.acquisitionSeq}`;
-}
-function createAcquisitionTracker(col,{opType,packType,packIndex}={}){
-  const batchId=nextAcquisitionBatchId(col);
-  return {
-    batchId,
-    opType:opType||'open-pack',
-    packType:packType||null,
-    packIndex:packIndex??null,
-    openedAt:new Date().toISOString(),
-    pullsBefore:{...(col?.pulls||{})},
-    openingSeen:{},
-  };
-}
-function annotateAcquiredCard(card, tracker){
-  if(!tracker) return card;
-  card.acquiredBatchId=tracker.batchId;
-  card.acquiredOpType=tracker.opType;
-  card.acquiredPackType=tracker.packType;
-  card.acquiredPackIndex=tracker.packIndex;
-  card.acquiredAt=tracker.openedAt;
-  const prevDup=(tracker.pullsBefore?.[card.cardNum]||0)+(tracker.openingSeen?.[card.cardNum]||0);
-  const currentDup=prevDup+1;
-  card.acquiredCopyIndex=currentDup;
-  card.acquiredIsDuplicate=currentDup>1;
-  tracker.openingSeen[card.cardNum]=(tracker.openingSeen[card.cardNum]||0)+1;
-  return card;
-}
-function setLastAcquisitionBatch(col, tracker, summary={}){
-  if(!col||!tracker) return;
-  col.lastAcquisitionBatch={
-    id:tracker.batchId,
-    opType:tracker.opType,
-    packType:tracker.packType,
-    packIndex:tracker.packIndex,
-    openedAt:tracker.openedAt,
-    duplicateCount:summary.duplicateCount||0,
-    newCount:summary.newCount||0,
-    cardCount:summary.cardCount||0,
-  };
-}
-function getLatestAcquisitionBatch(col){
-  return col?.lastAcquisitionBatch||null;
-}
-function ensureSealedInventory(col){
-  if(!col.sealedInventory) col.sealedInventory={};
-  return col.sealedInventory;
-}
-function getSealedInventoryEntry(col,product){
-  return col?.sealedInventory?.[product]||null;
-}
-function getSealedQty(col,product){
-  return getSealedInventoryEntry(col,product)?.qty||0;
-}
-function addSealedProduct(col,product,qty,meta={}){
-  const inv=ensureSealedInventory(col);
-  const entry=inv[product]||{qty:0,spent:0,history:[]};
-  entry.qty+=qty;
-  if(Number.isFinite(meta.spent)) entry.spent+=(meta.spent||0);
-  entry.updatedAt=new Date().toISOString();
-  if(meta.source||meta.storeName) entry.history=Array.isArray(entry.history)?entry.history:[];
-  if(meta.source||meta.storeName){
-    entry.history.push({
-      timestamp:new Date().toISOString(),
-      source:meta.source||'unknown',
-      storeId:meta.storeId||null,
-      storeName:meta.storeName||null,
-      qty,
-      spent:meta.spent||0,
-    });
-    if(entry.history.length>10) entry.history=entry.history.slice(-10);
-  }
-  inv[product]=entry;
-}
-function consumeSealedProduct(col,product,qty=1){
-  const entry=getSealedInventoryEntry(col,product);
-  if(!entry||entry.qty<qty) return false;
-  entry.qty-=qty;
-  entry.updatedAt=new Date().toISOString();
-  if(entry.qty<=0) delete col.sealedInventory[product];
-  return true;
-}
-function getSealedInventoryValue(col){
-  if(!col?.sealedInventory) return 0;
-  let total=0;
-  for(const [product,entry] of Object.entries(col.sealedInventory)){
-    const pt=PACKS[product];
-    if(!pt) continue;
-    total+=(entry.qty||0)*pt.price;
-  }
-  return total;
-}
-function formatSealedInventorySummary(col){
-  if(!col?.sealedInventory) return '';
-  const bits=[];
-  for(const [product,entry] of Object.entries(col.sealedInventory)){
-    const pt=PACKS[product];
-    if(!pt||!(entry.qty>0)) continue;
-    bits.push(`${entry.qty}× ${pt.name}`);
-  }
-  return bits.join(' │ ');
-}
-function isReal(){return process.argv.includes('--real')}
-function normalizeSeed(seed,fallback=Date.now()){
-  const n=Number(seed);
-  return Number.isFinite(n) ? Math.trunc(n) : fallback;
-}
-
-function genCard(num,cat,theme,rng){
-  const cr=mulberry32(num*13+cat.f.length*7+cat.l.length*3);
-  const tier=pwK(TIERS,'w',cr),sub=pwK(SUBS,'w',cr);
-  const name=cat.f[ri(cr,0,cat.f.length-1)]+' '+cat.l[ri(cr,0,cat.l.length-1)];
-  const ds=[`${name} dominates the ${theme} circuit`,`A legend of ${theme},${name} never backs down`,
-    `${name}'s legacy in ${theme} is unmatched`,`The ${theme} chronicles feature ${name}`,
-    `${name} rose through ${theme} with unmatched skill`];
-  const stats={};for(const k of['power','speed','technique','endurance','charisma'])stats[k]=ri(cr,tier.st[0],tier.st[1]);
-  return{num:String(num).padStart(3,'0'),name,subset:sub.name,starTier:tier.name,stats,desc:ds[ri(cr,0,4)],
-    basePrice:tier.pr[0]+cr()*(tier.pr[1]-tier.pr[0])};
-}
-
-function genSetCode(rng){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ';let s='';for(let i=0;i<3;i++)s+=c[ri(rng,0,25)];return s}
-
-function generateSet(category, options) {
-  const seed=normalizeSeed(options?.seed, ENGINE_BASE_SEED ?? Date.now());
-  const rng=mulberry32(seed);
-  
-  if (category && category !== 'character') {
-    const result = CAT.generateSetByCategory(category, {...(options||{}), seed});
-    if (result) {
-      const code=genSetCode(rng);
-      const year=new Date().getFullYear();
-      const themeName=result.collectionTheme||result.propertyName||result.setName;
-      const set = {
-        code, name: themeName, officialName: themeName, themeName, year, category: result.setName,
-        setCategory: category, cards: result.cards,
-        seed, created: new Date().toISOString(),
-      };
-      // Copy extra metadata
-      if (result.propertySynopsis) set.propertySynopsis = result.propertySynopsis;
-      if (result.propertyGenre) set.propertyGenre = result.propertyGenre;
-      if (result.sport) set.sport = result.sport;
-      if (result.collectionTheme) set.collectionTheme = result.collectionTheme;
-      if (result.seasons) set.seasons = result.seasons;
-      set.metadata = buildRichSetMetadata({
-        officialName: null,
-        themeName,
-        category: set.category,
-        setCategory: category,
-        year,
-        code,
-        cards: result.cards,
-        seed,
-        source: 'procedural',
-        parallels: DEFAULT_PARALLELS,
-        cardTypes: DEFAULT_CARD_TYPES,
-        inserts: [],
-        sport: set.sport,
-        collectionTheme: set.collectionTheme,
-        propertyGenre: set.propertyGenre,
-        propertySynopsis: set.propertySynopsis,
-        seasons: set.seasons,
-        cadenceDays: 45,
-        createdAt: set.created,
-      });
-      set.officialName=set.metadata.officialName;
-      set.name=set.metadata.officialName;
-      const key=`${code}-${year}`;
-      wJ(path.join(DATA_DIR,'sets',key+'.json'),set);
-      const cfg=loadCfg();cfg.activeSet=key;saveCfg(cfg);
-      wJ(path.join(DATA_DIR,'collections',key+'.json'),
-        {setKey:key,cards:[],pulls:{},stats:{total:0,value:0,spent:0,boxes:0,packs:0,hits:0,oneOfOnes:0},bestPull:null,parallelCounts:{},wallet:cfg.wallet,sealedInventory:{}});
-      return set;
-    }
-  }
-  
-  // Default: character generation (original behavior)
-  const tw=CATS.reduce((s,c)=>s+c.w,0);let r=rng()*tw,cat=CATS[0];
-  for(const c of CATS){r-=c.w;if(r<=0){cat=c;break}}
-  const theme=cat.th[ri(rng,0,cat.th.length-1)];
-  const code=genSetCode(rng),year=new Date().getFullYear();
-  const cardCount = options?.cards || CAT.SIZE_RANGES?.[category]?.suggest || 150;
-  const cards=[];for(let i=1;i<=cardCount;i++)cards.push(genCard(i,cat,theme,rng));
-  const set={
-    code,
-    name:theme,
-    officialName:theme,
-    themeName:theme,
-    year,
-    category:cat.n,
-    cards,
-    seed,
-    created:new Date().toISOString(),
-  };
-  set.metadata = buildRichSetMetadata({
-    officialName:null,
-    themeName:theme,
-    category:cat.n,
-    setCategory:category || 'character',
-    year,
-    code,
-    cards,
-    seed,
-    source:'procedural',
-    parallels:DEFAULT_PARALLELS,
-    cardTypes:DEFAULT_CARD_TYPES,
-    inserts:[],
-    cadenceDays:45,
-    createdAt:set.created,
-  });
-  set.officialName=set.metadata.officialName;
-  set.name=set.metadata.officialName;
-  const key=`${code}-${year}`;
-  wJ(path.join(DATA_DIR,'sets',key+'.json'),set);
-  const cfg=loadCfg();cfg.activeSet=key;saveCfg(cfg);
-  wJ(path.join(DATA_DIR,'collections',key+'.json'),
-    {setKey:`${code}-${year}`,cards:[],pulls:{},stats:{total:0,value:0,spent:0,boxes:0,packs:0,hits:0,oneOfOnes:0},bestPull:null,parallelCounts:{},wallet:cfg.wallet,sealedInventory:{}});
-  return set;
-}
-
-function rollParallel(maxT,set){
-  const parallels=resolveParallels(set);
-  const allowed=parallels.filter(p=>p.tier<=maxT);
-  for(let i=allowed.length-1;i>=0;i--){
-    const p=allowed[i];
-    const pm=p.pm||p.priceMultiplier||1; // support both field names
-    const odds=p.odds;
-    if(p.tier===1)return{parallel:p,sn:null,plate:null};
-    if(RNG()<1/odds){
-      let sn=null,plate=null;
-      const ser=p.ser||p.serial;
-      if(ser===1&&p.name==="Printing Plate"){plate=PLATES[ri(null,0,3)]}
-      else if(ser===1){sn=1}
-      else if(ser&&ser>1){sn=ri(null,1,typeof ser==='object'?ser.max:ser)}
-      return{parallel:{...p,pm:pm},sn,plate};
-    }
-  }
-  return{parallel:{...allowed[0],pm:allowed[0].pm||allowed[0].priceMultiplier||1},sn:null,plate:null};
-}
-
-function rollSpecial(set){
-  const types=resolveCardTypes(set);
-  const total=types.reduce((s,x)=>s+x.rarity,0);
-  let r=RNG()*total;
-  for(const t of types){r-=t.rarity;if(r<=0)return t}
-  return types[0];
-}
-
-// Roll a card type — uses per-card checklist if available, falls back to global roll
-function rollCardType(set,card){
-  const globalTypes=resolveCardTypes(set);
-  const hasPerCard=card&&Array.isArray(card.cardTypes)&&card.cardTypes.length>0;
-  if(!hasPerCard){
-    // Legacy fallback: old random roll from global types
-    const type=rollSpecial(set);
-    return composeCardTypeResult(type,globalTypes);
-  }
-  // Per-card checklist mode: pick from card's allowed types using global rarity weights
-  const allowed=card.cardTypes.map(name=>{
-    const def=globalTypes.find(t=>t.name===name||t.id===name);
-    return def||{id:'base',name:name,rarity:0.85,priceMultiplier:1,format:'standard',desc:'🃏 '+name};
-  });
-  const total=allowed.reduce((s,t)=>s+(t.rarity||1),0);
-  let r=RNG()*total;
-  let picked=allowed[0];
-  for(const t of allowed){r-=(t.rarity||1);if(r<=0){picked=t;break}}
-  return composeCardTypeResult(picked,globalTypes);
-}
-
-function composeCardTypeResult(type,globalTypes){
-  const result={...type};
-  // Compose auto details for auto types
-  if(type.id==='autograph'||type.id==='dual-auto'||type.id==='auto-patch'){
-    result.auto=composeAuto();
-    if(type.id==='dual-auto'){result.auto.autoVariant='dual';result.auto.name='Dual '+result.auto.name}
-    if(type.id==='auto-patch'){result.relic=composeRelic();result.priceMultiplier=(result.auto.mult*result.relic.mult)}
-    if(!result.format)result.format='standard';
-  }
-  if(type.id==='relic'){
-    result.relic=composeRelic();
-    result.priceMultiplier=result.relic.mult;
-  }
-  if(result.format&&CARD_FORMATS[result.format]){
-    result.formatMult=CARD_FORMATS[result.format].mult;
-    result.priceMultiplier=(result.priceMultiplier||1)*CARD_FORMATS[result.format].mult;
-  } else {
-    result.formatMult=1;
-    if(!result.format)result.format='standard';
-  }
-  return result;
-}
-
-function selectCard(set,forHit){
-  const w=set.cards.map(c=>{switch(c.starTier){
-    case"Common":return forHit?0.5:3;case"Uncommon":return forHit?1:2;case"Star":return forHit?2:1.5;
-    case"Superstar":return forHit?4:0.8;case"Legendary":return forHit?8:0.3;default:return 1;}});
-  const t=w.reduce((s,v)=>s+v,0);let r=RNG()*t;
-  for(let i=0;i<set.cards.length;i++){r-=w[i];if(r<=0)return set.cards[i]}
-  return set.cards[0];
-}
-
-function calcPrice(card,par,sp,cond,sn){
-  const subMod=SUBS.find(s=>s.name===card.subset)?.m||1;
-  let sb=1;if(sn!==null){if(sn<=5)sb=2;else if(sn<=10)sb=1.8;else if(sn<=25)sb=1.5}
-  const gradeMult = cond.mult || GRADES.find(g=>g.grade===cond.grade)?.mult || 1;
-  const spMult=sp.priceMultiplier||sp.mult||1; // support new card type format
-  return card.basePrice*subMod*par.pm*spMult*gradeMult*sb;
-}
-
-function fmtCard(c, idx, set, dupCount) {
-  const te = TIER_EMOJI[c.starTier] || "";
-  const pe = PAR_EMOJI[c.parallel] || "";
-  const se = SUB_EMOJI[c.subset] || "🃏";
-  const hitTag = c.isHit ? " 💎HIT" : "";
-  const dupTag = dupCount > 1 ? ` [x${dupCount}]` : "";
-  const serTag = c.serStr ? " " + c.serStr : "";
-  const stats = c.stats ? `⚔${c.stats.power} ${c.stats.speed} ${c.stats.technique} ${c.stats.endurance} ${c.stats.charisma}` : "";
-  const catLine = c._categoryLine || "";
-  const parDisplay = pe ? pe + " " + c.parallel : c.parallel;
-  // Quality hints — show what collector notices, NOT the grade (unless graded)
-  const quality = c.quality || c.condition || 'Unknown';
-  const gradeLabel = c.graded ? `G${c.grade}` : ''; // only show grade after PSA submission
-  const hintStr = typeof quality === 'string' ? quality : quality.hints.slice(0, 2).join('; ');
-  const condLine = gradeLabel ? `${gradeLabel} │ ${hintStr}` : hintStr;
-  const typeTag = c.cardTypeName ? ` │ ${c.cardTypeName}` : '';
-  const priceSep = typeTag ? ' │ ' : ' │ ';
-  return `  ${String(idx).padStart(2)}. ${te}${set.code}-${c.cardNum} ${c.name}${dupTag}\n` +
-    `     ${parDisplay}${serTag} | ${se} ${c.subset} | ${condLine}\n` +
-    (catLine ? `     ${catLine}\n` : '') +
-    `     ${stats}${typeTag}${priceSep}${fm$(c.price)}${hitTag}`;
-}
-
-function pullCards(set,col,packType,openCtx={}){
-  const pt=PACKS[packType];const pack=[];let hc=0;
-  for(let si=0;si<pt.cpp;si++){
-    const slot=pt.slots[si%pt.slots.length];
-    let sp={name:"None",mult:1,desc:"",priceMultiplier:1,format:"standard",formatMult:1},bc,isHit=false;
-    if(slot.hit){
-      if(RNG()<(PACKS[packType].hitRate||0)){
-        bc=selectCard(set,true);sp=rollCardType(set,bc);isHit=true;hc++;
-      } else {bc=selectCard(set,false)}
-    } else bc=selectCard(set,false);
-    const{parallel,sn,plate}=rollParallel(slot.mt||15,set);
-    const cond=rollGrade();const quality=generateQuality(cond);const price=calcPrice(bc,parallel,sp,cond,sn);
-    const serStr=parallel.num?(plate?`${plate} #1/1`:`#${sn}/${parallel.ser||parallel.serial}`):'';
-    const id=`${set.code}-${bc.num}-${parallel.name}${plate?'-'+plate:''}-${sn||'0'}-G${cond.grade}`;
-    const baseCard = set.cards.find(sc => sc.num === bc.num);
-    const catLine = CAT.fmtCardCategoryLine(baseCard, set.setCategory);
-    const condition=generateCondition(bc.starTier);
-    const c={id,cardNum:bc.num,name:bc.name,subset:bc.subset,starTier:bc.starTier,stats:bc.stats||{},
-      parallel:parallel.name,sn,serStr,plate,special:sp.name,specialDesc:sp.desc,
-      quality,grade:cond.grade,gradeName:cond.name,price,isHit,
-      marketPrice:price, popScore:0, demandScore:0,
-      cardFormat:sp.format||'standard',cardTypeId:sp.id||null,
-      cardTypeName:(sp.name==='Base'||sp.name==='None')?null:sp.name,
-      condition,
-      gradingResult:null,
-      _categoryLine:catLine};
-    annotateAcquiredCard(c,openCtx);
-    pack.push(c);
-    if(col){ // only update collection in real mode
-      col.cards.push(c);col.pulls[bc.num]=(col.pulls[bc.num]||0)+1;
-      col.stats.total++;col.stats.value+=price;col.parallelCounts[parallel.name]=(col.parallelCounts[parallel.name]||0)+1;
-      if(isHit)col.stats.hits++;if((parallel.ser||parallel.serial)===1&&sn===1)col.stats.oneOfOnes++;
-      if(!col.bestPull||price>col.bestPull.price)col.bestPull=c;
-    }
-  }
-  return{pack,hc};
-}
-
-function ensureSet(){const s=loadSet();if(!s){const ns=generateSet();console.log(`\n  🎴 Auto-generated set: ${ns.name} (${ns.code})\n`)}}
 
 function cmdGenSet(){
   // Parse category from args
@@ -1007,15 +112,18 @@ function cmdGenSet(){
   console.log(`\n${'═'.repeat(50)}`);
   console.log(`  🎴 NEW SET GENERATED`);console.log(`${'═'.repeat(50)}`);
   console.log(`  Set: ${s.name} (${s.code})`);console.log(`  Year: ${s.year}`);console.log(`  Category: ${s.category}`);
-  console.log(`  Cards: ${s.cards.length}`);console.log(`  Wallet: ${fm$(loadCfg().wallet)}`);
+  const cfg=loadCfg();
+  console.log(`  Cards: ${s.cards.length}`);
+  console.log(`  Wallet: ${typeof cfg.wallet==='number'?fm$(cfg.wallet):'n/a (shared set generation)'}`);
   const bt={};for(const c of s.cards)bt[c.starTier]=(bt[c.starTier]||0)+1;
   for(const t of TIERS)console.log(`    ${pR(t.name,12)} ${bt[t.name]||0}`);
   console.log(`${'═'.repeat(50)}\n`);
 }
 
 function cmdOpenPack(type){
-  ensureSet();const pt=type||'hobby';if(!PACKS[pt]){console.log(`Unknown: ${pt}`);return}
-  const set=loadSet();const real=isReal();
+  const set=ensureSet();if(!set)return;
+  const pt=type||'hobby';if(!PACKS[pt]){console.log(`Unknown: ${pt}`);return}
+  const real=isReal();
   const cfg=loadCfg();const baseCost=PACKS[pt].price/PACKS[pt].packs;
   const col=real?loadCol():null;
   const usedOwned=real&&col&&getSealedQty(col,pt)>0;
@@ -1058,18 +166,22 @@ function cmdOpenPack(type){
     console.log(`  Source: ${usedOwned?'owned sealed inventory':'fresh purchase from wallet'}`);
   }
   console.log(`${'═'.repeat(52)}`);
-  let newCount=0,dupCount=0;
+  let newCount=0,variantCount=0,dupCount=0;
   pack.forEach((c,i)=>{
     const isDup=Boolean(c.acquiredIsDuplicate);
-    if(isDup)dupCount++;else newCount++;
+    const isVariant=Boolean(c.acquiredIsVariant);
+    if(isDup)dupCount++;
+    else if(isVariant)variantCount++;
+    else newCount++;
     console.log(fmtCard(c,i+1,set,isDup?c.acquiredCopyIndex:0));
     console.log('');
   });
   console.log(`${'─'.repeat(52)}`);
   console.log(`  Value: ${fm$(tv)} | Cost: ${fm$(cost)} | ROI: ${cost>0?(roi>=0?'+':'')+roi.toFixed(1)+'%':'n/a'}`);
   if(real){
-    console.log(`  New: ${newCount} | Duplicates: ${dupCount} | Wallet: ${fm$(cfg.wallet)}`);
-    setLastAcquisitionBatch(col,packTracker,{newCount,duplicateCount:dupCount,cardCount:pack.length});
+    const totalNewCards = newCount + variantCount;
+    console.log(`  New: ${totalNewCards} (${variantCount} variant${variantCount!==1?'s':''}) | Dupes: ${dupCount} | Wallet: ${fm$(cfg.wallet)}`);
+    setLastAcquisitionBatch(col,packTracker,{newCount:totalNewCards,duplicateCount:dupCount,cardCount:pack.length});
     saveCol(col);
   } else {
     console.log(`  Wallet: untouched (virtual)`);
@@ -1078,8 +190,9 @@ function cmdOpenPack(type){
 }
 
 function cmdOpenBox(type){
-  ensureSet();const pt=type||'hobby';if(!PACKS[pt]){console.log(`Unknown: ${pt}`);return}
-  const set=loadSet();const real=isReal();const cfg=loadCfg();const bp=PACKS[pt].price;
+  const set=ensureSet();if(!set)return;
+  const pt=type||'hobby';if(!PACKS[pt]){console.log(`Unknown: ${pt}`);return}
+  const real=isReal();const cfg=loadCfg();const bp=PACKS[pt].price;
   const col=real?loadCol():null;
   const usedOwned=real&&col&&getSealedQty(col,pt)>0;
   if(real){
@@ -1097,7 +210,7 @@ function cmdOpenBox(type){
     col.stats.boxes++;
     var prevColLen=col.cards.length;
   }
-  const np=PACKS[pt].packs;let tv=0,th=0,boxBest=null,totalNew=0,totalDup=0;
+  const np=PACKS[pt].packs;let tv=0,th=0,boxBest=null,totalNew=0,totalVariant=0,totalDup=0;
   const displayCost=usedOwned?0:bp;
   const modeTag=real?(usedOwned?' [OWNED]':' [PURCHASED]'):' [DRY RUN]';
   console.log(`\n${'═'.repeat(52)}`);
@@ -1119,7 +232,10 @@ function cmdOpenBox(type){
     console.log(`\n  ── Pack ${p+1}/${np} ─────────────────────────`);
     pack.forEach((c,i)=>{
       const isDup=Boolean(c.acquiredIsDuplicate);
-      if(isDup)totalDup++;else totalNew++;
+      const isVariant=Boolean(c.acquiredIsVariant);
+      if(isDup)totalDup++;
+      else if(isVariant)totalVariant++;
+      else totalNew++;
       console.log(fmtCard(c,i+1,set,isDup?c.acquiredCopyIndex:0));
       console.log('');
     });
@@ -1145,7 +261,8 @@ function cmdOpenBox(type){
   console.log(`  Cards: ${np*PACKS[pt].cpp} | Value: ${fm$(tv)} | Cost: ${fm$(displayCost)}`);
   console.log(`  ROI: ${real&&usedOwned?'n/a':(roi>=0?'+':'')+roi.toFixed(1)+'%'} | Hits: ${th}`);
   if(real){
-    console.log(`  New: ${totalNew} | Duplicates: ${totalDup} | 1/1s: ${col.stats.oneOfOnes}`);
+    const totalNewCards = totalNew + totalVariant;
+    console.log(`  New: ${totalNewCards} (${totalVariant} variant${totalVariant!==1?'s':''}) | Dupes: ${totalDup} | 1/1s: ${col.stats.oneOfOnes}`);
     console.log(`  Wallet: ${fm$(cfg.wallet)}`);
   } else {
     console.log(`  1/1s: — | Wallet: untouched (virtual)`);
@@ -1157,12 +274,12 @@ function cmdOpenBox(type){
 function cmdPortfolio(){
   const cfg=loadCfg();
   // load all collections
-  const colDir=path.join(DATA_DIR,'collections');
+  const colDir=path.join(getDataDir(),'collections');
   const files=fs.readdirSync(colDir).filter(f=>f.endsWith('.json'));
   let totalCards=0,totalValue=0,totalSpent=0,totalHits=0,totalOnes=0,setsInfo=[];
   for(const f of files){
     const col=rJ(path.join(colDir,f));if(!col)continue;
-    const setPath=path.join(DATA_DIR,'sets',col.setKey+'.json');
+    const setPath=path.join(getDataDir(),'sets',col.setKey+'.json');
     const set=rJ(setPath);
     const uniqNums=new Set();
     for(const c of col.cards) uniqNums.add(c.cardNum);
@@ -1206,13 +323,13 @@ function cmdCollection(){
   const cfg=loadCfg();
   // optional set filter from args
   const filterArg=process.argv.slice(2).find(a=>!a.startsWith('-')&&a!=='collection');
-  const colDir=path.join(DATA_DIR,'collections');
+  const colDir=path.join(getDataDir(),'collections');
   const files=fs.readdirSync(colDir).filter(f=>f.endsWith('.json'));
   if(!files.length){console.log(`\n  ❌ No collections found.\n`);return}
   let shown=0;
   for(const f of files){
     const col=rJ(path.join(colDir,f));if(!col||!col.cards.length)continue;
-    const setPath=path.join(DATA_DIR,'sets',col.setKey+'.json');
+    const setPath=path.join(getDataDir(),'sets',col.setKey+'.json');
     const set=rJ(setPath);
     const setName=set?`${set.name} ${set.year}`:col.setKey;
     const setCode=set?set.code:'???';
@@ -1422,1565 +539,65 @@ function cmdNewSeason(){
 
 // ─── SECONDARY MARKET ───────────────────────────────────────────────
 
-function loadMarket(setKey){
-  return rJ(path.join(DATA_DIR,'sets',setKey,'market.json'))||null;
-}
 
-function getMarketCardList(market){
-  return market.cardList||Object.values(market.cards||{});
-}
-
-function saveMarket(setKey,m){
-  const dir=path.join(DATA_DIR,'sets',setKey);
-  if(!fs.existsSync(dir)) fs.mkdirSync(dir,{recursive:true});
-  wJ(path.join(dir,'market.json'),m);
-}
-
-function normalizeMarketEvents(market){
-  if(!market||!Array.isArray(market.events)) return market;
-  const normalized=[];
-  const sorted=[...market.events].sort((a,b)=>(a.tick||0)-(b.tick||0));
-  for(const event of sorted){
-    const existing=normalized.find(prev=>{
-      if(prev.type!==event.type) return false;
-      const prevEnd=(prev.tick||0)+(prev.duration||14);
-      const nextEnd=(event.tick||0)+(event.duration||14);
-      return (event.tick||0)<=prevEnd && (prev.tick||0)<=nextEnd;
-    });
-    if(existing){
-      existing.stackCount=(existing.stackCount||1)+1;
-      existing.baseDesc=existing.baseDesc||existing.desc||event.desc;
-      existing.magnitude=Math.round((existing.magnitude+event.magnitude)*1000)/1000;
-      existing.duration=Math.max(existing.duration||0,event.duration||0,(event.tick||0)-(existing.tick||0)+1);
-      existing.desc=formatMarketEventDesc(getMarketEventProfile(existing.type), existing.stackCount);
-      continue;
-    }
-    const stackCount=event.stackCount||1;
-    normalized.push({
-      ...event,
-      stackCount,
-      baseDesc:event.baseDesc||event.desc,
-      desc:formatMarketEventDesc(getMarketEventProfile(event.type), stackCount),
-    });
-  }
-  market.events=normalized;
-  return market;
-}
-
-const MACRO_FILE=path.join(DATA_DIR,'market-macro.json');
-
-function loadMacroState(){
-  return rJ(MACRO_FILE)||{lastFetch:0,source:'FRED SP500',label:'neutral',signal:0,weekPct:0,monthPct:0,compositePct:0};
-}
-
-function saveMacroState(state){
-  wJ(MACRO_FILE,state);
-}
-
-function fetchMacroState(){
-  let raw='';
-  try{
-    const fetchScript = `
-const https = require('https');
-const url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500';
-const req = https.get(url, (res) => {
-  if (res.statusCode !== 200) {
-    res.resume();
-    process.exit(1);
+function cmdCompare(){
+  const globalData=path.join(__dirname,'..','data');
+  const playersFile=path.join(globalData,'players.json');
+  const playersReg=rJ(playersFile);
+  if(!playersReg||!playersReg.players||!Object.keys(playersReg.players).length){
+    console.log(`\n  \u26A0 No players found.\n`);
     return;
   }
-  res.setEncoding('utf8');
-  let data = '';
-  res.on('data', (chunk) => { data += chunk; });
-  res.on('end', () => process.stdout.write(data));
-});
-req.setTimeout(8000, () => req.destroy(new Error('timeout')));
-req.on('error', () => process.exit(1));
-    `.trim();
-    raw=execFileSync(process.execPath,['-e',fetchScript],{encoding:'utf8',timeout:9000,maxBuffer:1024*1024,stdio:['ignore','pipe','ignore']});
-  } catch{
-    return null;
-  }
-
-  const lines=raw.trim().split(/\r?\n/);
-  if(lines.length<3) return null;
-  const points=[];
-  for(const line of lines.slice(1)){
-    const [date,value]=line.split(',');
-    const num=parseFloat(value);
-    if(date&&Number.isFinite(num)) points.push({date,value:num});
-  }
-  if(points.length<6) return null;
-
-  const latest=points[points.length-1];
-  const week=points[Math.max(0, points.length-6)];
-  const month=points[Math.max(0, points.length-21)];
-  const weekPct=((latest.value-week.value)/week.value)*100;
-  const monthPct=((latest.value-month.value)/month.value)*100;
-  const compositePct=monthPct*0.7+weekPct*0.3;
-  const signal=Math.max(-1,Math.min(1,compositePct/15));
-  const label=signal>0.35?'bullish':signal<-0.35?'bearish':'neutral';
-
-  return {
-    lastFetch:Date.now(),
-    source:'FRED SP500',
-    updatedAt:new Date().toISOString(),
-    latest,
-    week,
-    month,
-    weekPct,
-    monthPct,
-    compositePct,
-    signal,
-    label,
-  };
-}
-
-function getMacroState(force=false){
-  const cached=loadMacroState();
-  const ageMs=Date.now()-(cached.lastFetch||0);
-  const maxAgeMs=48*60*60*1000;
-  if(!force&&cached.lastFetch&&ageMs<maxAgeMs) return cached;
-  const fresh=fetchMacroState();
-  if(fresh){
-    saveMacroState(fresh);
-    return fresh;
-  }
-  return cached;
-}
-
-function clamp01(v){
-  return Math.max(0,Math.min(1,v));
-}
-
-function hashStringSeed(str){
-  let h=0;
-  for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i);
-  return Math.abs(h|0);
-}
-
-function getSimulationDate(day){
-  const d=new Date();
-  d.setHours(0,0,0,0);
-  d.setDate(d.getDate()+day);
-  return d;
-}
-
-function floppsDefaultCorporation(){
-  return {
-    scarcityIndex:0.58,
-    hypeIndex:0.54,
-    extractionIndex:0.61,
-    collectorStress:0.57,
-    retailerStress:0.46,
-    laborStress:0.41,
-    lobbyingHeat:0.28,
-    trustMask:0.44,
-    allocationTightness:0.52,
-    releasePace:0.74,
-    partnerHeat:0.38,
-    guidance:'disciplined growth through elevated collector engagement',
-    activePhase:'planning',
-    executiveFocus:'portfolio',
-  };
-}
-
-function ensureFloppsStateShape(state){
-  const next=state||{};
-  if(!next.stock) next.stock={price:100, history:[]};
-  if(!Array.isArray(next.stock.history)) next.stock.history=[];
-  if(!Array.isArray(next.newsHistory)) next.newsHistory=[];
-  if(typeof next.lastNewsDay!=='number') next.lastNewsDay=-1;
-  if(typeof next.lastStockDay!=='number') next.lastStockDay=-1;
-  if(typeof next.lastSeenDay!=='number') next.lastSeenDay=-1;
-  if(!next.corporation) next.corporation=floppsDefaultCorporation();
-  next.corporation={...floppsDefaultCorporation(), ...next.corporation};
-  if(!Array.isArray(next.calendar)) next.calendar=[];
-  if(!Array.isArray(next.dayHistory)) next.dayHistory=[];
-  if(!next.trendDesk) next.trendDesk={lastRefreshDay:-1,lastCommitteeCycle:-1,watchlist:[],chosenHistory:[]};
-  if(!Array.isArray(next.trendDesk.watchlist)) next.trendDesk.watchlist=[];
-  if(!Array.isArray(next.trendDesk.chosenHistory)) next.trendDesk.chosenHistory=[];
-  if(!Array.isArray(next.announcementHistory)) next.announcementHistory=[];
-  return next;
-}
-
-function loadFloppsState(){
-  return ensureFloppsStateShape(rJ(FLOPPS_STATE_FILE));
-}
-
-function saveFloppsState(state){
-  wJ(FLOPPS_STATE_FILE,ensureFloppsStateShape(state));
-}
-
-function slugifyFloppsText(value){
-  return String(value||'wildcard')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g,'-')
-    .replace(/^-+|-+$/g,'')
-    .slice(0,48)||'wildcard';
-}
-
-function buildFloppsReleaseCalendar(set, startDay=0){
-  const baseCode=set?.code||'FLP';
-  const baseName=set?.name||'Flagship';
-  const entries=[];
-  for(let i=0;i<9;i++){
-    const launchDay=startDay+(i*45);
-    const line=FLOPPS_PRODUCT_LINES[i%FLOPPS_PRODUCT_LINES.length];
-    const partner=FLOPPS_PARTNERS[i%FLOPPS_PARTNERS.length];
-    const seasonTag=`${new Date().getFullYear()}-${String(i+1).padStart(2,'0')}`;
-    entries.push({
-      code:`${baseCode}-${seasonTag}`,
-      title:i===0?`${baseName} ${line}`:`${line} ${seasonTag}`,
-      day:launchDay,
-      partner,
-      category:i%3===0?'sports':i%3===1?'entertainment':'premium',
-      channel:i%4===0?'hobby':i%4===1?'retail':i%4===2?'dutch-auction':'instant-drop',
-      cadenceDays:45,
-    });
-  }
-  return entries;
-}
-
-function scoreFloppsTrendCandidate(candidate, day, corp){
-  const simDate=getSimulationDate(day);
-  const month=simDate.getMonth();
-  const nearestWindow=Math.min(...candidate.windowMonths.map((m)=>{
-    const direct=Math.abs(month-m);
-    return Math.min(direct, 12-direct);
-  }));
-  const proximityBonus=Math.max(0,0.24-(nearestWindow*0.05));
-  const seeded=mulberry32(hashStringSeed(`${candidate.name}:${day}:${corp.activePhase}`));
-  const trendProxy=0.35+(seeded()*0.45);
-  const formatBonus=
-    candidate.formatBias==='premium'?corp.extractionIndex*0.12:
-    candidate.formatBias==='chrome'?corp.hypeIndex*0.1:
-    candidate.formatBias==='heritage'?(1-corp.releasePace)*0.08:
-    0.05;
-  const marketability=clamp01(candidate.base*0.45+trendProxy*0.3+proximityBonus+formatBonus+corp.partnerHeat*0.08);
-  return {
-    ...candidate,
-    trendProxy:Math.round(trendProxy*1000)/1000,
-    proximityBonus:Math.round(proximityBonus*1000)/1000,
-    marketability:Math.round(marketability*1000)/1000,
-  };
-}
-
-function ensureFloppsTrendDesk(state, day){
-  const corp=state.corporation||floppsDefaultCorporation();
-  if(!state.trendDesk.watchlist.length || day-state.trendDesk.lastRefreshDay>=14){
-    state.trendDesk.watchlist=FLOPPS_TREND_CANDIDATES
-      .map((candidate)=>scoreFloppsTrendCandidate(candidate, day, corp))
-      .sort((a,b)=>b.marketability-a.marketability);
-    state.trendDesk.lastRefreshDay=day;
-  }
-  const committeeCycle=Math.floor(day/45);
-  if(state.trendDesk.lastCommitteeCycle!==committeeCycle){
-    const chosen=state.trendDesk.watchlist[0];
-    if(chosen){
-      state.trendDesk.chosenHistory.push({
-        day,
-        cycle:committeeCycle,
-        name:chosen.name,
-        partner:chosen.partner,
-        category:chosen.category,
-        marketability:chosen.marketability,
-      });
-      const target=state.calendar.find((entry)=>entry.day>=day+30 && entry.selectionCycle==null);
-      if(target){
-        target.selectionCycle=committeeCycle;
-        target.licenseName=chosen.name;
-        target.partner=chosen.partner;
-        target.marketability=chosen.marketability;
-        target.title=`${chosen.name} ${target.channel==='instant-drop'?'Instant':'Collectors'} Set`;
+  const rows=[];
+  const playerIds=Object.keys(playersReg.players);
+  for(const id of playerIds){
+    const pDir=path.join(globalData,'players',id);
+    const cfg=rJ(path.join(pDir,'config.json'));
+    const colDir=path.join(pDir,'collections');
+    let totalCards=0,totalValue=0,totalSlots=0,totalSetSize=0,totalHits=0,totalPacks=0;
+    if(fs.existsSync(colDir)){
+      const files=fs.readdirSync(colDir).filter(f=>f.endsWith('.json'));
+      for(const f of files){
+        const col=rJ(path.join(colDir,f));
+        if(!col||!col.cards)continue;
+        totalCards+=col.cards.length;
+        totalValue+=col.stats?.value||0;
+        totalHits+=col.stats?.hits||0;
+        totalPacks+=col.stats?.packs||0;
+        const setSlots=new Set(col.cards.map(c=>c.cardNum));
+        totalSlots+=setSlots.size;
+        const setPath=path.join(globalData,'sets',col.setKey+'.json');
+        const set=rJ(setPath);
+        if(set)totalSetSize+=set.cards.length;
       }
     }
-    state.trendDesk.lastCommitteeCycle=committeeCycle;
+    const wallet=cfg?.wallet||0;
+    const variants=totalCards-totalSlots;
+    const compPct=totalSetSize>0?((totalSlots/totalSetSize)*100).toFixed(1):'0.0';
+    rows.push({id,displayName:playersReg.players[id].displayName||id,wallet,totalCards,totalSlots,totalSetSize,variants,totalValue,compPct,totalHits,totalPacks});
   }
-  if(state.trendDesk.chosenHistory.length>24) state.trendDesk.chosenHistory=state.trendDesk.chosenHistory.slice(-24);
-}
-
-function ensureFloppsReleaseCalendar(state, set, currentDay){
-  if(!state.calendar.length){
-    state.calendar=buildFloppsReleaseCalendar(set, Math.max(0,currentDay-(currentDay%45)));
-  }
-  const lastDay=state.calendar[state.calendar.length-1]?.day??0;
-  if(lastDay<currentDay+240){
-    const extension=buildFloppsReleaseCalendar(set, lastDay+45).slice(0,4);
-    state.calendar=state.calendar.concat(extension);
-  }
-  if(state.calendar.length>16) state.calendar=state.calendar.slice(-16);
-}
-
-function getFloppsReleaseWindow(state, day){
-  const cal=Array.isArray(state?.calendar)?state.calendar:[];
-  if(!cal.length){
-    return {phase:FLOPPS_PHASES[0], current:null, next:null, offset:0};
-  }
-  let current=cal[0];
-  let next=cal[cal.length-1];
-  for(let i=0;i<cal.length;i++){
-    if(cal[i].day<=day) current=cal[i];
-    if(cal[i].day>day){ next=cal[i]; break; }
-  }
-  const offset=day-(current?.day||0);
-  let phase=FLOPPS_PHASES[0];
-  if(offset<0) phase=FLOPPS_PHASES[1];
-  else if(offset<=5) phase=FLOPPS_PHASES[3];
-  else if(offset<=18) phase=FLOPPS_PHASES[4];
-  else if(offset<=32) phase=FLOPPS_PHASES[5];
-  else phase=FLOPPS_PHASES[2];
-  return {phase,current,next,offset};
-}
-
-function getFloppsEcosystemSnapshot(setKey){
-  const storeState=loadStoreState();
-  const scalperState=loadScalperState();
-  const defaults=loadDefaultStores();
-  const inventories=defaults.map((store)=>{
-    const inv=storeState.stores?.[store.id]?.inventory?.[setKey]||{};
-    let total=0;
-    for(const type of Object.keys(PACKS)){
-      total+=(inv[type]||0);
-    }
-    return {store, total};
-  });
-  const stockTotal=inventories.reduce((sum, entry)=>sum+entry.total,0);
-  const avgStock=inventories.length?stockTotal/inventories.length:0;
-  const recentScalperBuys=(scalperState.activityLog||[]).filter((e)=>e.action==='buy'&&Date.now()-e.timestamp<7*24*60*60*1000);
-  const recentScalperListings=(scalperState.activityLog||[]).filter((e)=>e.action==='list'&&Date.now()-e.timestamp<7*24*60*60*1000);
-  return {
-    avgStock,
-    stockTotal,
-    scalperBuys:recentScalperBuys.reduce((sum,e)=>sum+(e.qty||0),0),
-    scalperListings:recentScalperListings.length,
-    storeCount:inventories.length,
-  };
-}
-
-function pickFloppsExecutive(corp, release){
-  const dominant=[
-    ['allocationTightness','allocation'],
-    ['retailerStress','allocation'],
-    ['laborStress','labor'],
-    ['lobbyingHeat','lobbying'],
-    ['hypeIndex','hype'],
-    ['extractionIndex','margin'],
-    ['releasePace','cadence'],
-  ].sort((a,b)=>(corp[b[0]]||0)-(corp[a[0]]||0))[0]?.[1]||'portfolio';
-  const phaseDomain=release?.phase?.id==='launch'?'hype':release?.phase?.id==='licensing'?'portfolio':dominant;
-  return FLOPPS_EXECUTIVES.find((exec)=>exec.domain===phaseDomain)||FLOPPS_EXECUTIVES[0];
-}
-
-function advanceFloppsCorporationState(state, set, market, day){
-  ensureFloppsReleaseCalendar(state,set,day);
-  ensureFloppsTrendDesk(state,day);
-  const corp=state.corporation||floppsDefaultCorporation();
-  const eco=getFloppsEcosystemSnapshot(market?.setKey||`${set?.code}-${set?.year}`);
-  const release=getFloppsReleaseWindow(state, day);
-  const hot=isSetHot(market?.setKey||`${set?.code}-${set?.year}`);
-  const demand=getDemandFactor(market?.setKey||`${set?.code}-${set?.year}`);
-  const sentiment=market?.sentiment||1;
-
-  corp.hypeIndex=clamp01(0.28+Math.max(0,demand-1)*0.38+(hot?0.12:0)+(release.phase.id==='launch'?0.12:0));
-  corp.scarcityIndex=clamp01(
-    0.28
-    +(eco.avgStock<8?0.18:eco.avgStock<14?0.1:0)
-    +Math.min(0.22,eco.scalperBuys/160)
-    +(release.phase.id==='sellthrough'?0.08:0)
-  );
-  corp.extractionIndex=clamp01(0.32+corp.scarcityIndex*0.24+corp.hypeIndex*0.18+(release.phase.id==='launch'?0.06:0));
-  corp.collectorStress=clamp01(0.22+corp.hypeIndex*0.25+corp.scarcityIndex*0.2+corp.releasePace*0.14);
-  corp.retailerStress=clamp01(
-    0.18
-    +(eco.avgStock<8?0.22:eco.avgStock<14?0.12:0)
-    +corp.allocationTightness*0.22
-    +Math.min(0.18,eco.scalperBuys/220)
-  );
-  corp.laborStress=clamp01(0.2+corp.releasePace*0.18+corp.extractionIndex*0.14+(release.phase.id==='launch'?0.1:0));
-  corp.lobbyingHeat=clamp01(0.18+Math.max(0,sentiment-1)*0.15+(corp.extractionIndex*0.12));
-  corp.trustMask=clamp01(0.52-corp.extractionIndex*0.18+(release.phase.id==='launch'?0.08:0));
-  corp.allocationTightness=clamp01(0.35+corp.scarcityIndex*0.4+corp.retailerStress*0.18);
-  corp.releasePace=clamp01(0.55+(release.phase.id==='prelaunch'?0.08:0)+(release.phase.id==='launch'?0.12:0)+(corp.hypeIndex*0.08));
-  corp.partnerHeat=clamp01(0.28+(release.phase.id==='licensing'?0.18:0)+(release.next?0.06:0));
-  corp.activePhase=release.phase.id;
-  corp.executiveFocus=pickFloppsExecutive(corp, release).domain;
-  corp.guidance=
-    corp.extractionIndex>0.72?'premiumizing the collector funnel while defending disciplined scarcity':
-    corp.hypeIndex>0.7?'leaning into engagement velocity across the release calendar':
-    corp.retailerStress>0.65?'rebalancing partner allocation with operational clarity':
-    'maintaining disciplined growth through steady release sequencing';
-  state.corporation=corp;
-  const snapshot={
-    day,
-    phase:release.phase.id,
-    title:release.current?.title||null,
-    scarcityIndex:corp.scarcityIndex,
-    hypeIndex:corp.hypeIndex,
-    extractionIndex:corp.extractionIndex,
-    collectorStress:corp.collectorStress,
-    retailerStress:corp.retailerStress,
-    laborStress:corp.laborStress,
-    executiveFocus:corp.executiveFocus,
-  };
-  const existingIdx=state.dayHistory.findIndex((entry)=>entry.day===day);
-  if(existingIdx>=0) state.dayHistory[existingIdx]=snapshot;
-  else state.dayHistory.push(snapshot);
-  if(state.dayHistory.length>180) state.dayHistory=state.dayHistory.slice(-180);
-  return {corp, eco, release, executive:pickFloppsExecutive(corp, release)};
-}
-
-function getFloppsSimulationContext(set, market, stateOverride){
-  const macro=getMacroState();
-  const state=ensureFloppsStateShape(stateOverride||loadFloppsState());
-  const sentiment=market?.sentiment||1;
-  const changePct=market?.setAggregates?.totalChangePct||0;
-  const activeEvents=(market?.events||[]).filter(e=>market.tick-e.tick<(e.duration||14));
-  const bullish=activeEvents.filter(e=>isBullishMarketEvent(e.type)).length;
-  const bearish=activeEvents.filter(e=>isBearishMarketEvent(e.type)).length;
-  const hypeBoost=Math.max(-0.12,Math.min(0.12,(sentiment-1)*0.18 + changePct*0.0025));
-  const macroTilt=Math.max(-0.08,Math.min(0.08,(macro.signal||0)*0.08));
-  const eventTilt=Math.max(-0.12,Math.min(0.12,(bullish-bearish)*0.02));
-  const setHeat=Math.max(-0.06,Math.min(0.06,((set?.cards?.length||0)/150-1)*0.015));
-  const day=getSimulationDay(market);
-  const corpState=advanceFloppsCorporationState(state,set,market,day);
-  const corp=corpState.corp;
-  return {
-    macro,sentiment,changePct,activeEvents,bullish,bearish,hypeBoost,macroTilt,eventTilt,setHeat,
-    corporation:corp,
-    release:corpState.release,
-    executive:corpState.executive,
-    ecosystem:corpState.eco,
-  };
-}
-
-function pickFloppsBulletin(state, ctx, day){
-  const pool=[...FLOPPS_BULLETINS];
-  if(ctx.sentiment>1.08||ctx.hypeBoost>0.02){
-    pool.sort((a,b)=>b.stockDelta-a.stockDelta);
-  } else if(ctx.sentiment<0.95||ctx.changePct<0){
-    pool.sort((a,b)=>a.stockDelta-b.stockDelta);
-  } else {
-    pool.sort(() => RNG() - 0.5);
-  }
-  const weighted=pool.map((item, idx) => ({item, w:Math.max(0.2, item.weight * (idx < 8 ? 1.3 : 1))}));
-  const total=weighted.reduce((sum, entry)=>sum+entry.w,0);
-  let roll=RNG()*total;
-  for(const entry of weighted){
-    roll-=entry.w;
-    if(roll<=0) return entry.item;
-  }
-  return weighted[0].item;
-}
-
-function pickFloppsBulletinByCategory(ctx, category){
-  const pool=FLOPPS_BULLETINS.filter((item)=>item.category===category);
-  if(!pool.length) return pickFloppsBulletin(null,ctx,0);
-  const weighted=pool.map((item)=>({item,w:Math.max(0.2,item.weight||1)}));
-  const total=weighted.reduce((sum,entry)=>sum+entry.w,0);
-  let roll=RNG()*total;
-  for(const entry of weighted){
-    roll-=entry.w;
-    if(roll<=0) return entry.item;
-  }
-  return weighted[0].item;
-}
-
-function buildAnnouncementFromBulletin(bulletin, ctx, day, kindOverride){
-  const executiveByCategory={
-    labor:{name:'Dana Sloane',role:'Chief People Officer'},
-    allocation:{name:'Marcus Reed',role:'VP of Allocation'},
-    pricing:{name:'Lillian Mercer',role:'CFO'},
-    investor:{name:'Mira North',role:'Investor Relations'},
-    lobbying:{name:'Reed Harlan',role:'Head of Government Affairs'},
-    licensing:{name:'Grant Bell',role:'President of Product'},
-    community:{name:'Elena Cross',role:'Chief Marketing Officer'},
-    marketplace:{name:'Lillian Mercer',role:'CFO'},
-    operations:{name:'Marcus Reed',role:'VP of Allocation'},
-    cadence:{name:'Grant Bell',role:'President of Product'},
-  };
-  const exec=executiveByCategory[bulletin.category]||{name:ctx.executive?.name||'Management',role:ctx.executive?.role||'Executive Office'};
-  return {
-    kind:kindOverride||bulletin.category||'corporate',
-    id:`${bulletin.id}-${day}`,
-    title:bulletin.title,
-    summary:bulletin.summary,
-    paraphrase:bulletin.paraphrase,
-    executive:exec.name,
-    executiveRole:exec.role,
-    stockDelta:bulletin.stockDelta,
-  };
-}
-
-function updateFloppsStockPrice(state, ctx, bulletin, day){
-  const prev=state.stock?.price||100;
-  const corp=ctx.corporation||floppsDefaultCorporation();
-  const currentPrice=Math.max(12, Math.min(2000,
-    prev * (1 + ctx.macroTilt + ctx.hypeBoost + ctx.eventTilt + ctx.setHeat + (corp.extractionIndex-0.5)*0.03 + (corp.hypeIndex-0.5)*0.025 + (bulletin?.stockDelta || 0))
-  ));
-  state.stock=state.stock||{price:100, history:[]};
-  state.stock.price=Math.round(currentPrice*100)/100;
-  state.stock.history=Array.isArray(state.stock.history)?state.stock.history:[];
-  const point={
-    day,
-    price:state.stock.price,
-    macro:ctx.macro?.signal||0,
-    sentiment:ctx.sentiment,
-    phase:ctx.release?.phase?.id||null,
-    bulletin:bulletin?.id||null,
-  };
-  const last=state.stock.history[state.stock.history.length-1];
-  if(last&&last.day===day) state.stock.history[state.stock.history.length-1]=point;
-  else state.stock.history.push(point);
-  if(state.stock.history.length>120) state.stock.history=state.stock.history.slice(-120);
-}
-
-function formatFloppsNewsBlast(bulletin, state, ctx){
-  const price=state.stock?.price||100;
-  const mood=ctx.sentiment>1.05?'upbeat':ctx.sentiment<0.95?'tense':'measured';
-  const execName=bulletin.executive||ctx.executive?.name||'Management';
-  const phase=ctx.release?.phase?.label||'Operating Window';
-  const lines=[
-    `📰 Flopps desk note: ${bulletin.title}`,
-    `The company says ${bulletin.summary}`,
-    `Translation: ${bulletin.paraphrase}`,
-    `${execName} is carrying this one for ${phase}.`,
-    `FLPS now trades at ${fm$(price)} in the fake market, which management is describing as "${mood}".`,
-    `Check the corporate blog if you want the official version.`,
+  const colW=Math.max(...rows.map(r=>r.displayName.length))+2;
+  console.log(`\n${'═'.repeat(60)}`);
+  console.log(`  \u{1F4CA} PLAYER COMPARISON`);
+  console.log(`${'═'.repeat(60)}`);
+  console.log(`  Metric  ${rows.map(r=>r.displayName.padEnd(colW)).join('\u2502 ')}`);
+  console.log('  '+['─'.repeat(8)].concat(rows.map(()=>'─'.repeat(colW))).join('─┼─'));
+  const fields=[
+    {label:'Wallet',fn:r=>`$${r.wallet.toFixed(2)}`},
+    {label:'Cards',fn:r=>String(r.totalCards)},
+    {label:'Slots',fn:r=>`${r.totalSlots}/${r.totalSetSize}`},
+    {label:'Variants',fn:r=>String(r.variants)},
+    {label:'Value',fn:r=>`$${r.totalValue.toFixed(2)}`},
+    {label:'Completion',fn:r=>`${r.compPct}%`},
+    {label:'Hits',fn:r=>String(r.totalHits)},
+    {label:'Packs',fn:r=>String(r.totalPacks)},
   ];
-  if(bulletin.marketImpact) lines.splice(4,0,`Market effect: ${bulletin.marketImpact}`);
-  if(bulletin.collectorImpact) lines.splice(5,0,`Collector effect: ${bulletin.collectorImpact}`);
-  return lines.join('\n');
-}
-
-function getFloppsOverlayLines(set, market, {compact=false}={}){
-  if(!set||!market) return [];
-  const state=loadFloppsState();
-  const ctx=getFloppsSimulationContext(set,market,state);
-  const latest=state.latestNews||state.newsHistory?.slice(-1)[0]||null;
-  const price=state.stock?.price||100;
-  const day=getSimulationDay(market);
-  const dayLabel=Number.isFinite(day)?day:(state.lastSeenDay>=0?state.lastSeenDay:'n/a');
-  const lines=[
-    `FLPS ${fm$(price)} | simulation day ${dayLabel}`,
-  ];
-  lines.push(`  Phase: ${ctx.release?.phase?.label||'Unknown'} | Exec focus: ${ctx.executive?.name||'Management'}`);
-  if(state.trendDesk?.watchlist?.[0]){
-    lines.push(`  Trend desk: ${state.trendDesk.watchlist[0].name} (${Math.round(state.trendDesk.watchlist[0].marketability*100)}% marketability)`);
+  for(const f of fields){
+    const vals=rows.map(r=>f.fn(r).padEnd(colW));
+    console.log(`  ${f.label.padEnd(8)}${vals.join('\u2502 ')}`);
   }
-  if(latest){
-    lines.push(`  Latest bulletin: ${latest.title}`);
-    if(!compact){
-      lines.push(`  ${latest.summary}`);
-      lines.push(`  Translation: ${latest.paraphrase}`);
-      lines.push(`  Corporate stress: collectors ${(ctx.corporation?.collectorStress*100||0).toFixed(0)}% | retailers ${(ctx.corporation?.retailerStress*100||0).toFixed(0)}% | labor ${(ctx.corporation?.laborStress*100||0).toFixed(0)}%`);
-    }
-  } else {
-    lines.push(`  Latest bulletin: none recorded yet`);
-  }
-  return lines;
+  console.log(`${'═'.repeat(60)}\n`);
 }
-
-function daysSinceLastFloppsAnnouncement(state, kindFilter=null){
-  const items=(state.announcementHistory||[]).filter((item)=>!kindFilter || item.kind===kindFilter);
-  if(!items.length) return Infinity;
-  return (state.lastSeenDay>=0?state.lastSeenDay:items[items.length-1].day)-items[items.length-1].day;
-}
-
-function buildQuarterlyFloppsAnnouncement(state, ctx, day){
-  const quarter=Math.floor(day/90)+1;
-  const corp=ctx.corporation||floppsDefaultCorporation();
-  const guidance=corp.guidance;
-  return {
-    kind:'quarterly',
-    id:`quarterly-${quarter}`,
-    title:`Quarter ${quarter} Collector Shareholder Update`,
-    summary:`Flopps reaffirmed ${guidance} while highlighting disciplined allocation, premium demand, and durable collector engagement.`,
-    paraphrase:`They are doing quarterly earnings theater and translating pressure into polished investor language.`,
-    executive:ctx.executive?.name||'Mira North',
-    executiveRole:'Investor Relations',
-  };
-}
-
-function buildScheduledFloppsAnnouncement(state, ctx, day){
-  const focusRelease=(ctx.release?.phase?.id==='prelaunch'||ctx.release?.phase?.id==='licensing')?(ctx.release?.next||ctx.release?.current):ctx.release?.current;
-  if(!focusRelease) return null;
-  const offset=day-(focusRelease.day??day);
-  const licenseLabel=focusRelease.licenseName||focusRelease.title;
-  if(offset===-21){
-    return {
-      kind:'licensing',
-      id:`licensing-${focusRelease.code||focusRelease.day}`,
-      title:`Flopps Signs ${licenseLabel} for a Future Release Window`,
-      summary:`Flopps quietly locked a ${licenseLabel} product window after internal marketability testing tied to search interest, release timing, and crossover spend potential.`,
-      paraphrase:`They used trend data and release timing to decide what fandom to monetize next.`,
-      executive:'Grant Bell',
-      executiveRole:'President of Product',
-    };
-  }
-  if(offset===-7){
-    return {
-      kind:'consumer-blog',
-      id:`teaser-${focusRelease.code||focusRelease.day}`,
-      title:`Coming Next: ${licenseLabel}`,
-      summary:`Flopps published a controlled teaser for ${licenseLabel}, positioning the set as a cultural moment rather than another entry in the calendar.`,
-      paraphrase:`They started the prelaunch hype cycle one week out.`,
-      executive:'Elena Cross',
-      executiveRole:'Chief Marketing Officer',
-    };
-  }
-  if(offset===0){
-    return {
-      kind:'launch',
-      id:`launch-${focusRelease.code||focusRelease.day}`,
-      title:`${licenseLabel} Launches Across Priority Channels`,
-      summary:`Flopps announced the release of ${licenseLabel} with premium language around allocations, chase depth, and collector excitement.`,
-      paraphrase:`Launch day. They are opening the buying funnel as hard as possible.`,
-      executive:'Marcus Reed',
-      executiveRole:'VP of Allocation',
-    };
-  }
-  if(offset===14){
-    return {
-      kind:'sellthrough',
-      id:`sellthrough-${focusRelease.code||focusRelease.day}`,
-      title:`${licenseLabel} Sell-Through Update`,
-      summary:`Flopps says ${licenseLabel} outperformed internal demand expectations and validated its premium release discipline.`,
-      paraphrase:`Two weeks after launch, they are using sell-through numbers to justify the next squeeze.`,
-      executive:'Lillian Mercer',
-      executiveRole:'CFO',
-    };
-  }
-  return null;
-}
-
-function buildExceptionalFloppsAnnouncement(state, ctx, day){
-  const corp=ctx.corporation||floppsDefaultCorporation();
-  const daysSinceLast=Math.min(
-    daysSinceLastFloppsAnnouncement(state),
-    state.announcementHistory.length?day-state.announcementHistory[state.announcementHistory.length-1].day:Infinity
-  );
-  if(daysSinceLast<10) return null;
-  if(corp.retailerStress>0.72){
-    return buildAnnouncementFromBulletin(pickFloppsBulletinByCategory(ctx,'allocation'),ctx,day,'operations');
-  }
-  if(corp.laborStress>0.68){
-    return buildAnnouncementFromBulletin(pickFloppsBulletinByCategory(ctx,'labor'),ctx,day,'corporate');
-  }
-  if(corp.extractionIndex>0.72 && RNG()<0.25){
-    return buildAnnouncementFromBulletin(pickFloppsBulletinByCategory(ctx,'pricing'),ctx,day,'pricing');
-  }
-  if(corp.lobbyingHeat>0.58 && RNG()<0.2){
-    return buildAnnouncementFromBulletin(pickFloppsBulletinByCategory(ctx,'lobbying'),ctx,day,'policy');
-  }
-  if(corp.hypeIndex>0.66 && RNG()<0.2){
-    return buildAnnouncementFromBulletin(pickFloppsBulletinByCategory(ctx,'community'),ctx,day,'consumer-blog');
-  }
-  const wildcard=maybeGenerateFloppsWildcardBulletin(state,ctx,day,{daysSinceLast});
-  if(wildcard) return wildcard;
-  return null;
-}
-
-function getFloppsWildcardChance(state, ctx, daysSinceLast){
-  if(daysSinceLast<18) return 0;
-  const corp=ctx.corporation||floppsDefaultCorporation();
-  let chance=0.006;
-  if(['prelaunch','launch','sellthrough'].includes(ctx.release?.phase?.id)) chance+=0.012;
-  chance+=Math.max(0,corp.hypeIndex-0.66)*0.06;
-  chance+=Math.max(0,corp.extractionIndex-0.7)*0.05;
-  chance+=Math.max(0,corp.collectorStress-0.68)*0.04;
-  const trendTop=state.trendDesk?.watchlist?.[0];
-  if((trendTop?.marketability||0)>0.84) chance+=0.01;
-  return Math.max(0,Math.min(0.07,chance));
-}
-
-function normalizeFloppsWildcardEvent(raw, ctx, day){
-  const title=String(raw?.title||'Flopps Wildcard Corporate Update').slice(0,100);
-  const id=raw?.id||`wildcard-${day}-${slugifyFloppsText(title)}`;
-  return {
-    kind:'wildcard',
-    id,
-    title,
-    summary:String(raw?.summary||'Flopps published a surprise corporate update with immediate market implications.').slice(0,320),
-    paraphrase:String(raw?.paraphrase||'Something strange just hit the collector funnel and nobody was ready for it.').slice(0,320),
-    executive:String(raw?.executive||ctx.executive?.name||'Management').slice(0,80),
-    executiveRole:String(raw?.executiveRole||ctx.executive?.role||'Executive Office').slice(0,80),
-    stockDelta:Math.max(-0.08,Math.min(0.08,Number(raw?.stockDelta||0))),
-    marketImpact:String(raw?.marketImpact||'The secondary market is repricing the news in real time.').slice(0,220),
-    collectorImpact:String(raw?.collectorImpact||'Collectors, stores, and flippers are all trying to decode the implication.').slice(0,220),
-    source:'openrouter:kimi-k2.5',
-  };
-}
-
-function saveFloppsWildcardArtifact(bulletin, day, ctx){
-  const filename=`day-${String(day).padStart(4,'0')}-${slugifyFloppsText(bulletin.title)}.json`;
-  wJ(path.join(FLOPPS_WILDCARD_DIR,filename),{
-    day,
-    createdAt:new Date().toISOString(),
-    bulletin,
-    releasePhase:ctx.release?.phase?.id||null,
-    currentRelease:ctx.release?.current?.title||null,
-    nextRelease:ctx.release?.next?.title||null,
-    stockPrice:ctx.stockPrice||null,
-  });
-}
-
-function maybeGenerateFloppsWildcardBulletin(state, ctx, day, {daysSinceLast=null,force=false}={}){
-  const since=daysSinceLast==null?daysSinceLastFloppsAnnouncement(state):daysSinceLast;
-  const chance=getFloppsWildcardChance(state,ctx,since);
-  if(!force && (chance<=0 || RNG()>=chance)) return null;
-  const trendTop=state.trendDesk?.watchlist?.[0]||null;
-  const outputFile=path.join(FLOPPS_WILDCARD_DIR,`tmp-${process.pid}-${Date.now()}.json`);
-  const context={
-    day,
-    stockPrice:state.stock?.price||100,
-    executive:ctx.executive||null,
-    trendDeskTop:trendTop?{name:trendTop.name,marketability:trendTop.marketability}:null,
-    release:{
-      phase:ctx.release?.phase?.id||null,
-      phaseLabel:ctx.release?.phase?.label||null,
-      currentTitle:ctx.release?.current?.title||null,
-      nextTitle:ctx.release?.next?.title||null,
-    },
-    corporation:ctx.corporation||null,
-  };
-  try{
-    const raw=execFileSync(
-      process.execPath,
-      [
-        path.join(__dirname,'ai-set-generator.js'),
-        '--flopps',
-        '--flopps-mode','wildcard-event',
-        '--flopps-model','moonshotai/kimi-k2.5',
-        '--wildcard-context',JSON.stringify(context),
-        '--wildcard-output-file',outputFile,
-      ],
-      {cwd:DATA_DIR,encoding:'utf8',stdio:['ignore','pipe','pipe']}
-    );
-    if(!fs.existsSync(outputFile)) return null;
-    const parsed=JSON.parse(fs.readFileSync(outputFile,'utf8'));
-    try{fs.unlinkSync(outputFile)}catch{}
-    const bulletin=normalizeFloppsWildcardEvent(parsed,ctx,day);
-    saveFloppsWildcardArtifact(bulletin,day,{...ctx,stockPrice:context.stockPrice});
-    return bulletin;
-  } catch{
-    try{if(fs.existsSync(outputFile)) fs.unlinkSync(outputFile)}catch{}
-    return null;
-  }
-}
-
-function recordFloppsBulletin(state, ctx, bulletin, currentDay, commandName){
-  updateFloppsStockPrice(state, ctx, bulletin, currentDay);
-  state.lastNewsDay=Math.max(state.lastNewsDay,currentDay);
-  state.latestNews={
-    day:currentDay,
-    command:commandName||null,
-    id:bulletin.id,
-    title:bulletin.title,
-    summary:bulletin.summary,
-    paraphrase:bulletin.paraphrase,
-    executive:bulletin.executive||ctx.executive?.name||null,
-    executiveRole:bulletin.executiveRole||ctx.executive?.role||null,
-    phase:ctx.release?.phase?.id||null,
-    releaseTitle:ctx.release?.current?.title||null,
-    kind:bulletin.kind||'bulletin',
-    stock:state.stock.price,
-    marketImpact:bulletin.marketImpact||null,
-    collectorImpact:bulletin.collectorImpact||null,
-    source:bulletin.source||'simulation',
-    createdAt:new Date().toISOString(),
-  };
-  if(bulletin.quarter!=null) state.latestNews.quarter=bulletin.quarter;
-  state.newsHistory.push(state.latestNews);
-  state.announcementHistory.push({
-    day:currentDay,
-    kind:bulletin.kind||'bulletin',
-    quarter:bulletin.quarter,
-    id:bulletin.id,
-    title:bulletin.title,
-  });
-  if(state.newsHistory.length>60) state.newsHistory=state.newsHistory.slice(-60);
-  if(state.announcementHistory.length>120) state.announcementHistory=state.announcementHistory.slice(-120);
-  saveFloppsState(state);
-}
-
-function formatFloppsNewsSuffix(state){
-  const latest=state?.latestNews;
-  if(!latest) return '';
-  const note=latest.paraphrase||latest.summary||latest.title||'Flopps had news';
-  return `\nP.S. Flopps just moved: ${note}`;
-}
-
-function maybeAnnounceFloppsNews(set, market, commandName){
-  if(!set||!market) return;
-  const state=loadFloppsState();
-  const day=getSimulationDay(market);
-  const currentDay=Number.isFinite(day)?day:0;
-  ensureFloppsReleaseCalendar(state,set,currentDay);
-  const ctx=getFloppsSimulationContext(set, market, state);
-  const dayChanged=currentDay>state.lastSeenDay;
-
-  if(dayChanged){
-    state.lastSeenDay=currentDay;
-    state.lastStockDay=currentDay;
-    updateFloppsStockPrice(state, ctx, null, currentDay);
-  }
-
-  if(currentDay<=state.lastNewsDay){
-    saveFloppsState(state);
-    return;
-  }
-  let bulletin=null;
-  const quarter=Math.floor(currentDay/90);
-  const hasQuarterlyThisQuarter=(state.announcementHistory||[]).some((item)=>item.kind==='quarterly'&&item.quarter===quarter);
-  if(currentDay>0 && currentDay%90===0 && !hasQuarterlyThisQuarter){
-    bulletin=buildQuarterlyFloppsAnnouncement(state,ctx,currentDay);
-    bulletin.quarter=quarter;
-  } else {
-    bulletin=buildScheduledFloppsAnnouncement(state,ctx,currentDay) || buildExceptionalFloppsAnnouncement(state,ctx,currentDay);
-  }
-  if(!bulletin){
-    saveFloppsState(state);
-    return null;
-  }
-
-  recordFloppsBulletin(state,ctx,bulletin,currentDay,commandName);
-  return bulletin;
-}
-
-function getSpeculationWeight(starTier){
-  if(starTier==='Legendary') return 1;
-  if(starTier==='Superstar') return 0.85;
-  if(starTier==='Star') return 0.65;
-  if(starTier==='Uncommon') return 0.45;
-  return 0.3;
-}
-
-function initMarket(set){
-  // Refresh the macro overlay before any price-sensitive market use.
-  // The helper is cached for up to 48h, so this stays cheap when fresh.
-  getMacroState();
-  const key=set.code+'-'+set.year;
-  let m=loadMarket(key);
-  if(m) {
-    // Backfill setAggregates for markets that predate the field
-    if(!m.setAggregates) {
-      computeSetAggregates(m);
-      saveMarket(key,m);
-    }
-    normalizeMarketEvents(m);
-    if(!m.lastTickAt){
-      m.lastTickAt=m.lastPackOpened||m.createdAt||Date.now();
-      saveMarket(key,m);
-    }
-    if(!m.cardList) m.cardList=Object.values(m.cards);
-    saveMarket(key,m);
-    return m;
-  }
-  const now=Date.now();
-  m={setKey:key, tick:0, lastPackOpened:now, createdAt:now,
-    lastTickAt:now,
-    sentiment:1.0, events:[], eventLog:[], history:{},
-    cardList:[],
-    cards:{}};
-  for(const c of set.cards){
-    const mc={num:c.num, name:c.name, starTier:c.starTier,
-      basePrice:c.basePrice, popScore:assignChaseScore(c),
-      totalPulled:0, supplyInMarket:0, currentPrice:c.basePrice,
-      floorPrice:c.basePrice, peakPrice:c.basePrice,
-      demandScore:0.5, trendVelocity:0,
-      sales24h:0, avgSold7d:c.basePrice, salesHistory:[]};
-    m.cards[c.num]=mc;
-    m.cardList.push(mc);
-  }
-  saveMarket(key,m);
-  return m;
-}
-
-function assignChaseScore(card){
-  let s=0.2;
-  if(card.num==="001") s=0.75;
-  if(card.starTier==="Legendary") s=Math.max(s,0.7);
-  else if(card.starTier==="Superstar") s=Math.max(s,0.55);
-  else if(card.starTier==="Star") s=Math.max(s,0.4);
-  const st=card.stats;
-  if(st){const avg=(st.power+st.speed+st.technique+st.endurance+(st.charisma||0))/(st.charisma?5:4);
-    if(avg>85)s=Math.max(s,0.6);else if(avg>75)s=Math.max(s,0.45);}
-  if(RNG()<0.08) s=0.4+RNG()*0.25;
-  return Math.min(1,s);
-}
-
-function weightedPick(items){
-  const total=items.reduce((s,i)=>s+i.w,0);
-  let r=RNG()*total;
-  for(const i of items){r-=i.w;if(r<=0)return i.t}
-  return items[0].t;
-}
-
-const MARKET_EVENT_PROFILES={
-  break_flood:{
-    label:'Large case break floods the market',
-    duration:[7,13],
-    magnitude:[0.05,0.15],
-    demandMult:0.95,
-    sentimentDelta:0,
-    icon:'📦',
-    effect:'supply surge',
-  },
-  retailer_surge:{
-    label:'Retailer restock wave hits the market',
-    duration:[6,12],
-    magnitude:[0.04,0.10],
-    demandMult:0.97,
-    sentimentDelta:0.01,
-    icon:'🏬',
-    effect:'fresh supply',
-  },
-  hobby_boom:{
-    label:'Collector hype sends premium cards flying',
-    duration:[18,40],
-    magnitude:[0.18,0.42],
-    demandMult:1.06,
-    sentimentDelta:0.20,
-    icon:'📈',
-    effect:'bullish demand',
-  },
-  correction:{
-    label:'Market correction as buyers step back',
-    duration:[18,42],
-    magnitude:[0.14,0.28],
-    demandMult:0.92,
-    sentimentDelta:-0.20,
-    icon:'📉',
-    effect:'bearish demand',
-  },
-  nostalgia_wave:{
-    label:'Nostalgia wave brings old collectors back',
-    duration:[30,72],
-    magnitude:[0.50,1.00],
-    demandMult:1.10,
-    sentimentDelta:0.06,
-    icon:'🕐',
-    effect:'nostalgic revival',
-  },
-  rookie_chase:{
-    label:'Rookie chase sparks a sudden run',
-    duration:[10,22],
-    magnitude:[0.10,0.24],
-    demandMult:1.04,
-    sentimentDelta:0.08,
-    icon:'⭐',
-    effect:'rookie chase',
-  },
-  injury_report:{
-    label:'Injury report cools player demand',
-    duration:[4,10],
-    magnitude:[0.06,0.14],
-    demandMult:0.94,
-    sentimentDelta:-0.03,
-    icon:'🏥',
-    effect:'player uncertainty',
-  },
-  hot_streak:{
-    label:'Hot streak news lifts the room',
-    duration:[5,14],
-    magnitude:[0.08,0.18],
-    demandMult:1.05,
-    sentimentDelta:0.04,
-    icon:'🔥',
-    effect:'hot streak',
-  },
-  scandal:{
-    label:'Off-field scandal rattles buyers',
-    duration:[8,18],
-    magnitude:[0.10,0.22],
-    demandMult:0.91,
-    sentimentDelta:-0.07,
-    icon:'⚠️',
-    effect:'reputation shock',
-  },
-  award_buzz:{
-    label:'Award buzz pushes demand higher',
-    duration:[8,18],
-    magnitude:[0.08,0.18],
-    demandMult:1.05,
-    sentimentDelta:0.05,
-    icon:'🏆',
-    effect:'award buzz',
-  },
-  livestream_hype:{
-    label:'Livestream breaker hype spikes short-term demand',
-    duration:[4,12],
-    magnitude:[0.06,0.14],
-    demandMult:1.03,
-    sentimentDelta:0.03,
-    icon:'🎥',
-    effect:'live break hype',
-  },
-  grading_rush:{
-    label:'Grading backlog tightens supply',
-    duration:[14,30],
-    magnitude:[0.08,0.16],
-    demandMult:1.02,
-    sentimentDelta:0.02,
-    icon:'🧾',
-    effect:'grading choke',
-  },
-  auction_comp:{
-    label:'Auction competition pushes comps upward',
-    duration:[10,24],
-    magnitude:[0.08,0.18],
-    demandMult:1.04,
-    sentimentDelta:0.02,
-    icon:'🔨',
-    effect:'auction pressure',
-  },
-  stream_dump:{
-    label:'Stream dump puts fresh copies into circulation',
-    duration:[5,10],
-    magnitude:[0.06,0.14],
-    demandMult:0.96,
-    sentimentDelta:-0.01,
-    icon:'📉',
-    effect:'supply dump',
-  },
-  championship: {
-    label:'Championship chatter drives a premium surge',
-    duration:[18,36],
-    magnitude:[0.14,0.30],
-    demandMult:1.06,
-    sentimentDelta:0.09,
-    icon:'🥇',
-    effect:'title buzz',
-  },
-  media_spotlight:{
-    label:'Media spotlight drags new eyes into the market',
-    duration:[12,24],
-    magnitude:[0.10,0.20],
-    demandMult:1.03,
-    sentimentDelta:0.05,
-    icon:'📣',
-    effect:'media attention',
-  },
-  supply_chain:{
-    label:'Supply chain friction slows restocks',
-    duration:[14,28],
-    magnitude:[0.06,0.16],
-    demandMult:1.02,
-    sentimentDelta:-0.02,
-    icon:'🚚',
-    effect:'tight supply',
-  },
-  grading_pop:{
-    label:'Grading pop report surprises collectors',
-    duration:[10,20],
-    magnitude:[0.06,0.12],
-    demandMult:1.01,
-    sentimentDelta:0.02,
-    icon:'🔍',
-    effect:'pop report',
-  },
-  meme_spike:{
-    label:'Meme spike drags a niche card into the spotlight',
-    duration:[3,9],
-    magnitude:[0.05,0.12],
-    demandMult:1.02,
-    sentimentDelta:0.01,
-    icon:'😂',
-    effect:'viral meme',
-  },
-  drought:{
-    label:'A quiet market drought reduces trading volume',
-    duration:[12,26],
-    magnitude:[0.06,0.14],
-    demandMult:0.97,
-    sentimentDelta:-0.03,
-    icon:'🌫️',
-    effect:'quiet market',
-  },
-};
-
-const MARKET_EVENT_TYPES=Object.keys(MARKET_EVENT_PROFILES);
-
-function formatMarketEventDesc(profile, stackCount = 1){
-  const count=Math.max(1, stackCount|0);
-  if(count===1) return profile.label;
-  const copy={
-    2:`${profile.label} intensifies`,
-    3:`${profile.label} compounds`,
-    4:`${profile.label} overwhelms the market`,
-  };
-  return copy[count]||`${profile.label} x${count}`;
-}
-
-function pickMarketEventType(excludeTypes = []){
-  const blocked = new Set(excludeTypes.map((t) => String(t || '')));
-  const pool = MARKET_EVENT_TYPES.filter((type) => !blocked.has(type));
-  const source = pool.length ? pool : MARKET_EVENT_TYPES;
-  const weighted = source.map(type => {
-    const profile = MARKET_EVENT_PROFILES[type];
-    const weight =
-      type === 'break_flood' ? 5 :
-      type === 'retailer_surge' ? 3 :
-      type === 'hobby_boom' ? 2 :
-      type === 'correction' ? 2 :
-      type === 'nostalgia_wave' ? 1.5 :
-      type === 'hot_streak' ? 1.6 :
-      type === 'rookie_chase' ? 1.4 :
-      type === 'injury_report' ? 1.2 :
-      type === 'livestream_hype' ? 1.3 :
-      type === 'grading_rush' ? 1.1 :
-      type === 'auction_comp' ? 1.1 :
-      type === 'award_buzz' ? 1.0 :
-      type === 'media_spotlight' ? 1.0 :
-      type === 'supply_chain' ? 0.9 :
-      type === 'grading_pop' ? 0.9 :
-      type === 'meme_spike' ? 0.8 :
-      type === 'stream_dump' ? 0.8 :
-      type === 'championship' ? 1.0 :
-      type === 'scandal' ? 0.9 :
-      type === 'drought' ? 0.8 : 1;
-    return { t: type, w: weight * (profile?.weight || 1) };
-  });
-  return weightedPick(weighted);
-}
-
-function getMarketEventProfile(type){
-  return MARKET_EVENT_PROFILES[type] || MARKET_EVENT_PROFILES.break_flood;
-}
-
-function buildMarketEvent(type, tick, stackCount = 1){
-  const profile = getMarketEventProfile(type);
-  const stack = Math.max(1, stackCount|0);
-  return {
-    type,
-    tick,
-    duration: ri(null, profile.duration[0], profile.duration[1]),
-    magnitude: Math.round((profile.magnitude[0] + RNG() * (profile.magnitude[1] - profile.magnitude[0])) * 1000) / 1000 * stack,
-    label: profile.label,
-    icon: profile.icon,
-    effect: profile.effect,
-    stackCount: stack,
-    baseDesc: profile.label,
-    desc: formatMarketEventDesc(profile, stack),
-  };
-}
-
-function applyMarketEvent(market, type, tick){
-  const profile = getMarketEventProfile(type);
-  const event = buildMarketEvent(type, tick, 1);
-  const applied = addMarketEvent(market, event);
-  market.sentiment = Math.max(0.5, Math.min(1.5, (market.sentiment || 1) + (profile.sentimentDelta || 0)));
-  return applied;
-}
-
-function marketEventDemandMultiplier(type){
-  return getMarketEventProfile(type).demandMult || 1;
-}
-
-const MARKET_TICK_MS=12*60*60*1000; // 1 market tick = 12 real hours
-const MAX_MARKET_CATCHUP_TICKS=365; // Beyond this, rebuild the market snapshot instead of replaying every tick.
-
-// Calculate how many market ticks should run based on time since the last tick.
-function calcPendingTicks(market){
-  const anchor=market?.lastTickAt||market?.lastPackOpened||market?.createdAt||0;
-  if(!anchor) return 0;
-  const ms=Date.now()-anchor;
-  const ticks=Math.floor(ms/MARKET_TICK_MS);
-  return Math.max(0, ticks);
-}
-
-function resimulateMarketSnapshot(set, market, col, pending){
-  const cards=market.cardList||Object.values(market.cards||{});
-  const macro=getMacroState();
-  const tick=market.tick+pending;
-  market.tick=tick;
-  market.sentiment=Math.max(0.5,Math.min(1.5,(market.sentiment||1)+((RNG()-0.5)*0.25*Math.min(1,pending/12))));
-  market.events=(market.events||[]).filter(e=>tick-e.tick<(e.duration||14));
-
-  const pullChance={Common:0.6,Uncommon:0.5,Star:0.35,Superstar:0.2,Legendary:0.1};
-  const tierDemand={Common:0.05,Uncommon:0.15,Star:0.40,Superstar:0.70,Legendary:0.90};
-  const meanPop={Common:0.12,Uncommon:0.25,Star:0.45,Superstar:0.6,Legendary:0.7};
-  const tierVol={Common:0.3,Uncommon:0.5,Star:0.7,Superstar:1.0,Legendary:1.2};
-
-  for(const mc of cards){
-    const basePrice=mc.basePrice||0;
-    const starTier=mc.starTier||'Common';
-    const currentPrice=mc.currentPrice||basePrice;
-    const popScore=typeof mc.popScore==='number'?mc.popScore:0.2;
-    let demand=tierDemand[starTier]||0.1;
-    const ageMonths=tick/30;
-    demand*=Math.max(0.4,1-ageMonths*0.003);
-    demand*=(0.6+popScore*0.4);
-    demand*=0.85+market.sentiment*0.15;
-    if(ageMonths>12) demand*=Math.min(1.2,1+(ageMonths-12)*0.01);
-    for(const e of market.events){
-      demand*=marketEventDemandMultiplier(e.type);
-    }
-    demand=Math.min(1,Math.max(0.03,demand));
-    mc.demandScore=demand;
-
-    mc.popScore+=(meanPop[starTier]-popScore)*Math.min(0.2,pending*0.005);
-    mc.popScore=Math.min(1,Math.max(0.05,mc.popScore));
-
-    const intrinsic=basePrice*(0.8+demand*0.4);
-    const momentum=mc.avgSold7d>0?1+(mc.avgSold7d-currentPrice)/Math.max(currentPrice,0.01)*0.08:1;
-    const macroMove=(macro.signal||0)*0.025*getSpeculationWeight(starTier);
-    const fairValue=intrinsic*momentum*(1+macroMove);
-    const vol=0.008*(tierVol[starTier]||1);
-    const noise=(RNG()-0.5)*2*vol;
-    const target=Math.max(basePrice*0.3, fairValue+noise);
-
-    mc.trendVelocity=target-currentPrice;
-    mc.currentPrice=target;
-    mc.floorPrice=Math.min(mc.floorPrice||target,mc.currentPrice);
-    mc.peakPrice=Math.max(mc.peakPrice||target,mc.currentPrice);
-    mc.sales24h=Math.floor(RNG()*3*demand);
-    if(mc.sales24h>0){
-      const salePrice=mc.currentPrice*(0.95+RNG()*0.1);
-      mc.salesHistory.push({tick, price:salePrice, parallel:'Base'});
-      if(mc.salesHistory.length>20) mc.salesHistory=mc.salesHistory.slice(-20);
-      const recent=mc.salesHistory.slice(-7);
-      mc.avgSold7d=recent.reduce((s,x)=>s+x.price,0)/recent.length;
-    }
-
-    if(tick%7===0){
-      if(!market.history[mc.num]) market.history[mc.num]=[];
-      market.history[mc.num].push({tick, price:mc.currentPrice});
-      if(market.history[mc.num].length>52) market.history[mc.num]=market.history[mc.num].slice(-52);
-    }
-  }
-
-  if(RNG()<0.08){
-    applyMarketEvent(market, pickMarketEventType(), tick);
-  }
-  if(RNG()<0.03){
-    const firstType = market.events[market.events.length - 1]?.type;
-    applyMarketEvent(market, pickMarketEventType(firstType ? [firstType] : []), tick);
-  }
-
-  market.events=market.events.filter(e=>tick-e.tick<e.duration);
-  market.eventLog=(market.eventLog||[]).slice(-100);
-  market.eventLog.push({tick, type:'resimulate', desc:`Market resimulated after ${pending} elapsed ticks`});
-
-  computeSetAggregates(market);
-  if(market.setAggregates?.priceIndex){
-    market.setAggregates.priceIndex=market.setAggregates.priceIndex.slice(-365);
-  }
-  if(col) syncMarketToCollection(market,col);
-}
-
-function catchUpMarketToNow(set, market, col){
-  const pending=calcPendingTicks(market);
-  if(pending>MAX_MARKET_CATCHUP_TICKS){
-    resimulateMarketSnapshot(set, market, col, pending);
-  } else if(pending>0){
-    runMarketTicks(set,market,col,pending);
-  } else if(col){
-    syncMarketToCollection(market,col);
-  }
-  market.lastTickAt=Date.now();
-  return pending;
-}
-
-function activeMarketEvents(market){
-  return (market?.events||[]).filter(e=>market.tick-e.tick<(e.duration||14));
-}
-
-function isBullishMarketEvent(type){
-  const profile=getMarketEventProfile(type);
-  return (profile.demandMult||1)>1 || (profile.sentimentDelta||0)>0;
-}
-
-function isBearishMarketEvent(type){
-  const profile=getMarketEventProfile(type);
-  return (profile.demandMult||1)<1 || (profile.sentimentDelta||0)<0;
-}
-
-function addMarketEvent(market, event){
-  market.events=market.events||[];
-  const active=market.events.find(e=>e.type===event.type&&market.tick-e.tick<(e.duration||14));
-  if(active){
-    active.stackCount=(active.stackCount||1)+1;
-    active.baseDesc=active.baseDesc||active.desc||event.desc;
-    active.magnitude=Math.round((active.magnitude+event.magnitude)*1000)/1000;
-    active.duration=Math.max(active.duration||0,event.duration||0);
-    active.desc=formatMarketEventDesc(getMarketEventProfile(active.type), active.stackCount);
-    active.lastStackTick=event.tick;
-    return active;
-  }
-
-  const next={...event, stackCount:1, baseDesc:event.desc};
-  market.events.push(next);
-  market.eventLog=market.eventLog||[];
-  market.eventLog.push({tick:event.tick, type:event.type, desc:event.desc});
-  return next;
-}
-
-// Stable simulation day for display purposes.
-// Inventory-driven market ticks do not advance this calendar.
-function getSimulationDay(market){
-  if(!market) return 0;
-  const createdAt=market.createdAt||market.lastPackOpened||0;
-  if(!createdAt) return market.tick||0;
-  return Math.max(0, Math.floor((Date.now()-createdAt)/(1000*60*60*24)));
-}
-
-// Run N market ticks at once.
-// nTicks = elapsed 12-hour ticks since the last simulation update.
-// Compute or update set-level market aggregates for programmatic access.
-// Called on every tick and on initMarket for backfill.
-function computeSetAggregates(market){
-  if(!market.setAggregates) market.setAggregates={};
-  const agg=market.setAggregates;
-  agg.tick=market.tick;
-  agg.sentiment=market.sentiment;
-  const allCards=market.cardList||Object.values(market.cards);
-  let baseSum=0;
-  let mktSum=0;
-  const tierBuckets={
-    Legendary:{count:0,bookValue:0,marketValue:0,velSum:0},
-    Superstar:{count:0,bookValue:0,marketValue:0,velSum:0},
-    Star:{count:0,bookValue:0,marketValue:0,velSum:0},
-    Uncommon:{count:0,bookValue:0,marketValue:0,velSum:0},
-    Common:{count:0,bookValue:0,marketValue:0,velSum:0},
-  };
-  for(const mc of allCards){
-    baseSum+=mc.basePrice;
-    mktSum+=mc.currentPrice;
-    const bucket=tierBuckets[mc.starTier];
-    if(bucket){
-      bucket.count++;
-      bucket.bookValue+=mc.basePrice;
-      bucket.marketValue+=mc.currentPrice;
-      bucket.velSum+=(mc.trendVelocity||0);
-    }
-  }
-  agg.totalBaseValue=Math.round(baseSum*100)/100;
-  agg.totalMarketValue=Math.round(mktSum*100)/100;
-  agg.totalChangePct=agg.totalBaseValue>0?Math.round((agg.totalMarketValue-agg.totalBaseValue)/agg.totalBaseValue*10000)/100:0;
-  agg.totalCards=allCards.length;
-  // Per-tier aggregates
-  agg.tiers={};
-  for(const tier of['Legendary','Superstar','Star','Uncommon','Common']){
-    const bucket=tierBuckets[tier];
-    const book=bucket.bookValue;
-    const mkt=bucket.marketValue;
-    const change=book>0?Math.round((mkt-book)/book*10000)/100:0;
-    const avgVel=bucket.count>0?Math.round(bucket.velSum/bucket.count*10000)/10000:0;
-    agg.tiers[tier]={count:bucket.count,bookValue:Math.round(book*100)/100,marketValue:Math.round(mkt*100)/100,changePct:change,avgTrendVelocity:avgVel};
-  }
-  // Active events
-  agg.activeEvents=activeMarketEvents(market).map(e=>({
-    type:e.type, desc:e.desc, magnitude:e.magnitude, remaining:e.duration-(market.tick-e.tick)
-  }));
-  // Price index (only append on actual tick advancement, not on backfill)
-  if(!agg.priceIndex) agg.priceIndex=[];
-  const sampleCards=allCards.slice(0,50);
-  let idxVal=0;
-  for(const mc of sampleCards) idxVal+=mc.currentPrice;
-  // Only add a new point if tick advanced (check against last entry)
-  const lastTick=agg.priceIndex.length>0?agg.priceIndex[agg.priceIndex.length-1].tick:-1;
-  if(market.tick!==lastTick){
-    agg.priceIndex.push({tick:market.tick,value:Math.round(idxVal*100)/100});
-  }
-  if(agg.priceIndex.length>365) agg.priceIndex=agg.priceIndex.slice(-365);
-}
-
-function runMarketTicks(set,market,col,nTicks){
-  const cards=market.cardList||Object.values(market.cards);
-  const pullChance={Common:0.6,Uncommon:0.5,Star:0.35,Superstar:0.2,Legendary:0.1};
-  const tierDemand={Common:0.05,Uncommon:0.15,Star:0.40,Superstar:0.70,Legendary:0.90};
-  const meanPop={Common:0.12,Uncommon:0.25,Star:0.45,Superstar:0.6,Legendary:0.7};
-  const tierVol={Common:0.3,Uncommon:0.5,Star:0.7,Superstar:1.0,Legendary:1.2};
-  const macro=getMacroState();
-  for(let t=0;t<nTicks;t++){
-    market.tick++;
-    const tick=market.tick;
-
-    // Sentiment: slow random walk
-    market.sentiment+=(RNG()-0.48)*0.04;
-    market.sentiment=Math.max(0.5,Math.min(1.5,market.sentiment));
-
-    for(let idx=0; idx<cards.length; idx++){
-      const mc=cards[idx];
-      if(RNG()<(pullChance[mc.starTier]||0.5)){
-        mc.totalPulled++;
-        mc.supplyInMarket++;
-      }
-      if(mc.supplyInMarket>0&&RNG()<0.008) mc.supplyInMarket--;
-
-      // ── Demand calculation ──
-      let demand=tierDemand[mc.starTier]||0.1;
-
-      // Age decay (gentle — 0.3% per month)
-      const ageMonths=tick/30;
-      demand*=Math.max(0.4, 1-ageMonths*0.003);
-
-      // Popularity factor
-      demand*=(0.6+mc.popScore*0.4);
-
-      // Market sentiment
-      demand*=0.85+market.sentiment*0.15;
-
-      // Nostalgia (after 12 months)
-      if(ageMonths>12) demand*=Math.min(1.2, 1+(ageMonths-12)*0.01);
-
-      // Active event multipliers
-      for(const e of market.events){
-        demand*=marketEventDemandMultiplier(e.type);
-      }
-
-      demand=Math.min(1,Math.max(0.03,demand));
-      mc.demandScore=demand;
-
-      // ── Popularity update (5% event chance per tick) ──
-      if(RNG()<0.05){
-        const ev=weightedPick([{t:'hot',w:3},{t:'viral',w:1},{t:'injury',w:1},{t:'milestone',w:0.5}]);
-        if(ev==='hot') mc.popScore=Math.min(1,mc.popScore+0.03+RNG()*0.06);
-        else if(ev==='viral') mc.popScore=Math.min(1,mc.popScore+0.1+RNG()*0.1);
-        else if(ev==='injury') mc.popScore=Math.max(0.05,mc.popScore-0.05-RNG()*0.05);
-        else mc.popScore=Math.min(1,mc.popScore+0.05);
-      }
-      mc.popScore+=(meanPop[mc.starTier]-mc.popScore)*0.01;
-
-      // ── Fair value ──
-      const intrinsic=mc.basePrice*(0.8+mc.demandScore*0.4);
-      const momentum=mc.avgSold7d>0?1+(mc.avgSold7d-mc.currentPrice)/mc.currentPrice*0.08:1;
-      const macroMove=(macro.signal||0)*0.025*getSpeculationWeight(mc.starTier);
-      const fairValue=intrinsic*momentum*(1+macroMove);
-
-      // ── Volatility ──
-      const vol=0.008*(tierVol[mc.starTier]||1);
-      const noise=(RNG()-0.5)*2*vol;
-
-      const target=Math.max(mc.basePrice*0.3, fairValue+noise);
-      mc.trendVelocity=(target-mc.currentPrice)*0.08;
-      mc.currentPrice=Math.max(mc.basePrice*0.3, mc.currentPrice+mc.trendVelocity);
-      mc.floorPrice=Math.min(mc.floorPrice,mc.currentPrice);
-      mc.peakPrice=Math.max(mc.peakPrice,mc.currentPrice);
-
-      // Simulate sales
-      mc.sales24h=Math.floor(RNG()*3*mc.demandScore);
-      if(mc.sales24h>0){
-        const salePrice=mc.currentPrice*(0.95+RNG()*0.1);
-        mc.salesHistory.push({tick, price:salePrice, parallel:'Base'});
-        if(mc.salesHistory.length>20) mc.salesHistory=mc.salesHistory.slice(-20);
-        const recent=mc.salesHistory.slice(-7);
-        mc.avgSold7d=recent.reduce((s,x)=>s+x.price,0)/recent.length;
-      }
-
-      // History snapshot every 7 ticks for charting
-      if(tick%7===0){
-        if(!market.history[mc.num]) market.history[mc.num]=[];
-        market.history[mc.num].push({tick, price:mc.currentPrice});
-        if(market.history[mc.num].length>52) market.history[mc.num]=market.history[mc.num].slice(-52);
-      }
-    }
-
-    // ── Market events (random) ──
-    if(RNG()<0.08){
-      applyMarketEvent(market, pickMarketEventType(), tick);
-    }
-    if(RNG()<0.03){
-      const firstType = market.events[market.events.length - 1]?.type;
-      applyMarketEvent(market, pickMarketEventType(firstType ? [firstType] : []), tick);
-    }
-
-    // Expire old events
-    market.events=market.events.filter(e=>tick-e.tick<e.duration);
-  }
-
-  // Build set-level aggregates for programmatic access
-  computeSetAggregates(market);
-
-  // Update the simulation clock to the current operation time.
-  market.lastTickAt=Date.now();
-
-  // Sync market prices into collection
-  if(col) syncMarketToCollection(market,col);
-
-  saveMarket(market.setKey,market);
-  return market;
-}
-
-// Sync current market prices into every collection card's marketPrice field.
-// book price (c.price) is NEVER modified — it stays as the original pull price.
-// After any price update, ensure higher-tier parallels of the same card number
-// are never cheaper than lower-tier ones.  Grade bumps a card above its tier
-// floor, so we only intervene when the ordering is violated.
-function enforceTierOrdering(col, priceField){
-  const tierMap=Object.fromEntries(PARALLELS.map(p=>[p.name,p.tier||0]));
-  const byNum={};
-  for(const c of col.cards){
-    (byNum[c.cardNum]||(byNum[c.cardNum]=[])).push(c);
-  }
-  for(const cards of Object.values(byNum)){
-    cards.sort((a,b)=>{
-      const tA=tierMap[a.parallel]||0;
-      const tB=tierMap[b.parallel]||0;
-      return tA-tB;
-    });
-    let floor=0;
-    for(const c of cards){
-      const p=c[priceField]||0;
-      if(p<floor) c[priceField]=Math.round(floor*100)/100;
-      floor=Math.max(floor, p);
-    }
-  }
-}
-
-function syncMarketToCollection(market,col){
-  const cfg=loadCfg();
-  const parMap=Object.fromEntries(PARALLELS.map(p=>[p.name,p]));
-  for(const c of col.cards){
-    const mc=market.cards[c.cardNum];
-    if(!mc)continue;
-    const par=parMap[c.parallel]||PARALLELS[0];
-    const gradeMult=c.grade?(GRADES.find(g=>g.grade===c.grade)?.mult||1):1;
-    c.marketPrice=Math.round(mc.currentPrice*par.pm*gradeMult*100)/100;
-  }
-  enforceTierOrdering(col,'marketPrice');
-  enforceTierOrdering(col,'price');
-  col.stats.value=col.cards.reduce((s,c)=>s+(c.marketPrice||c.price),0);
-  col.wallet=cfg.wallet;
-}
-
-// Run 1 market tick when inventory changes (sell, add, remove).
-// Sold cards enter the secondary market as new supply and record as completed sales.
-// Does NOT reset lastPackOpened — that remains informational, while lastTickAt drives the simulation clock.
-function tickMarketOnChange(set, col, soldCards) {
-  const market = initMarket(set);
-  // First catch up any elapsed time so the sale lands on the current market day.
-  catchUpMarketToNow(set, market, col);
-
-  // Sold cards increase supply on the secondary market
-  if (soldCards && soldCards.length > 0) {
-    for (const sc of soldCards) {
-      const mc = market.cards[sc.cardNum];
-      if (!mc) continue;
-      mc.supplyInMarket++;
-      mc.sales24h++;
-      const salePrice = sc.price || mc.currentPrice;
-      mc.salesHistory.push({
-        tick: market.tick,
-        price: salePrice,
-        parallel: sc.parallel || 'Base'
-      });
-      if (mc.salesHistory.length > 20) mc.salesHistory = mc.salesHistory.slice(-20);
-      const recent = mc.salesHistory.slice(-7);
-      mc.avgSold7d = recent.reduce((s, x) => s + x.price, 0) / recent.length;
-    }
-  }
-
-  // Run 1 tick (demand, sentiment, events, price simulation)
-  runMarketTicks(set, market, col, 1);
-  saveMarket(market.setKey, market);
-
-  return market;
-}
-
-// ── Market commands (read-only) ──
 
 function cmdMarket(){
   const cfg=loadCfg();if(!cfg.activeSet){console.log('No active set.');return}
@@ -3529,7 +1146,7 @@ function updateChecklist(set,col){
     }
   }
   const ownedNums=new Set(Object.keys(ownedByNum));
-  const checklistDir=path.join(DATA_DIR,'checklists');
+  const checklistDir=path.join(getDataDir(),'checklists');
   if(!fs.existsSync(checklistDir))fs.mkdirSync(checklistDir,{recursive:true});
   let md=`# ${set.name} — Checklist\n\n`;
   md+=`> ${set.category} | ${set.cards.length} cards | ${set.code}\n\n`;
@@ -3628,14 +1245,15 @@ function updateChecklist(set,col){
   md+=`*Updated: ${new Date().toISOString().split('T')[0]}*\n`;
   const fp=path.join(checklistDir,set.code+'-'+set.year+'.md');
   fs.writeFileSync(fp,md,'utf8');
+  LOG.current?.debug('write-checklist',{setCode:set.code,setYear:set.year,path:fp});
   return fp;
 }
 
 function cmdChecklist(){
   const cfg=loadCfg();
   const filterArg=process.argv.slice(2).find(a=>!a.startsWith('-')&&a!=='checklist');
-  const colDir=path.join(DATA_DIR,'collections');
-  const setDir=path.join(DATA_DIR,'sets');
+  const colDir=path.join(getDataDir(),'collections');
+  const setDir=path.join(getDataDir(),'sets');
   const sets=fs.readdirSync(setDir).filter(f=>f.endsWith('.json')).map(f=>rJ(path.join(setDir,f))).filter(Boolean);
   let shown=0;
   for(const set of sets){
@@ -3954,10 +1572,11 @@ function cmdGradeCard(){
 }
 
 // ─── HISTORY LOG ────────────────────────────────────────────────────
-const HISTORY_FILE=path.join(DATA_DIR,'history.jsonl');
+const HISTORY_FILE=path.join(getDataDir(),'history.jsonl');
 function logHistory(action, details, walletBefore, walletAfter, extra){
   const entry={timestamp:new Date().toISOString(), action, details, walletBefore, walletAfter,...(extra||{})};
   fs.appendFileSync(HISTORY_FILE, JSON.stringify(entry)+'\n');
+  LOG.current?.log('history-entry',{action,details,walletBefore,walletAfter,extra:logSummarize(extra||{})});
 }
 function readHistory(count){
   if(!fs.existsSync(HISTORY_FILE)) return [];
@@ -3989,8 +1608,8 @@ function cmdUndo(n){
   // process each set
   for(const[sk,ents] of Object.entries(bySet)){
     const col=loadCol(sk);if(!col){console.log(`  ⚠ Collection not found: ${sk}`);continue}
-    let set=rJ(path.join(DATA_DIR,'sets',sk+'.json'));
-    if(!set){const entries=fs.readdirSync(path.join(DATA_DIR,'sets')).filter(f=>f.endsWith('.json'));const match=entries.find(f=>f.replace('.json','').startsWith(sk+'-'));if(match)set=rJ(path.join(DATA_DIR,'sets',match))}
+    let set=rJ(path.join(getDataDir(),'sets',sk+'.json'));
+    if(!set){const entries=fs.readdirSync(path.join(getDataDir(),'sets')).filter(f=>f.endsWith('.json'));const match=entries.find(f=>f.replace('.json','').startsWith(sk+'-'));if(match)set=rJ(path.join(getDataDir(),'sets',match))}
     if(!set){console.log(`  ⚠ Set not found: ${sk}`);continue}
     const cfg=loadCfg()
     let totalCards=0,totalSpent=0,totalPacks=0,totalBoxes=0
@@ -4028,12 +1647,14 @@ function cmdUndo(n){
   // remove history entries
   const remaining=lines.filter((_,i)=>!indices.includes(i))
   fs.writeFileSync(HISTORY_FILE,remaining.join('\n')+'\n')
+  LOG.current?.debug('rewrite-history',{removedEntries:indices.length,remainingEntries:remaining.length});
   console.log(`${'═'.repeat(52)}\n`)
 }
 
 function cmdRemoveMoney(){
   const sub=args.find(a=>!a.startsWith('-')&&a!=='remove-money');
   const cfg=loadCfg();
+  if(typeof cfg.wallet!=='number'){console.log(`\n  No player wallet configured for this data directory. Use player-manager.js dir first.\n`);return;}
   const amt=parseFloat(sub);
   if(isNaN(amt)||amt<=0){console.log(`\n  Usage: card-engine remove-money <amount>\n`);return;}
   if(cfg.wallet<amt){console.log(`\n  ❌ Need ${fm$(amt)}, have ${fm$(cfg.wallet)}\n`);return;}
@@ -4050,6 +1671,7 @@ function cmdRemoveMoney(){
 function cmdAddMoney(){
   const sub=args.find(a=>!a.startsWith('-')&&a!=='add-money');
   const cfg=loadCfg();
+  if(typeof cfg.wallet!=='number'){console.log(`\n  No player wallet configured for this data directory. Use player-manager.js dir first.\n`);return;}
   const amt=sub?parseFloat(sub):(cfg.pocketMoney||5);
   if(isNaN(amt)||amt<=0){console.log(`\n  Usage: card-engine add-money [amount]\n  Default: $${cfg.pocketMoney||5} (pocketMoney in config)\n`);return;}
   const before=cfg.wallet;
@@ -4068,6 +1690,7 @@ function cmdSetMoney(){
   const amt=parseFloat(sub);
   if(isNaN(amt)){console.log(`\n  ❌ Invalid amount: ${sub}\n`);return;}
   const cfg=loadCfg();
+  if(typeof cfg.wallet!=='number'){console.log(`\n  No player wallet configured for this data directory. Use player-manager.js dir first.\n`);return;}
   const before=cfg.wallet;
   cfg.wallet=Math.round(amt*100)/100;
   saveCfg(cfg);
@@ -4100,6 +1723,57 @@ function cmdDuplicates(){
     console.log(`  ${g.cardNum} ${pR(g.name,25)} ${pe}${pR(g.parallel,18)} x${g.copies.length} ${fm$(best.price).padStart(7)} ea  total: ${fm$(totalVal)}`);
   }
   console.log(`${'═'.repeat(52)}\n`);
+}
+
+function cmdWishlist(){
+  const cfg=loadCfg();if(!cfg.activeSet){console.log('No active set.');return}
+  const set=loadSet();if(!set){console.log('Set not found.');return}
+  const subCmd=process.argv.slice(2).find((a,i)=>i>0&&!a.startsWith('-'));
+  if(!subCmd||subCmd==='list') return cmdWishlistList(cfg,set);
+  if(subCmd==='add') return cmdWishlistAdd(cfg,set);
+  if(subCmd==='remove') return cmdWishlistRemove(cfg,set);
+  console.log('Usage: wishlist add <card-num>, wishlist remove <card-num>, wishlist list');
+}
+function cmdWishlistAdd(cfg,set){
+  const cardNum=process.argv.slice(2).find((a,i)=>i>1&&!a.startsWith('-'));
+  if(!cardNum){console.log('Usage: wishlist add <card-num>');return}
+  if(!cfg.wishlist) cfg.wishlist=[];
+  if(cfg.wishlist.includes(cardNum)){console.log(`\n  ⭐ Card #${cardNum} is already on your wishlist.\n`);return}
+  const baseCard=set.cards.find(c=>c.num===cardNum);
+  if(!baseCard){console.log(`\n  ❌ Card #${cardNum} not found in set.\n`);return}
+  cfg.wishlist.push(cardNum);
+  cfg.wishlist.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+  saveCfg(cfg);
+  console.log(`\n  ⭐ Added #${cardNum} ${baseCard.name} to wishlist.\n`);
+}
+function cmdWishlistRemove(cfg,set){
+  const cardNum=process.argv.slice(2).find((a,i)=>i>1&&!a.startsWith('-'));
+  if(!cardNum){console.log('Usage: wishlist remove <card-num>');return}
+  if(!cfg.wishlist||!cfg.wishlist.includes(cardNum)){console.log(`\n  ⭐ Card #${cardNum} is not on your wishlist.\n`);return}
+  cfg.wishlist=cfg.wishlist.filter(n=>n!==cardNum);
+  saveCfg(cfg);
+  const baseCard=set.cards.find(c=>c.num===cardNum);
+  console.log(`\n  ⭐ Removed #${cardNum} ${baseCard?baseCard.name:''} from wishlist.\n`);
+}
+function cmdWishlistList(cfg,set){
+  if(!cfg.wishlist||cfg.wishlist.length===0){console.log(`\n  📋 Wishlist is empty. Use 'wishlist add <card-num>' to add cards.\n`);return}
+  const col=loadCol();
+  const ownedNums=new Set();
+  if(col) col.cards.forEach(c=>ownedNums.add(c.cardNum));
+  let ownedCount=0,missingCount=0;
+  console.log(`\n${'═'.repeat(52)}`);
+  console.log(`  📋 WISHLIST (${cfg.wishlist.length} cards)`);
+  console.log(`${'═'.repeat(52)}`);
+  for(const num of cfg.wishlist){
+    const baseCard=set.cards.find(c=>c.num===num);
+    const name=baseCard?baseCard.name:'Unknown';
+    const owned=ownedNums.has(num);
+    if(owned) ownedCount++;else missingCount++;
+    const status=owned?'✅ Owned':'❌ Missing';
+    console.log(`  ${num} ${pR(name,30)} ${status}`);
+  }
+  console.log(`${'═'.repeat(52)}`);
+  console.log(`  ${ownedCount} owned  ${missingCount} missing\n`);
 }
 
 function cmdTopCards(){
@@ -4174,6 +1848,7 @@ function cmdHistory(){
 
 function cmdWallet(){
   const cfg=loadCfg();
+  if(typeof cfg.wallet!=='number'){console.log(`\n  No player wallet configured for this data directory. Use player-manager.js dir first.\n`);return;}
   const col=cfg.activeSet?loadCol():null;
   const assets=col?col.stats.value:0;
   const sealedValue=col?getSealedInventoryValue(col):0;
@@ -4192,6 +1867,7 @@ function cmdWallet(){
 
 function cmdResetCollection(){
   const cfg=loadCfg();if(!cfg.activeSet){console.log('No active set.');return}
+  if(typeof cfg.wallet!=='number'){console.log('No player wallet configured for this data directory. Use player-manager.js dir first.');return;}
   if(!args.includes('--confirm')){
     console.log(`\n  ⚠️  This will WIPE all cards, stats, and reset wallet for: ${cfg.activeSet}`);
     console.log(`  Use: card-engine reset-collection --confirm\n`);return;
@@ -4199,7 +1875,7 @@ function cmdResetCollection(){
   const col=loadCol();if(!col){console.log('No collection.');return}
   const before=cfg.wallet;
   col.cards=[];col.pulls={};col.parallelCounts={};col.stats={total:0,value:0,spent:0,boxes:0,packs:0,hits:0,oneOfOnes:0};col.bestPull=null;col.sealedInventory={};
-  cfg.wallet=50;col.wallet=50;saveCfg(cfg);saveCol(col);
+  cfg.wallet=0;col.wallet=0;saveCfg(cfg);saveCol(col);
   logHistory('reset-collection',cfg.activeSet,before,cfg.wallet);
   const set=loadSet();if(set)updateChecklist(set,col);
   console.log(`\n  🔄 Collection reset. Wallet: ${fm$(cfg.wallet)}\n`);
@@ -4210,145 +1886,14 @@ function cmdListSets(){
   console.log(`\n${'═'.repeat(50)}`);console.log(`  📁 SETS HISTORY`);console.log(`${'═'.repeat(50)}`);
   if(cfg.activeSet){const col=loadCol();const set=loadSet();
     if(set&&col)console.log(`  ⭐ ${set.name} (${set.code}) — ${col.stats.total} cards, ${fm$(col.stats.value)} [ACTIVE]`)}
-  for(const a of ar){const s=rJ(path.join(DATA_DIR,'sets',a.setKey+'.json'));
+  for(const a of ar){const s=rJ(path.join(getDataDir(),'sets',a.setKey+'.json'));
     console.log(`  📁 ${a.setKey} — ${a.totalCards||'?'} cards, ${fm$(a.stats?.value||0)} [${a.archivedAt?.split('T')[0]}]`)}
   console.log(`${'═'.repeat(50)}\n`);
 }
 
 // ─── STORE SYSTEM ──────────────────────────────────────────────────
-const STORES_DIR=path.join(DATA_DIR,'stores');
-const SCALPERS_DIR=path.join(DATA_DIR,'scalpers');
-
-function loadDefaultStores(){return rJ(path.join(STORES_DIR,'default-stores.json'))||[]}
-function loadStoreState(){
-  const s=rJ(path.join(STORES_DIR,'state.json'));
-  if(s) return s;
-  // Initialize
-  const defaults=loadDefaultStores();
-  const now=Date.now();
-  const state={lastSimulation:now, stores:{}, relationships:{}, purchaseHistory:[]};
-  for(const d of defaults){
-    state.stores[d.id]={lastRestock:now, inventory:{}, lastVisited:0};
-    state.relationships[d.id]={totalSpent:0, purchaseCount:0, tier:0};
-  }
-  wJ(path.join(STORES_DIR,'state.json'),state);
-  return state;
-}
-function saveStoreState(s){wJ(path.join(STORES_DIR,'state.json'),s)}
-
-function loadDefaultScalpers(){return rJ(path.join(SCALPERS_DIR,'default-scalpers.json'))||[]}
-function loadScalperState(){
-  const s=rJ(path.join(SCALPERS_DIR,'state.json'));
-  if(s){
-    s.scalpers=s.scalpers||{};
-    s.activityLog=Array.isArray(s.activityLog)?s.activityLog:[];
-    for(const d of loadDefaultScalpers()){
-      const scalper=s.scalpers[d.id]||{};
-      s.scalpers[d.id]={
-        ...d,
-        ...scalper,
-        cash:Number.isFinite(scalper.cash)?scalper.cash:d.cash,
-        inventory:Array.isArray(scalper.inventory)?scalper.inventory:[],
-        listings:Array.isArray(scalper.listings)?scalper.listings:[],
-        lastAction:Number.isFinite(scalper.lastAction)?scalper.lastAction:Date.now(),
-      };
-    }
-    return s;
-  }
-  const defaults=loadDefaultScalpers();
-  const now=Date.now();
-  const state={lastSimulation:now, scalpers:{}, activityLog:[]};
-  for(const d of defaults){
-    state.scalpers[d.id]={...d, cash:d.cash, inventory:[], listings:[], lastAction:now};
-  }
-  wJ(path.join(SCALPERS_DIR,'state.json'),state);
-  return state;
-}
-function saveScalperState(s){wJ(path.join(SCALPERS_DIR,'state.json'),s)}
-
-function getRelationshipTier(store, rel){
-  const thresholds=store.relationshipThresholds||[100,500,2000,5000,15000];
-  let tier=0;
-  for(let i=0;i<thresholds.length;i++){if(rel.totalSpent>=thresholds[i])tier=i+1}
-  return tier;
-}
-function getRelationshipDiscount(store, rel){
-  const tier=getRelationshipTier(store, rel);
-  // Tiers 0-4 get 0%, 2%, 5%, 8%, 12% discount
-  const discounts=[0, 0.02, 0.05, 0.08, 0.12];
-  return discounts[tier]||0;
-}
-
-function getRecentScalperBuyQty(storeId, days=7){
-  const scalperState=loadScalperState()
-  const cutoff=Date.now()-days*24*60*60*1000
-  let qty=0
-  for(const e of scalperState.activityLog||[]){
-    if(e.storeId===storeId&&e.action==='buy'&&e.timestamp>=cutoff) qty+=(e.qty||1)
-  }
-  return qty
-}
-
-function getStoreInventoryProfile(store, setKey){
-  const market=loadMarket(setKey)
-  const hot=isSetHot(setKey)
-  const flopps=loadFloppsState()
-  const currentDay=market?getSimulationDay(market):(flopps.lastSeenDay>=0?flopps.lastSeenDay:0)
-  const release=getFloppsReleaseWindow(flopps, currentDay)
-  const corp=flopps.corporation||floppsDefaultCorporation()
-  const recentScalperQty=getRecentScalperBuyQty(store.id)
-  const scalperPressure=Math.min(1.5, recentScalperQty/12)
-  const sentiment=market?.sentiment||1
-  const typeBase=store.type==='bigbox'?1.35:store.type==='online'?0.9:1.0
-  const typeProductScale={
-    hobby:store.type==='bigbox'?0.8:store.type==='online'?1.05:1.1,
-    blaster:store.type==='bigbox'?1.2:store.type==='online'?0.9:1.0,
-    retail:store.type==='bigbox'?1.35:store.type==='online'?0.65:0.95,
-    jumbo:store.type==='bigbox'?1.1:store.type==='online'?0.85:1.0,
-  }
-  const hotPenalty=hot?{
-    hobby:0.55,
-    blaster:0.72,
-    retail:0.82,
-    jumbo:0.76,
-  }:{hobby:1,blaster:1,retail:1,jumbo:1}
-  const scalperPenalty=Math.max(0.58,1-scalperPressure*0.18)
-  const sentimentBias=Math.max(0.85,Math.min(1.15,0.9+sentiment*0.1))
-  const allocationMultiplier=Math.max(0.48,1-corp.allocationTightness*0.22-(release.phase.id==='launch'?0.14:0)-(release.phase.id==='sellthrough'?0.08:0))
-  const distributorLagRisk=clamp01(0.05+corp.retailerStress*0.28+(release.phase.id==='launch'?0.14:0)+(scalperPressure*0.08))
-  const releasePhase=release.phase.id
-  return {hot, recentScalperQty, scalperPressure, typeBase, typeProductScale, hotPenalty, scalperPenalty, sentimentBias, allocationMultiplier, distributorLagRisk, releasePhase, corporation:corp}
-}
-
-function calcStoreInventoryQty(store, setKey, type, rng, range){
-  const profile=getStoreInventoryProfile(store, setKey)
-  const base=ri(rng, range[0], range[1])
-  const scale=profile.typeBase
-    *(profile.typeProductScale[type]||1)
-    *(profile.hotPenalty[type]||1)
-    *profile.scalperPenalty
-    *profile.sentimentBias
-    *profile.allocationMultiplier
-  return Math.max(1, Math.round(base*scale))
-}
-
-function ensureStoreInventory(state, store, setKey){
-  const inv=state.stores[store.id].inventory;
-  if(!inv[setKey]){
-    // Initialize stock for this set
-    const range=store.stockRange||[5,10];
-    const rng=mulberry32(Date.now()+store.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0));
-    inv[setKey]={};
-    for(const[type, pt] of Object.entries(PACKS)){
-      // Big box stores don't carry hobby
-      if(store.sellsHobby===false&&type==='hobby') continue;
-      // Online doesn't carry retail/blaster as prominently
-      if(store.type==='online'&&type==='retail') continue;
-      const qty=calcStoreInventoryQty(store, setKey, type, rng, range);
-      inv[setKey][type]=qty;
-    }
-  }
-}
+const STORES_DIR=path.join(getDataDir(),'stores');
+const SCALPERS_DIR=path.join(getDataDir(),'scalpers');
 
 function cmdMarketMacro(){
   const macro=getMacroState();
@@ -4424,15 +1969,6 @@ function cmdFloppsStatus(){
   console.log(`${'═'.repeat(56)}\n`);
 }
 
-function getFloppsPriceForDay(state, day){
-  const history=state?.stock?.history||[];
-  if(!history.length) return state?.stock?.price||100;
-  const exact=history.find((p)=>p.day===day);
-  if(exact) return exact.price;
-  const prior=[...history].filter((p)=>p.day<=day).sort((a,b)=>b.day-a.day)[0];
-  if(prior) return prior.price;
-  return history[0].price;
-}
 
 function cmdFloppsDay(dayArg){
   const state=loadFloppsState();
@@ -4513,63 +2049,6 @@ function cmdFloppsWildcard(){
   }
   recordFloppsBulletin(state,ctx,bulletin,currentDay,'flopps-wildcard');
   console.log(`\n${formatFloppsNewsBlast(bulletin,state,ctx)}\n`);
-}
-
-function restockIfNeeded(state, store, setKey){
-  const storeState=state.stores[store.id];
-  const now=Date.now();
-  const daysSinceRestock=(now-storeState.lastRestock)/(1000*60*60*24);
-  if(daysSinceRestock>=store.restockDays){
-    const inv=storeState.inventory[setKey];
-    if(!inv) return;
-    const range=store.stockRange||[5,10];
-    const profile=getStoreInventoryProfile(store, setKey)
-    for(const[type] of Object.entries(PACKS)){
-      if(store.sellsHobby===false&&type==='hobby') continue;
-      if(store.type==='online'&&type==='retail') continue;
-      let restockQty=calcStoreInventoryQty(store, setKey, type, null, range);
-      if(RNG()<profile.distributorLagRisk){
-        restockQty=Math.max(0,Math.round(restockQty*(0.35+RNG()*0.4)));
-      }
-      inv[type]=(inv[type]||0)+restockQty;
-    }
-    storeState.lastRestock=now;
-  }
-}
-
-function isSetHot(setKey){
-  const cfg=loadCfg();
-  if(!cfg.activeSet) return false;
-  const market=loadMarket(setKey);
-  if(!market) return false;
-  // If sentiment > 1.15 and there's a bullish market event, set is hot.
-  const hasBullishEvent=market.events?.some(e=>isBullishMarketEvent(e.type));
-  return market.sentiment>1.15 || hasBullishEvent;
-}
-
-function getDemandFactor(setKey){
-  const market=loadMarket(setKey);
-  if(!market) return 1.0;
-  // Average demand of superstar+legendary cards
-  const cards=getMarketCardList(market);
-  const hotCards=cards.filter(c=>c.starTier==='Superstar'||c.starTier==='Legendary');
-  const avgDemand=hotCards.length>0?hotCards.reduce((s,c)=>s+c.demandScore,0)/hotCards.length:0;
-  const macro=getMacroState();
-  const macroTilt=Math.max(-0.03,Math.min(0.03,(macro.signal||0)*0.03));
-  return 1.0 + avgDemand * 0.5 + macroTilt; // mostly market demand, tiny macro tilt
-}
-
-function calcStorePrice(store, packType, setKey, rel){
-  const pt=PACKS[packType];
-  if(!pt) return 0;
-  const base=pt.price;
-  const hot=isSetHot(setKey);
-  const profile=getStoreInventoryProfile(store,setKey);
-  const markup=hot ? (store.markupHot||0.2) : (store.markupBase||0.15);
-  const demandFactor=getDemandFactor(setKey);
-  const discount=getRelationshipDiscount(store, rel);
-  const corpPremium=1+(profile.corporation.extractionIndex-0.5)*0.18+(profile.releasePhase==='launch'?0.06:0);
-  return Math.max(1, Math.round(base * (1 + markup) * demandFactor * corpPremium * (1 - discount) * 100) / 100);
 }
 
 function cmdStore(){
@@ -4794,117 +2273,6 @@ function cmdStoreBuy(){
 }
 
 // ─── STORE SUPPLIES DATA ───────────────────────────────────────────
-const SUPPLIES=[
-  {id:'sleeves-pack', name:'Card Sleeves (100ct)', basePrice:8, category:'supplies'},
-  {id:'toploaders', name:'Top Loaders (25ct)', basePrice:12, category:'supplies'},
-  {id:'card-box', name:'Card Storage Box', basePrice:5, category:'supplies'},
-  {id:'magnetic-case', name:'Magnetic One-Touch (10ct)', basePrice:25, category:'supplies'},
-  {id:'grading-holder', name:'Grading Card Holder', basePrice:3, category:'supplies'},
-  {id:'team-bag', name:'Team Bag (500ct)', basePrice:20, category:'supplies'},
-]
-
-// ─── STORE SALE EVENTS ─────────────────────────────────────────────
-
-const SALE_TYPES=[
-  {id:'flash', name:'⚡ Flash Sale', desc:'Limited time flash sale — everything discounted!', discount:0.15, durationHrs:2},
-  {id:'clearance', name:'🏷️ Clearance Event', desc:'Store is clearing old inventory — deep discounts!', discount:0.25, durationHrs:12},
-  {id:'b2g1', name:'🎁 Buy 2 Get 1 Free', desc:'Buy any 2 products, get 1 free (lowest value).', discount:0, durationHrs:24, type:'b2g1'},
-  {id:'loyalty', name:'🌟 Loyalty Bonus Day', desc:'Extra loyalty discount for regular customers!', discount:0.08, durationHrs:48},
-  {id:'restock', name:'📦 Fresh Restock Sale', desc:'New stock just arrived — celebratory pricing!', discount:0.10, durationHrs:6},
-]
-
-function loadStoreSales(){
-  return rJ(path.join(STORES_DIR,'sales.json'))||{active:[], history:[]}
-}
-function saveStoreSales(s){wJ(path.join(STORES_DIR,'sales.json'),s)}
-
-function generateStoreSales(setKey){
-  const sales=loadStoreSales()
-  const now=Date.now()
-  // Expire old sales
-  sales.active=sales.active.filter(s=>now-s.startedAt<s.durationHrs*60*60*1000)
-  // 15% chance to spawn a new sale
-  if(RNG()<0.15&&sales.active.length<2){
-    const template=SALE_TYPES[Math.floor(RNG()*SALE_TYPES.length)]
-    const sale={...template, setKey, startedAt:now, announced:false}
-    sales.active.push(sale)
-    // Announce in market events
-    const cfg=loadCfg()
-    if(cfg.activeSet){
-      const market=loadMarket(cfg.activeSet)
-      if(market){
-        market.eventLog=market.eventLog||[]
-        market.eventLog.push({tick:market.tick, type:'store_sale', desc:`${sale.name} at all stores — ${sale.desc}`})
-        saveMarket(market.setKey,market)
-      }
-    }
-  }
-  saveStoreSales(sales)
-  return sales
-}
-
-function getStoreSaleDiscount(storeId){
-  const sales=loadStoreSales()
-  const now=Date.now()
-  let totalDiscount=0
-  let activeSale=null
-  const activeSales=[]
-  for(const s of sales.active){
-    if(now-s.startedAt<s.durationHrs*60*60*1000){
-      totalDiscount+=s.discount
-      activeSales.push(s)
-      if(!activeSale) activeSale=s
-    }
-  }
-  return {discount:totalDiscount, sale:activeSale, sales:activeSales}
-}
-
-// ─── ENHANCED STORE INVENTORY ─────────────────────────────────────
-
-function ensureFullInventory(state, store, setKey){
-  ensureStoreInventory(state, store, setKey)
-  const inv=state.stores[store.id].inventory
-  if(!inv[setKey]) inv[setKey]={}
-  const si=inv[setKey]
-  // Add supplies if not present
-  if(!si.supplies){
-    const rng=mulberry32(Date.now()+store.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0)+999)
-    si.supplies={}
-    const supplyCount=store.type==='lcs'?6:store.type==='bigbox'?4:3
-    for(let i=0;i<supplyCount;i++){
-      const sup=SUPPLIES[Math.floor(RNG()*SUPPLIES.length)]
-      si.supplies[sup.id]={...sup, qty:ri(rng,2,8)}
-    }
-  }
-  // Add single cards if not present (LCS and hobby stores only)
-  if(!si.singles&&(store.type==='lcs'||store.type==='online')){
-    const cfg=loadCfg()
-    const set=loadSet()
-    const market=set?loadMarket(setKey):null
-    if(set){
-      const rng=mulberry32(Date.now()+store.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0)+777)
-      si.singles=[]
-      const count=ri(rng,3,12)
-      const cards=[...set.cards].sort(()=>RNG()-0.5).slice(0,count)
-      for(const c of cards){
-        const mc=market?.cards?.[c.num]
-        const price=mc?mc.currentPrice*(1+(store.markupBase||0.15)):c.basePrice*1.3
-        si.singles.push({num:c.num, name:c.name, starTier:c.starTier, price:Math.round(price*100)/100, qty:ri(rng,1,3)})
-      }
-    }
-  }
-  // Add sealed boxes
-  if(!si.sealed){
-    si.sealed={
-      hobby_box:{name:'Hobby Box', price:PACKS.hobby.price*2, qty:ri(null,1,3)},
-      jumbo_box:{name:'Jumbo Box', price:PACKS.jumbo.price*2, qty:ri(null,1,3)},
-    }
-    if(store.type!=='bigbox'&&store.sellsHobby!==false){
-      si.sealed.hobby_case={name:'Hobby Case (12 boxes)', price:PACKS.hobby.price*2*10, qty:ri(null,0,1)}
-    }
-  }
-}
-
 function cmdStoreStock(){
   const storeId=args[2]
   if(!storeId){console.log(`\n  Usage: card-engine store stock <store-id>\n`);return}
@@ -5186,156 +2554,6 @@ function cmdStoreTrade(){
 
 // ─── ENHANCED SCALPER SYSTEM ───────────────────────────────────────
 
-function simulateScalpersEnhanced(setKey){
-  const scalperState=loadScalperState()
-  const storeState=loadStoreState()
-  const defaults=loadDefaultStores()
-  const defaultsScalpers=loadDefaultScalpers()
-  const flopps=loadFloppsState()
-  const corp=flopps.corporation||floppsDefaultCorporation()
-  const now=Date.now()
-  const msSince=now-scalperState.lastSimulation
-  const daysSince=msSince/(1000*60*60*24)
-  if(daysSince<1) return
-
-  const storeMap=Object.fromEntries(defaults.map(s=>[s.id,s]))
-  const scalperMap=Object.fromEntries(defaultsScalpers.map(s=>[s.id,s]))
-  const hot=isSetHot(setKey)
-  const demandFactor=getDemandFactor(setKey)
-  const market=loadMarket(setKey)
-  const log=scalperState.activityLog||[]
-  const marketCards=market?getMarketCardList(market):[]
-  const hotCards=marketCards
-    .filter(c=>c.starTier==='Superstar'||c.starTier==='Legendary')
-    .sort((a,b)=>b.currentPrice-a.currentPrice)
-    .slice(0,5)
-  const recentListingsByCard={}
-  for(const e of log){
-    if(e.action!=='list'||Date.now()-e.timestamp>3*24*60*60*1000) continue
-    (recentListingsByCard[e.cardNum]||(recentListingsByCard[e.cardNum]=[])).push(e)
-  }
-
-  // Determine market direction for scalper reactions
-  let marketDirection='neutral'
-  if(market){
-    const recentEvents=market.events||[]
-    const hasBullish=recentEvents.some(e=>isBullishMarketEvent(e.type))
-    const hasBearish=recentEvents.some(e=>isBearishMarketEvent(e.type))
-    if(hasBullish && !hasBearish) marketDirection='bullish'
-    else if(hasBearish && !hasBullish) marketDirection='bearish'
-    else if(hasBullish && hasBearish) marketDirection=market.sentiment>=1?'bullish':'bearish'
-    else if(market.sentiment>1.1) marketDirection='bullish'
-    else if(market.sentiment<0.9) marketDirection='bearish'
-  }
-
-  for(const[sid, scalper] of Object.entries(scalperState.scalpers)){
-    const def=scalperMap[sid]
-    if(!def) continue
-
-    const cyclesPerDay=def.activityPattern==='daily'?1:(def.activityPattern==='weekly'?(1/7):1/14)
-    const cycles=Math.floor(daysSince*cyclesPerDay)
-    if(cycles<=0) continue
-
-    // Strategy: flip_quick = buy & list fast; hold = accumulate & wait
-    const strategy=def.strategy||'flip_quick'
-
-    for(let c=0;c<cycles;c++){
-      // ── MARKET REACTION ──
-      // Buy on dips (crash/bearish)
-      const preferred=def.targetStorePreference.filter(id=>storeMap[id])
-      if(!preferred.length) continue
-      const targetId=preferred[Math.floor(RNG()*preferred.length)]
-      const targetStore=storeMap[targetId]
-      const recentStorePressure=getRecentScalperBuyQty(targetId, 7)
-      const pressureBoost=Math.min(0.5, recentStorePressure/24)
-      let buyChance=def.aggressiveness*(hot?1.5:0.7)*demandFactor*(1+pressureBoost)
-      buyChance*=1+(corp.hypeIndex*0.18)+(corp.scarcityIndex*0.14)
-      if(marketDirection==='bearish'&&strategy==='hold') buyChance*=2.0 // bargain hunt
-      if(marketDirection==='bearish'&&strategy==='flip_quick') buyChance*=0.3 // avoid dropping market
-      if(marketDirection==='bullish') buyChance*=1.3 // fomo
-
-      if(RNG()>buyChance) continue
-
-      ensureFullInventory(storeState, targetStore, setKey)
-      const inv=storeState.stores[targetId]?.inventory?.[setKey]
-      if(!inv) continue
-
-      const allowedTypes=Object.entries(PACKS).filter(([t])=>
-        !(targetStore.sellsHobby===false&&t==='hobby')&&!(targetStore.type==='online'&&t==='retail'))
-      const[type, pt]=allowedTypes[Math.floor(RNG()*allowedTypes.length)]
-      const stock=inv[type]||0
-
-      let buyQty=1
-      if(def.aggressiveness>0.7) buyQty=Math.min(3, Math.floor(RNG()*4)+1)
-      if(def.aggressiveness>0.9) buyQty=Math.min(5, buyQty+2)
-      if(def.tier==='bot') buyQty=Math.min(stock, buyQty+2)
-      if(hot) buyQty=Math.min(stock, buyQty+1)
-      if(marketDirection==='bullish') buyQty=Math.min(stock, buyQty+1)
-      buyQty=Math.min(buyQty, stock)
-      if(buyQty<=0||stock<=0) continue
-
-      const price=pt.price*(1+(targetStore.markupBase||0.1))
-      const totalCost=price*buyQty
-      if(scalper.cash<totalCost) continue
-
-      scalper.cash-=totalCost
-      inv[type]-=buyQty
-      scalper.lastAction=now
-
-      log.push({
-        timestamp:now, scalperId:sid, scalperName:def.name, emoji:def.emoji,
-        storeId:targetId, storeName:targetStore.name, action:'buy',
-        product:pt.name, productType:type, qty:buyQty, cost:totalCost,
-        marketDirection, strategy
-      })
-
-      // ── LIST & UNDERCUT ──
-      if(market&&RNG()<0.6){
-        if(hotCards.length>0){
-          const card=hotCards[Math.floor(RNG()*hotCards.length)]
-          // Check for undercutting
-          const otherListings=(recentListingsByCard[card.num]||[]).filter(e=>e.scalperId!==sid)
-          const undercut=otherListings.length>0?0.95:1.0
-          const markup=def.markupRange[0]+RNG()*(def.markupRange[1]-def.markupRange[0])
-          const listPrice=Math.round(card.currentPrice*markup*undercut*100)/100
-
-          log.push({
-            timestamp:now, scalperId:sid, scalperName:def.name, emoji:def.emoji,
-            action:'list', cardNum:card.num, cardName:card.name,
-            cardTier:card.starTier, listPrice, markup:markup*undercut,
-            undercut:undercut<1, undercuttingWho:undercut<1?otherListings[0]?.scalperName:null
-          })
-
-          const existingListings=Array.isArray(scalper.listings)?scalper.listings:[]
-          scalper.listings=existingListings.concat([{cardNum:card.num, cardName:card.name, listPrice, markup:markup*undercut, listedAt:now, strategy}])
-          const recentForCard=Array.isArray(recentListingsByCard[card.num])?recentListingsByCard[card.num]:[]
-          recentListingsByCard[card.num]=recentForCard.concat([{scalperId:sid, action:'list', timestamp:now}])
-        }
-      }
-    }
-
-    // ── STUCK INVENTORY CHECK ──
-    // If scalper has listings older than 7 days and market is bearish, force discount
-    const oldListings=(scalper.listings||[]).filter(l=>Date.now()-l.listedAt>7*24*60*60*1000)
-    if(oldListings.length>0&&marketDirection!=='bullish'&&RNG()<0.4){
-      const stuck=oldListings[Math.floor(RNG()*oldListings.length)]
-      const discount=0.8+RNG()*0.1
-      const oldPrice=stuck.listPrice
-      stuck.listPrice=Math.round(stuck.listPrice*discount*100)/100
-      log.push({
-        timestamp:now, scalperId:sid, scalperName:def.name, emoji:def.emoji,
-        action:'discount', cardNum:stuck.cardNum, cardName:stuck.cardName,
-        oldPrice, newPrice:stuck.listPrice, reason:marketDirection==='bearish'?'market dip':'stuck inventory'
-      })
-    }
-  }
-
-  scalperState.activityLog=log.slice(-300)
-  scalperState.lastSimulation=now
-  saveScalperState(scalperState)
-  saveStoreState(storeState)
-}
-
 function cmdScalperLog(){
   const cfg=loadCfg()
   if(!cfg.activeSet){console.log('No active set.');return}
@@ -5413,103 +2631,6 @@ function cmdStoreReputation(){
 }
 
 // ─── SCALPER NPC SYSTEM ────────────────────────────────────────────
-
-function simulateScalpers(setKey){
-  const scalperState=loadScalperState();
-  const storeState=loadStoreState();
-  const defaults=loadDefaultStores();
-  const now=Date.now();
-  const msSince=now-scalperState.lastSimulation;
-  const daysSince=msSince/(1000*60*60*24);
-  if(daysSince<1) return; // Don't simulate if less than 1 day has passed
-
-  const storeMap=Object.fromEntries(defaults.map(s=>[s.id,s]));
-  const hot=isSetHot(setKey);
-  const demandFactor=getDemandFactor(setKey);
-  const log=scalperState.activityLog||[];
-
-  for(const[sid, scalper] of Object.entries(scalperState.scalpers)){
-    const def=loadDefaultScalpers().find(s=>s.id===sid);
-    if(!def) continue;
-    // How many cycles did this scalper act?
-    const cyclesPerDay=def.activityPattern==='daily'?1:(def.activityPattern==='weekly'?(1/7):1/14);
-    const cycles=Math.floor(daysSince*cyclesPerDay);
-    if(cycles<=0) continue;
-
-    for(let c=0;c<cycles;c++){
-      // Decide whether to buy (based on aggressiveness × demand)
-      const buyChance=def.aggressiveness*(hot?1.5:0.7)*demandFactor;
-      if(RNG()>buyChance) continue;
-
-      // Pick a store from preferences
-      const preferred=def.targetStorePreference.filter(id=>storeMap[id]);
-      if(!preferred.length) continue;
-      const targetId=preferred[Math.floor(RNG()*preferred.length)];
-      const targetStore=storeMap[targetId];
-
-      // Ensure store has inventory for this set
-      ensureStoreInventory(storeState, targetStore, setKey);
-      const inv=storeState.stores[targetId]?.inventory?.[setKey];
-      if(!inv) continue;
-
-      // Pick a product type to buy
-      const allowedTypes=Object.entries(PACKS).filter(([t])=>
-        !(targetStore.sellsHobby===false&&t==='hobby')&&!(targetStore.type==='online'&&t==='retail'));
-      const[type, pt]=allowedTypes[Math.floor(RNG()*allowedTypes.length)];
-      const stock=inv[type]||0;
-
-      // Buy quantity based on aggressiveness and type
-      let buyQty=1;
-      if(def.aggressiveness>0.7) buyQty=Math.min(3, Math.floor(RNG()*4)+1);
-      if(def.aggressiveness>0.9) buyQty=Math.min(5, buyQty+2);
-      if(def.tier==='bot') buyQty=Math.min(stock, buyQty+2); // bots buy more
-      buyQty=Math.min(buyQty, stock);
-
-      if(buyQty<=0||stock<=0) continue;
-
-      const price=pt.price*(1+(targetStore.markupBase||0.1));
-      const totalCost=price*buyQty;
-
-      if(scalper.cash<totalCost) continue;
-
-      // Execute buy
-      scalper.cash-=totalCost;
-      inv[type]-=buyQty;
-      scalper.lastAction=now;
-
-      log.push({
-        timestamp:now, scalperId:sid, scalperName:def.name, emoji:def.emoji,
-        storeId:targetId, storeName:targetStore.name, action:'buy',
-        product:pt.name, productType:type, qty:buyQty, cost:totalCost
-      });
-
-      // Simulate scalper opening and listing some cards
-      const set=loadSet();
-      if(set&&RNG()<0.6){
-        // Pick a random high-value card from set to "list"
-        const hotCards=set.cards.filter(c=>c.starTier==='Superstar'||c.starTier==='Legendary');
-        if(hotCards.length>0){
-          const card=hotCards[Math.floor(RNG()*hotCards.length)];
-          const markup=def.markupRange[0]+RNG()*(def.markupRange[1]-def.markupRange[0]);
-          const listPrice=Math.round(card.basePrice*markup*100)/100;
-          log.push({
-            timestamp:now, scalperId:sid, scalperName:def.name, emoji:def.emoji,
-            action:'list', cardNum:card.num, cardName:card.name,
-            cardTier:card.starTier, listPrice, markup
-          });
-          const existingListings=Array.isArray(scalper.listings)?scalper.listings:[];
-          scalper.listings=existingListings.concat([{cardNum:card.num, cardName:card.name, listPrice, markup, listedAt:now}]);
-        }
-      }
-    }
-  }
-
-  // Keep log manageable (last 200 entries)
-  scalperState.activityLog=log.slice(-200);
-  scalperState.lastSimulation=now;
-  saveScalperState(scalperState);
-  saveStoreState(storeState);
-}
 
 function cmdMarketScalpers(){
   const sub=args[1];
@@ -5738,46 +2859,6 @@ function cmdGradeSubmit(){
   console.log(`\n  Wallet: ${fm$(beforeWallet)} → ${fm$(cfg.wallet)}`);
   console.log(`  Submit? Cards will be unavailable for ~${tierInfo.days} days.`);
   console.log(`${'═'.repeat(56)}\n`);
-}
-
-function processCompletedSubmissions(state,col,set){
-  let newCompletions=false;
-  const cardByNum=Object.fromEntries(col.cards.map((c,i)=>[c.cardNum,{card:c,idx:i}]));
-  for(const sub of state.submissions){
-    if(sub.completed)continue;
-    const elapsed=(Date.now()-sub.submittedAt)/(1000*60*60*24); // days
-    if(elapsed>=sub.daysToComplete){
-      sub.completed=true;
-      sub.completedAt=Date.now();
-      const grade=conditionToGrade(sub.condition,sub.company);
-      const cond=sub.condition;
-      const blackLabel=sub.company==='BGS'&&grade===10&&isBlackLabel(cond);
-      const mult=gradeMultiplier(grade,sub.company,cond);
-      const newPrice=Math.round(sub.rawValue*mult*100)/100;
-      sub.result={grade,blackLabel,mult,newPrice};
-      // Update card in collection
-      const entry=cardByNum[sub.cardNum];
-      if(entry){
-        const card=entry.card;
-        card.gradingResult={
-          company:sub.company,tier:sub.tier,grade,blackLabel,
-          condition:{...cond},gradedAt:Date.now(),
-          originalPrice:sub.rawValue,newPrice,mult,cracked:false
-        };
-        card.price=newPrice;
-      }
-      // Update population
-      bumpPopulation(col.setKey,sub.cardNum,sub.company,grade);
-      state.history.push({
-        cardNum:sub.cardNum,name:sub.name,company:sub.company,tier:sub.tier,
-        grade,blackLabel,rawValue:sub.rawValue,newPrice,mult,
-        submittedAt:sub.submittedAt,completedAt:Date.now()
-      });
-      newCompletions=true;
-    }
-  }
-  if(newCompletions){rebuildPulls(col);saveCol(col);}
-  return newCompletions;
 }
 
 function cmdGradeStatus(){
@@ -6015,20 +3096,9 @@ function cmdGradeStats(){
 
 // ─── COLLECTION ACQUISITION & ADVANCED MARKET ─────────────────────
 
-const MARKETPLACE_DIR=path.join(DATA_DIR,'marketplace');
-const NPCS_DIR=path.join(DATA_DIR,'npcs');
+const MARKETPLACE_DIR=path.join(getDataDir(),'marketplace');
+const NPCS_DIR=path.join(getDataDir(),'npcs');
 
-function loadListings(){return rJ(path.join(MARKETPLACE_DIR,'listings.json'))||{listings:[],sold:[],nextId:1,lastChecked:0}}
-function saveListings(d){wJ(path.join(MARKETPLACE_DIR,'listings.json'),d)}
-function loadLots(){return rJ(path.join(MARKETPLACE_DIR,'lots.json'))||{lots:[],soldLots:[],nextId:1,lastRefreshed:0}}
-function saveLots(d){wJ(path.join(MARKETPLACE_DIR,'lots.json'),d)}
-function loadAuctions(){return rJ(path.join(MARKETPLACE_DIR,'auctions.json'))||{auctions:[],completed:[],nextId:1,lastChecked:0}}
-function saveAuctions(d){wJ(path.join(MARKETPLACE_DIR,'auctions.json'),d)}
-function loadTraders(){return rJ(path.join(NPCS_DIR,'traders.json'))||[]}
-function loadTradeHistory(){return rJ(path.join(NPCS_DIR,'trade-history.json'))||[]}
-function saveTradeHistory(d){wJ(path.join(NPCS_DIR,'trade-history.json'),d)}
-
-// ── Buy Single ──
 function cmdBuySingle(){
   const argv=process.argv.slice(2);
   const wantBest=argv.includes('--best')
@@ -6512,54 +3582,6 @@ function cmdLotHistory(){
 }
 
 // ── Consignment (Sell singles) ──
-function tickListings(col,set,market){
-  const listings=loadListings();
-  const now=Date.now();
-  const hrsSinceCheck=(now-(listings.lastChecked||0))/(1000*60*60);
-  if(hrsSinceCheck<1||!listings.listings.length){listings.lastChecked=now;saveListings(listings);return}
-  // Simulate ~1hr passing per check, check if any sold
-  const toRemove=[];
-  for(const listing of listings.listings){
-    const mc=market.cards[listing.cardNum];
-    if(!mc) continue;
-    const marketPrice=mc.currentPrice;
-    const priceRatio=listing.price/marketPrice;
-    // Below market = higher sell chance. Above = lower.
-    let sellChance=0;
-    if(priceRatio<=0.8) sellChance=0.15;
-    else if(priceRatio<=1.0) sellChance=0.08;
-    else if(priceRatio<=1.2) sellChance=0.04;
-    else sellChance=0.01;
-    if(RNG()<sellChance){
-      const fee=listing.price*0.10;
-      const net=listing.price-fee;
-      const cfg=loadCfg();
-      cfg.wallet+=net;saveCfg(cfg);col.wallet=cfg.wallet;
-      // Remove card from collection
-      const cardIdx=col.cards.findIndex(c=>c.id===listing.cardId);
-      if(cardIdx>=0){
-        const card=col.cards[cardIdx];
-        col.cards.splice(cardIdx,1);
-        col.stats.total--;
-        col.stats.value-=(card.marketPrice||card.price);
-        const pc=(col.pulls[listing.cardNum]||0);
-        if(pc<=1) delete col.pulls[listing.cardNum]; else col.pulls[listing.cardNum]=pc-1;
-      }
-      listing.soldAt=now;listing.soldPrice=listing.price;listing.fee=fee;listing.net=net;
-      listings.sold.push(listing);
-      toRemove.push(listing);
-      market.cards[listing.cardNum].supplyInMarket++;
-      market.cards[listing.cardNum].salesHistory.push({tick:market.tick,price:listing.price,parallel:'Base'});
-      logHistory('consignment-sold',`#${listing.cardNum} (${fm$(net)} after fee)`,cfg.wallet-net,cfg.wallet);
-    }
-  }
-  if(toRemove.length>0){
-    listings.listings=listings.listings.filter(l=>!toRemove.includes(l));
-    rebuildPulls(col);
-  }
-  listings.lastChecked=now;saveListings(listings);
-}
-
 function cmdSellList(){
   const sub=process.argv.slice(2).find(a=>!a.startsWith('-')&&a!=='sell-list');
   if(!sub){return cmdSellListings()} // default to showing listings
@@ -6761,68 +3783,6 @@ function cmdMarketLeaderboard(){
 }
 
 // ── Auction System ──
-function tickAuctions(col,set,market){
-  const auctions=loadAuctions();
-  const now=Date.now();
-  const toResolve=[];
-  for(const auction of auctions.auctions){
-    const elapsedHrs=(now-auction.startedAt)/(1000*60*60);
-    const durationHrs=(auction.durationDays||3)*24;
-    if(elapsedHrs>=durationHrs){
-      toResolve.push(auction);
-    } else {
-      // NPC bids: chance per check
-      if(auction.bids.length>0&&auction.bids[auction.bids.length-1].bidder==='player') continue;
-      const mc=market.cards[auction.cardNum];
-      if(!mc) continue;
-      const marketVal=mc.currentPrice*2; // NPC values card at 2x base
-      const highestBid=auction.bids.length>0?Math.max(...auction.bids.map(b=>b.amount)):auction.minBid;
-      const npcMaxBid=marketVal*0.8;
-      if(highestBid<npcMaxBid&&RNG()<0.15){
-        const npcBid=Math.min(npcMaxBid,highestBid+marketVal*0.05*(1+RNG()));
-        const rounded=Math.round(npcBid*100)/100;
-        const npcs=loadTraders();
-        const npc=npcs[Math.floor(RNG()*npcs.length)];
-        auction.bids.push({bidder:npc.name,amount:rounded,time:Date.now()});
-        auction.highestBid=rounded;
-      }
-    }
-  }
-  // Resolve expired auctions
-  for(const auction of toResolve){
-    if(auction.bids.length===0){
-      // No bids — return card
-      auction.status='expired';
-      auctions.completed.push(auction);
-    } else {
-      const winningBid=auction.bids[auction.bids.length-1];
-      const fee=auction.seller==='player'?winningBid.amount*0.05:0;
-      const net=winningBid.amount-fee;
-      auction.status='sold';auction.winningBid=winningBid;auction.net=net;
-      if(auction.seller==='player'){
-        // Remove card, add money
-        const cardIdx=col.cards.findIndex(c=>c.id===auction.cardId);
-        if(cardIdx>=0){
-          col.cards.splice(cardIdx,1);col.stats.total--;
-          col.stats.value-=(col.cards[cardIdx]?.marketPrice||0);
-          const pc=(col.pulls[auction.cardNum]||0);
-          if(pc<=1) delete col.pulls[auction.cardNum]; else col.pulls[auction.cardNum]=pc-1;
-        }
-        const cfg=loadCfg();cfg.wallet+=net;saveCfg(cfg);col.wallet=cfg.wallet;
-        logHistory('auction-sold',`#${auction.cardNum} (${fm$(net)})`,cfg.wallet-net,cfg.wallet);
-      } else if(winningBid.bidder==='player'){
-        // Player won — add card, deduct money
-        // Card already removed from col if player was seller
-      }
-      auctions.completed.push(auction);
-    }
-    auctions.auctions=auctions.auctions.filter(a=>a.id!==auction.id);
-  }
-  if(toResolve.length) rebuildPulls(col);
-  auctions.lastChecked=now;saveAuctions(auctions);
-  return toResolve;
-}
-
 function cmdAuction(){
   const sub=process.argv.slice(2).find(a=>!a.startsWith('-')&&a!=='auction');
   if(sub==='list') return cmdAuctionList();
@@ -6940,181 +3900,6 @@ function cmdAuctionClose(){
 }
 
 // ─── AUCTION HOUSE SYSTEM (ENHANCED) ─────────────────────────────
-
-const NPC_BIDDERS=[
-  {name:'CardKing_Mike',style:'shill',aggression:0.8,maxMult:2.5,snipeChance:0.4},
-  {name:'VintageVault',style:'genuine',aggression:0.5,maxMult:1.5,snipeChance:0.1},
-  {name:'SlabHunter99',style:'genuine',aggression:0.6,maxMult:1.8,snipeChance:0.2},
-  {name:'MysteryBidder',style:'shill',aggression:0.9,maxMult:3.0,snipeChance:0.5},
-  {name:'RookieCollector',style:'genuine',aggression:0.3,maxMult:1.2,snipeChance:0.05},
-  {name:'WhaleAlert',style:'genuine',aggression:0.7,maxMult:2.2,snipeChance:0.15},
-  {name:'TheGrader',style:'shill',aggression:0.6,maxMult:2.0,snipeChance:0.3},
-]
-
-function tickAuctionsEnhanced(col,set,market){
-  const auctions=loadAuctions();
-  const now=Date.now();
-  const toResolve=[];
-
-  for(const auction of auctions.auctions){
-    if(auction.status&&auction.status!=='active') continue;
-    const elapsedHrs=(now-auction.startedAt)/(1000*60*60);
-    const durationHrs=(auction.durationDays||3)*24;
-    const timeLeftPct=Math.max(0,1-elapsedHrs/durationHrs);
-    const isLastHour=timeLeftPct<0.05; // last 5%
-
-    if(elapsedHrs>=durationHrs){
-      toResolve.push(auction);
-      continue;
-    }
-
-    const mc=market.cards[auction.cardNum];
-    if(!mc) continue;
-    const baseVal=mc.currentPrice;
-    const highestBid=auction.bids.length>0?Math.max(...auction.bids.map(b=>b.amount)):auction.startingBid;
-    const bidderSet=new Set(auction.bids.map(b=>b.bidder));
-
-    // NPC bidding
-    for(const npc of NPC_BIDDERS){
-      if(bidderSet.has(npc.name)) continue;
-      const npcMax=baseVal*npc.maxMult*(auction.isRare?1.3:1);
-      if(highestBid>=npcMax) continue;
-      let bidChance=npc.aggression*0.12;
-      if(isLastHour&&RNG()<npc.snipeChance) bidChance=0.8; // snipe!
-      if(bidChance<RNG()) continue;
-      const increment=baseVal*0.05*(1+RNG());
-      const newBid=Math.round(Math.min(npcMax,highestBid+increment)*100)/100;
-      auction.bids.push({bidder:npc.name,amount:newBid,time:Date.now(),style:npc.style});
-      auction.highestBid=Math.max(auction.highestBid||0,newBid);
-      auction.hot=auction.hot||npc.style==='shill';
-      bidderSet.add(npc.name);
-      break; // one NPC per check per auction
-    }
-
-    // NPC shill escalation (drive up price near end)
-    if(isLastHour&&auction.hot&&RNG()<0.3){
-      const shill=NPC_BIDDERS.filter(n=>n.style==='shill'&&!bidderSet.has(n.name));
-      if(shill.length){
-        const s=shill[0];
-        const snipe=baseVal*2.2*(1+RNG()*0.3);
-        if(snipe>auction.highestBid){
-          const amt=Math.round(snipe*100)/100;
-          auction.bids.push({bidder:s.name,amount:amt,time:Date.now(),style:'shill'});
-          auction.highestBid=amt;
-          bidderSet.add(s.name);
-        }
-      }
-    }
-
-    // Buy-it-now check
-    if(auction.buyItNow&&highestBid>=auction.buyItNow){
-      toResolve.push(auction);
-      auction.buyNowTriggered=true;
-    }
-  }
-
-  // Resolve
-  for(const auction of toResolve){
-    if(auction.bids.length===0){
-      auction.status='expired';auction.resolvedAt=Date.now();
-      auctions.completed.push(auction);
-      // Return card
-      if(auction.seller==='player'){
-        // Card stays in collection (was never removed)
-      }
-    } else {
-      const winningBid=auction.bids[auction.bids.length-1];
-      // Check reserve
-      const reserveMet=!auction.reserve||winningBid.amount>=auction.reserve;
-      const fee=winningBid.amount*0.05;
-
-      if(!reserveMet&&auction.seller==='player'){
-        auction.status='reserve-not-met';auction.resolvedAt=Date.now();
-        auctions.completed.push(auction);
-        // Card returned (stays in collection)
-      } else {
-        auction.status='sold';auction.winningBid=winningBid;
-        auction.net=winningBid.amount-fee;auction.fee=fee;
-        auction.resolvedAt=Date.now();
-        auctions.completed.push(auction);
-
-        if(auction.seller==='player'){
-          const cardIdx=col.cards.findIndex(c=>c.id===auction.cardId);
-          if(cardIdx>=0){
-            const card=col.cards[cardIdx];
-            col.cards.splice(cardIdx,1);col.stats.total--;
-            col.stats.value-=(card.marketPrice||card.price);
-            const pc=(col.pulls[auction.cardNum]||0);
-            if(pc<=1) delete col.pulls[auction.cardNum]; else col.pulls[auction.cardNum]=pc-1;
-          }
-          const cfg=loadCfg();cfg.wallet+=auction.net;saveCfg(cfg);col.wallet=cfg.wallet;
-          logHistory('auction-sold',`#${auction.cardNum} ${auction.name} (${fm$(auction.net)})`,cfg.wallet-auction.net,cfg.wallet);
-        } else if(winningBid.bidder==='player'){
-          // Player won from NPC auction
-          const cfg=loadCfg();
-          if(cfg.wallet>=winningBid.amount){
-            cfg.wallet-=winningBid.amount;saveCfg(cfg);col.wallet=cfg.wallet;
-            const baseCard=set.cards.find(c=>c.num===auction.cardNum);
-            if(baseCard){
-              const par=PARALLELS[0];const grade=rollGrade();const quality=generateQuality(grade);
-              const price=winningBid.amount;const id=`${set.code}-${auction.cardNum}-Base-0-G${grade.grade}`;
-              const catLine=CAT.fmtCardCategoryLine(baseCard,set.setCategory);
-              const newCard={id,cardNum:auction.cardNum,name:baseCard.name,subset:baseCard.subset,
-                starTier:baseCard.starTier,stats:baseCard.stats||{},parallel:'Base',sn:null,
-                serStr:'',plate:null,special:'None',specialDesc:'',quality,grade:grade.grade,
-                gradeName:grade.name,price,isHit:false,marketPrice:price,
-                popScore:0,demandScore:0,cardFormat:'standard',cardTypeId:null,cardTypeName:null,
-                _categoryLine:catLine,source:'auction',auctionId:auction.id,auctionPrice:winningBid.amount};
-              col.cards.push(newCard);col.pulls[auction.cardNum]=(col.pulls[auction.cardNum]||0)+1;
-              col.stats.total++;col.stats.value+=price;
-              if(!col.bestPull||price>col.bestPull.price)col.bestPull=newCard;
-              logHistory('auction-won',`#${auction.cardNum} ${baseCard.name} (${fm$(winningBid.amount)})`,cfg.wallet+winningBid.amount,cfg.wallet);
-            }
-          }
-        }
-
-        // Record sale in market
-        if(mc){
-          mc.salesHistory.push({tick:market.tick,price:winningBid.amount,parallel:auction.parallel||'Base'});
-          mc.sales24h++;
-        }
-      }
-    }
-    auctions.auctions=auctions.auctions.filter(a=>a.id!==auction.id);
-  }
-  if(toResolve.length) rebuildPulls(col);
-  auctions.lastChecked=now;saveAuctions(auctions);
-  return toResolve;
-}
-
-// Generate NPC auctions to bid on
-function ensureNpcAuctions(set,market){
-  const auctions=loadAuctions();
-  const playerAuctions=auctions.auctions.filter(a=>a.seller==='player');
-  const npcAuctions=auctions.auctions.filter(a=>a.seller!=='player');
-  if(npcAuctions.length>=3) return;
-  const needed=3-npcAuctions.length;
-  for(let i=0;i<needed;i++){
-    const card=set.cards[Math.floor(RNG()*set.cards.length)];
-    const mc=market.cards[card.num];
-    if(!mc) continue;
-    const isRare=card.starTier==='Legendary'||card.starTier==='Superstar';
-    const startBid=Math.round(mc.currentPrice*(isRare?0.8:0.5)*100)/100;
-    const reserve=isRare?Math.round(startBid*1.2*100)/100:null;
-    const buyNow=isRare?Math.round(mc.currentPrice*2.5*100)/100:null;
-    const npc=NPC_BIDDERS[Math.floor(RNG()*NPC_BIDDERS.length)];
-    const id=String(auctions.nextId++);
-    auctions.auctions.push({
-      id,cardId:`npc-${id}`,cardNum:card.num,name:card.name,parallel:'Base',
-      starTier:card.starTier,startingBid:startBid,reserve,buyItNow:buyNow,
-      marketPrice:mc.currentPrice,durationDays:[1,3,7][Math.floor(RNG()*3)],
-      seller:npc.name,startedAt:Date.now()-RNG()*48*60*60*1000,
-      bids:[{bidder:'CardKing_Mike',amount:startBid,time:Date.now()-RNG()*24*60*60*1000,style:'genuine'}],
-      highestBid:startBid,isRare,hot:false,status:'active',
-    });
-  }
-  saveAuctions(auctions);
-}
 
 function cmdAuctionEnhanced(){
   const sub=process.argv.slice(2)[1];
@@ -7361,87 +4146,7 @@ function cmdAuctionRelist(){
 
 // ─── GRADING ECONOMY EXPANSION ────────────────────────────────────
 
-const POPULATION_FILE=path.join(DATA_DIR,'grading-population.json')
-function loadPopulation(){
-  return rJ(POPULATION_FILE)||{}
-}
-function savePopulation(p){wJ(POPULATION_FILE,p)}
-
-function simNpcPopulationGrowth(setKey,cardNum){
-  const pop=loadPopulation();
-  if(!pop[setKey]) pop[setKey]={}
-  if(!pop[setKey][cardNum]) pop[setKey][cardNum]={totalGraded:0}
-  const cardPop=pop[setKey][cardNum]
-  // Simulate NPC grading (gradeflation)
-  for(const comp of['PSA','BGS','SGC']){
-    if(!cardPop[comp]) cardPop[comp]={}
-    // Chance of new graded copies appearing (simulates other collectors)
-    const newGrades=Math.floor(RNG()*3)
-    for(let i=0;i<newGrades;i++){
-      // Weight towards lower grades (bell curve centered around 8)
-      const r=RNG()
-      let grade
-      if(r<0.01) grade=10
-      else if(r<0.05) grade=9.5
-      else if(r<0.20) grade=9
-      else if(r<0.35) grade=8.5
-      else if(r<0.55) grade=8
-      else grade=7
-      cardPop[comp][grade]=(cardPop[comp][grade]||0)+1
-      cardPop.totalGraded++
-    }
-  }
-  savePopulation(pop)
-}
-
-function bumpPopulation(setKey,cardNum,company,grade){
-  const pop=loadPopulation()
-  if(!pop[setKey]) pop[setKey]={}
-  if(!pop[setKey][cardNum]) pop[setKey][cardNum]={totalGraded:0}
-  if(!pop[setKey][cardNum][company]) pop[setKey][cardNum][company]={}
-  pop[setKey][cardNum][company][grade]=(pop[setKey][cardNum][company][grade]||0)+1
-  pop[setKey][cardNum].totalGraded++
-  savePopulation(pop)
-}
-
-function gradeRarityBonus(cardNum,starTier,grade,set){
-  const pop=loadPopulation()
-  const setKey=set.code+'-'+set.year
-  const cardPop=pop[setKey]?.[cardNum]
-  if(!cardPop||cardPop.totalGraded===0) return{bonus:1.5,label:'First graded!'}
-  const gradeCount=cardPop.PSA?.[grade]||0
-  const total=cardPop.totalGraded
-  if(grade===10){
-    if(gradeCount===0) return{bonus:starTier==='Legendary'?5.0:starTier==='Superstar'?3.5:starTier==='Star'?2.5:1.8,label:'First PSA 10!'}
-    if(gradeCount<=3) return{bonus:starTier==='Legendary'?4.0:starTier==='Superstar'?3.0:starTier==='Star'?2.2:1.5,label:'Ultra rare (≤3)'}
-    if(gradeCount<=10) return{bonus:starTier==='Legendary'?3.0:starTier==='Superstar'?2.0:1.3,label:'Rare (≤10)'}
-    if(gradeCount<=30) return{bonus:1.5,label:'Uncommon (≤30)'}
-    // Gradeflation: diminishing returns
-    const dilution=Math.max(1.1, 2.0-gradeCount/100)
-    return{bonus:dilution,label:`Diluted (${gradeCount} exist)`}
-  }
-  if(grade===9){
-    if(gradeCount<=5) return{bonus:1.3,label:'Low pop 9'}
-    const dilution=Math.max(1.05, 1.3-gradeCount/200)
-    return{bonus:dilution,label:`${gradeCount} PSA 9s exist`}
-  }
-  return{bonus:1.0,label:'Common grade'}
-}
-
-function gradeflationPressure(cardNum,company,grade,set){
-  const pop=loadPopulation()
-  const setKey=set.code+'-'+set.year
-  const cardPop=pop[setKey]?.[cardNum]
-  if(!cardPop) return{pressure:'none',premium:0}
-  const total=cardPop.totalGraded
-  if(total<10) return{pressure:'none',premium:100}
-  const highGrades=(cardPop[company]?.[10]||0)+(cardPop[company]?.[9.5]||0)+(cardPop[company]?.[9]||0)
-  const ratio=highGrades/total
-  if(ratio>0.3) return{pressure:'high',premium:Math.round((1-ratio)*100)}
-  if(ratio>0.15) return{pressure:'medium',premium:Math.round((1-ratio)*100)}
-  return{pressure:'low',premium:Math.round((1-ratio)*100)}
-}
-
+const POPULATION_FILE=path.join(getDataDir(),'grading-population.json')
 function cmdGradePopReport(){
   const cfg=loadCfg();if(!cfg.activeSet){console.log('No active set.');return}
   const col=loadCol();const set=loadSet()
@@ -7621,28 +4326,6 @@ function cmdGradeCrackRisk(){
 
 // ─── SUPPLY CHAIN / PROVENANCE ────────────────────────────────────
 
-const ORIGIN_PRESETS=[
-  {type:'retail-blaster',label:'Pulled from retail blaster',mult:1.0,emoji:'🏪'},
-  {type:'hobby-box',label:'Pulled from hobby box',mult:1.05,emoji:'📦'},
-  {type:'hobby-pack',label:'Pulled from hobby pack',mult:1.0,emoji:'🃏'},
-  {type:'jumbo-box',label:'Pulled from jumbo box',mult:1.02,emoji:'🎁'},
-  {type:'store-bought',label:'Store bought (LCS)',mult:1.05,emoji:'🏪'},
-  {type:'auction-won',label:'Won at auction',mult:1.0,emoji:'🏷️'},
-  {type:'trade',label:'Acquired via trade',mult:0.98,emoji:'🤝'},
-  {type:'lot-pull',label:'Pulled from collection lot',mult:0.97,emoji:'🎁'},
-  {type:'first-pack',label:'First pack of set (collector premium!)',mult:1.15,emoji:'⭐'},
-  {type:'viral-break',label:'Pulled during viral break',mult:1.20,emoji:'🔥'},
-  {type:'marketplace',label:'Purchased from marketplace',mult:1.0,emoji:'🛒'},
-]
-
-function assignOrigin(card,source){
-  const preset=ORIGIN_PRESETS.find(p=>p.type===source)||ORIGIN_PRESETS[0]
-  // Rare chance of special origin
-  if(RNG()<0.02) return ORIGIN_PRESETS.find(p=>p.type==='viral-break')
-  if(RNG()<0.01) return ORIGIN_PRESETS.find(p=>p.type==='first-pack')
-  return preset
-}
-
 function cmdOrigin(){
   const cfg=loadCfg();if(!cfg.activeSet){console.log('No active set.');return}
   const col=loadCol();if(!col||!col.cards.length){console.log('Collection is empty.');return}
@@ -7695,67 +4378,7 @@ function cmdOrigin(){
 
 // ─── MARKET DEPTH / ORDER BOOK ────────────────────────────────────
 
-const ORDERBOOK_DIR=path.join(DATA_DIR,'orderbook')
-function loadOrderBook(setKey){
-  return rJ(path.join(ORDERBOOK_DIR,setKey+'.json'))||{bids:[],asks:[],lastUpdate:0}
-}
-function saveOrderBook(setKey,ob){
-  const dir=ORDERBOOK_DIR
-  if(!fs.existsSync(dir))fs.mkdirSync(dir,{recursive:true})
-  wJ(path.join(dir,setKey+'.json'),ob)
-}
-
-function generateOrderBook(setKey,market){
-  const ob=loadOrderBook(setKey)
-  const now=Date.now()
-  if(now-ob.lastUpdate<3600000&&ob.bids.length>0) return ob // cache 1hr
-
-  const cards=getMarketCardList(market)
-  const marketMakers=[
-    {name:'DeepLiquidity_LLC',style:'tight',spread:0.03,depth:5},
-    {name:'CardMarket_Maker',style:'wide',spread:0.06,depth:4},
-    {name:'WhaleDesk',style:'tight',spread:0.04,depth:3},
-  ]
-
-  const newBids=[]
-  const newAsks=[]
-
-  for(const mc of cards){
-    const price=mc.currentPrice
-    const vol=mc.demandScore
-
-    // Market maker orders
-    for(const mm of marketMakers){
-      for(let i=0;i<mm.depth;i++){
-        const offset=price*mm.spread*(i+1)*(0.8+RNG()*0.4)
-        const bidPrice=Math.round((price-offset)*100)/100
-        const askPrice=Math.round((price+offset)*100)/100
-        const qty=Math.max(1,Math.floor(RNG()*3*vol*5))
-        newBids.push({cardNum:mc.num,name:mc.name,price:bidPrice,qty,maker:mm.name,orderType:'limit'})
-        newAsks.push({cardNum:mc.num,name:mc.name,price:askPrice,qty,maker:mm.name,orderType:'limit'})
-      }
-    }
-
-    // Random retail orders
-    if(RNG()<0.3){
-      const qty=Math.floor(RNG()*2)+1
-      const bidPrice=Math.round(price*(0.85+RNG()*0.1)*100)/100
-      newBids.push({cardNum:mc.num,name:mc.name,price:bidPrice,qty,maker:'retail',orderType:'limit'})
-    }
-    if(RNG()<0.3){
-      const qty=Math.floor(RNG()*2)+1
-      const askPrice=Math.round(price*(1.05+RNG()*0.15)*100)/100
-      newAsks.push({cardNum:mc.num,name:mc.name,price:askPrice,qty,maker:'retail',orderType:'limit'})
-    }
-  }
-
-  ob.bids=newBids
-  ob.asks=newAsks
-  ob.lastUpdate=now
-  saveOrderBook(setKey,ob)
-  return ob
-}
-
+const ORDERBOOK_DIR=path.join(getDataDir(),'orderbook')
 function cmdMarketBook(){
   const cfg=loadCfg();if(!cfg.activeSet){console.log('No active set.');return}
   const set=loadSet();const market=initMarket(set)
@@ -7910,11 +4533,22 @@ function cmdMarketOrder(){
 // Main
 const args=process.argv.slice(2);const cmd=args[0];
 let floppsSuffix='';
+LOG.current=createTradingLogger({script:'card-engine',argv:args,verbose:args.includes('--verbose')||process.env.TRADING_CARDS_VERBOSE==='1',dataDir:getDataDir()});
+process.on('uncaughtException',err=>{LOG.current?.error('uncaught-exception',{error:err});throw err;});
+process.on('unhandledRejection',err=>{LOG.current?.error('unhandled-rejection',{error:err});});
 {
   const seedArg=args.indexOf('--seed');
   const seed=seedArg>=0&&args[seedArg+1]?normalizeSeed(args[seedArg+1]):process.env.TRADING_CARDS_SEED;
   setEngineSeed(seed);
 }
+LOG.current?.log('process.start',{command:cmd||null,dataDir:getDataDir()});
+const PLAYER_FREE_COMMANDS=new Set(['generate-set','gen-set','generate-set-ai','gen-ai','flopps','flopps-launch','flopps-status','flopps-day','flopps-today','flopps-wildcard','compare','list-sets']);
+const isHelpOrVersion=cmd==='--help'||cmd==='-h'||cmd==='--version'||cmd==='-V';
+if(cmd&&!isHelpOrVersion&&!PLAYER_FREE_COMMANDS.has(cmd)&&!requirePlayerContext(cmd)){
+  process.exitCode=1;
+  process.exit(1);
+}
+applyStipendSweep({dataDir:getDataDir(),amount:5,timeZone:'Europe/Sofia'});
 {
   const cfg=loadCfg();
   if(cfg.activeSet){
@@ -7926,73 +4560,11 @@ let floppsSuffix='';
     }
   }
 }
-switch(cmd){
-  case'generate-set':case'gen-set':cmdGenSet();break;
-  case'open-pack':cmdOpenPack(args[1]);break;
-  case'open-box':cmdOpenBox(args[1]);break;
-  case'portfolio':cmdPortfolio();break;
-  case'collection':cmdCollection();break;
-  case'checklist':cmdChecklist();break;
-  case'set-info':cmdSetInfo();break;
-  case'card-types':cmdCardTypes();break;
-  case'new-season':cmdNewSeason();break;
-  case'list-sets':cmdListSets();break;
-  case'remove-money':cmdRemoveMoney();break;
-  case'add-money':cmdAddMoney();break;
-  case'wallet':cmdWallet();break;
-  case'set-money':cmdSetMoney();break;
-  case'duplicates':case'dups':cmdDuplicates();break;
-  case'top-cards':cmdTopCards();break;
-  case'pack-stats':cmdPackStats();break;
-  case'history':cmdHistory();break;
-  case'undo':cmdUndo(args[1]);break;
-  case'reset-collection':cmdResetCollection();break;
-  case'grade-card':cmdGradeCard();break;
-  case'grade':cmdGrade();break;
-  case'market':
-    if(args[1]==='scalpers'||args[1]==='scalper'){cmdMarketScalpers();break}
-    if(args[1]==='scalper-log'){cmdScalperLog();break}
-    if(args[1]==='macro'){cmdMarketMacro();break}
-    if(args[1]==='book'){cmdMarketBook();break}
-    if(args[1]==='order'){cmdMarketOrder();break}
-    cmdMarket();break;
-  case'origin':cmdOrigin();break;
-  case'flag':cmdFlag();break;
-  case'revalue':cmdRevalue();break;
-  case'sell':cmdSell();break;
-  case'buy':case'buy-single':cmdBuySingle();break;
-  case'trade':cmdTrade();break;
-  case'lot':cmdLot();break;
-  case'sell-list':cmdSellList();break;
-  case'auction':cmdAuctionEnhanced();break;
-  case'store':cmdStore();break;
-  case'flopps-status':cmdFloppsStatus();break;
-  case'flopps-day':cmdFloppsDay(args[1]);break;
-  case'flopps-today':cmdFloppsToday();break;
-  case'flopps-wildcard':cmdFloppsWildcard();break;
-  case'flopps':case'flopps-launch':
-    const{execFileSync:execFileSyncFlopps}=require('child_process');
-    execFileSyncFlopps(process.execPath,[path.join(__dirname,'ai-set-generator.js'),'--flopps',...process.argv.slice(3)],{stdio:'inherit',cwd:DATA_DIR});
-    break;
-  case'generate-set-ai':case'gen-ai':
-    const{execFileSync}=require('child_process');
-    execFileSync(process.execPath,[path.join(__dirname,'ai-set-generator.js'),...process.argv.slice(3)],{stdio:'inherit',cwd:DATA_DIR});
-    break;
-  default:console.log(`Usage: card-engine <command> [options]
-  Commands: generate-set [--category <type>] [--sport <sport>] [--cards N] [--theme <theme>],
-            generate-set-ai [--category <type>] [--sport <sport>] [--model MODEL] [--theme THEME] [--cards N] [--set-code CODE],
-            open-pack [type] [--real], open-box [type] [--real],
-            portfolio, collection [set-code|name], checklist [set-code|name],
-            sell <card-num>, set-info, card-types, new-season, list-sets, wallet,
-            add-money [amount], set-money <amount>,
-            grade-card <card-num>|--all|--dups,
-            grade submit|status|history|pop|cost|crack|stats,
-            market [card-num], market macro, market scalpers, market scalper <id>,
-            flag [card-num|owned|movers|gainers|losers], revalue,
-            store list, store visit <id>, store buy <id> <product> [qty], store stock <id>, store pressure <id>, store restock <id>, store trade <id> <card-num> <product>, store reputation,
-            flopps-status, flopps-day <day|today>, flopps-today, flopps-wildcard,
-            duplicates, top-cards [--grade], pack-stats, history [--all|--count N],
-            undo [n], reset-collection --confirm,
+
+// ─── Commander.js Argument Parsing ─────────────────────────────────
+const { program } = require('commander');
+
+const EXTENDED_HELP = `
 
   Pack types: hobby ($120), blaster ($50), retail ($5), jumbo ($30)
 
@@ -8014,9 +4586,9 @@ switch(cmd){
     revalue               # recalculate collection from current market prices, save
 
     Market advances automatically when:
-      • You open a real pack or box (time-based: elapsed 12-hour ticks since the last operation)
-      • You sell a card (+1 tick, sold cards increase market supply)
-      • You sell duplicates in bulk (+1 tick, all sold cards increase supply)
+      - You open a real pack or box (time-based: elapsed 12-hour ticks since the last operation)
+      - You sell a card (+1 tick, sold cards increase market supply)
+      - You sell duplicates in bulk (+1 tick, all sold cards increase supply)
 
   Selling & Buying:
     sell <card-num>       # sell cheapest copy of card #007
@@ -8082,6 +4654,230 @@ switch(cmd){
     generate-set-ai --theme "Cyberpunk Street Racing"
     generate-set-ai --cards 200 --set-code DRG
     generate-set-ai --flopps --theme "Arena of Broken Promises"
-    flopps --theme "Arena of Broken Promises" --set-code FPP`);break;
-}
+    flopps --theme "Arena of Broken Promises" --set-code FPP`;
+
+program
+  .name('card-engine')
+  .usage('<command> [options]')
+  .addHelpText('after', EXTENDED_HELP)
+  .showHelpAfterError()
+  .configureHelp({ showGlobalOptions: true });
+
+// Global options — isReal() and seed parsing still use process.argv directly
+program
+  .option('--real', 'Commit to collection — cards saved as personal assets, wallet deducted')
+  .option('--seed <value>', 'Set RNG seed for deterministic outcomes')
+  .option('--verbose', 'Enable verbose logging');
+
+// ─── Command Definitions ────────────────────────────────────────────
+
+program.command('generate-set').alias('gen-set')
+  .description('Generate a new card set')
+  .option('--category <type>', 'Set category (character, sports, movie, etc.)')
+  .option('--sport <sport>', 'Sport for sports sets')
+  .option('--cards <N>', 'Number of cards', parseInt)
+  .option('--theme <theme>', 'Theme for the set')
+  .action(cmdGenSet);
+
+program.command('generate-set-ai').alias('gen-ai')
+  .description('Generate a card set using AI (requires OPENROUTER_API_KEY)')
+  .action(() => {
+    const{execFileSync}=require('child_process');
+    execFileSync(process.execPath,[path.join(__dirname,'ai-set-generator.js'),...process.argv.slice(3)],{stdio:'inherit',cwd:getDataDir()});
+  });
+
+program.command('open-pack')
+  .argument('[type]', 'Pack type: hobby ($120), blaster ($50), retail ($5), jumbo ($30)')
+  .description('Open a pack of cards')
+  .action((type) => cmdOpenPack(type));
+
+program.command('open-box')
+  .argument('[type]', 'Box type: hobby box or retail box')
+  .description('Open a box of cards')
+  .action((type) => cmdOpenBox(type));
+
+program.command('portfolio')
+  .description('Financial overview + set completion')
+  .action(cmdPortfolio);
+
+program.command('compare')
+  .description('Compare wallets and collections across all players')
+  .action(cmdCompare);
+
+program.command('collection')
+  .argument('[set-code]', 'Set code or name filter')
+  .description('Show collection')
+  .action(cmdCollection);
+
+program.command('checklist')
+  .argument('[set-code]', 'Set code or name filter')
+  .description('Show checklist')
+  .action(cmdChecklist);
+
+program.command('set-info')
+  .description('Show active set information')
+  .action(cmdSetInfo);
+
+program.command('card-types')
+  .description('Show card types')
+  .action(cmdCardTypes);
+
+program.command('new-season')
+  .description('Start a new season (reset market, rollover set)')
+  .action(cmdNewSeason);
+
+program.command('list-sets')
+  .description('List all generated sets')
+  .action(cmdListSets);
+
+program.command('remove-money')
+  .argument('<amount>', 'Amount to remove (withdrawn)')
+  .description('Remove money from wallet')
+  .action(cmdRemoveMoney);
+
+program.command('add-money')
+  .argument('[amount]', 'Amount to add (default: pocketMoney from config)')
+  .description('Add money to wallet')
+  .action(cmdAddMoney);
+
+program.command('wallet')
+  .description('Show wallet balance')
+  .action(cmdWallet);
+
+program.command('set-money')
+  .argument('<amount>', 'New wallet balance')
+  .description('Set wallet balance')
+  .action(cmdSetMoney);
+
+program.command('duplicates').alias('dups')
+  .description('Show duplicate cards in collection')
+  .action(cmdDuplicates);
+
+program.command('wishlist')
+  .argument('[action]', 'add, remove, or list')
+  .argument('[card-num]', 'Card number to add/remove')
+  .description('Manage wishlist: add <num>, remove <num>, list')
+  .action(cmdWishlist);
+
+program.command('top-cards')
+  .description('Show top cards by value [--grade]')
+  .option('--grade', 'Sort by grade instead of value')
+  .action(cmdTopCards);
+
+program.command('pack-stats')
+  .description('Show pack opening statistics')
+  .action(cmdPackStats);
+
+program.command('history')
+  .description('Show transaction history [--all] [--count N]')
+  .option('--all', 'Show all history entries')
+  .option('--count <N>', 'Number of entries to show', parseInt)
+  .action(cmdHistory);
+
+program.command('undo')
+  .argument('[n]', 'Number of operations to undo (default: 1)', parseInt)
+  .description('Undo the last N transaction(s)')
+  .action((n) => cmdUndo(n));
+
+program.command('reset-collection')
+  .description('Reset collection --confirm required')
+  .option('--confirm', 'Confirm the reset')
+  .action(cmdResetCollection);
+
+program.command('grade-card')
+  .argument('<target>', 'Card number, --all, or --dups')
+  .description('Submit a card to PSA grading')
+  .action(cmdGradeCard);
+
+program.command('grade')
+  .argument('[subcommand]', 'submit, status, history, pop, cost, crack, stats, pop-report, value-add, crack-risk')
+  .description('Grading system: submit, status, history, pop, cost, crack, stats')
+  .action(cmdGrade);
+
+program.command('market')
+  .argument('[args...]', 'Card number, macro, supply <num>, book <num>, events, demand, leaderboard, scalpers, or scalper-log')
+  .description('Secondary market dashboard or card detail')
+  .action(cmdMarket);
+
+program.command('origin')
+  .argument('[card-num]', 'Card number (omit for summary)')
+  .description('Show card origin / acquisition history')
+  .action(cmdOrigin);
+
+program.command('flag')
+  .argument('[query]', 'Card number, owned, movers, gainers, or losers')
+  .description('Market heatmap: set overview, card detail, owned, movers, gainers, losers')
+  .action(cmdFlag);
+
+program.command('revalue')
+  .description('Recalculate collection from current market prices')
+  .action(cmdRevalue);
+
+program.command('sell')
+  .argument('[target]', 'Card number, dups, or pack-dups')
+  .description('Sell a card: <card-num>, dups, pack-dups [--best] [--pack]')
+  .action(cmdSell);
+
+program.command('buy').alias('buy-single')
+  .argument('[card-num]', 'Card number to buy')
+  .description('Buy a single card from the market [--best] [--max-price $X]')
+  .action(cmdBuySingle);
+
+program.command('trade')
+  .argument('[action]', 'browse, offer, counter, or history')
+  .argument('[args...]', 'Additional arguments')
+  .description('Trade with NPCs: browse, offer, counter, history')
+  .action(cmdTrade);
+
+program.command('lot')
+  .argument('[action]', 'browse, buy, or history')
+  .argument('[args...]', 'Lot ID for buy')
+  .description('Browse and buy collection lots')
+  .action(cmdLot);
+
+program.command('sell-list')
+  .argument('[subcommand]', 'Card number+price, instant, listings, or cancel')
+  .argument('[args...]', 'Additional arguments')
+  .description('Consignment listings: <card-num> <price>, instant, listings, cancel')
+  .action(cmdSellList);
+
+program.command('auction')
+  .argument('[action]', 'list, browse, bid, sell, view, close, history, or relist')
+  .argument('[args...]', 'Auction ID, card number, or amount')
+  .description('Auction house: list, browse, bid, close')
+  .action(cmdAuctionEnhanced);
+
+program.command('store')
+  .argument('[action]', 'list, visit, buy, stock, pressure, restock, trade, or reputation')
+  .argument('[args...]', 'Store ID, product, or quantity')
+  .description('Store system: list, visit, buy, stock, pressure, restock, trade, reputation')
+  .action(cmdStore);
+
+program.command('flopps-status')
+  .description('Show the fake FLPS stock price and latest bulletin')
+  .action(cmdFloppsStatus);
+
+program.command('flopps-day')
+  .argument('<day>', 'Simulation day to inspect')
+  .description('Show Flopps actions on a specific simulation day')
+  .action((day) => cmdFloppsDay(day));
+
+program.command('flopps-today')
+  .description('Show Flopps actions for today')
+  .action(cmdFloppsToday);
+
+program.command('flopps-wildcard')
+  .description('Force a surprise AI-written Flopps event')
+  .action(cmdFloppsWildcard);
+
+program.command('flopps').alias('flopps-launch')
+  .description('Launch a Flopps AI-generated set')
+  .action(() => {
+    const{execFileSync:execFileSyncFlopps}=require('child_process');
+    execFileSyncFlopps(process.execPath,[path.join(__dirname,'ai-set-generator.js'),'--flopps',...process.argv.slice(3)],{stdio:'inherit',cwd:getDataDir()});
+  });
+
+program.parse(process.argv);
+
 if(floppsSuffix) process.stdout.write(floppsSuffix+'\n');
+LOG.current?.log('process.end',{command:cmd||null});

@@ -1,0 +1,9 @@
+{
+  "name": "trading-cards-skill-for-openclaw",
+  "version": "2.0.0",
+  "description": "Virtual trading card ecosystem for Hermes Agent and OpenClaw — pack breaks, collection tracking, secondary markets, grading, and Flopps corporate parody",
+  "private": false,
+  "dependencies": {
+    "commander": "^14.0.3"
+  }
+}

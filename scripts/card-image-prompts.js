@@ -4,6 +4,10 @@
 const fs = require('fs');
 const path = require('path');
 const {
+  createTradingLogger,
+  summarize,
+} = require('./trading-logger.js');
+const {
   resolveSetPath,
   buildPromptBundle,
   writePromptBundleToSet,
@@ -74,12 +78,18 @@ function normalizeNum(value) {
 
 function main() {
   const opts = parseArgs(process.argv);
+  const logger = createTradingLogger({
+    script: 'card-image-prompts',
+    argv: process.argv.slice(2),
+    verbose: process.argv.includes('--verbose') || process.env.TRADING_CARDS_VERBOSE === '1',
+  });
   if (opts.help) {
     usage();
     return;
   }
 
   const setPath = resolveSetPath(opts.set);
+  logger.log('process.start', { command: 'card-image-prompts', setPath, options: summarize(opts) });
   const set = JSON.parse(fs.readFileSync(setPath, 'utf8'));
   const cards = selectCards(set, {
     card: opts.card,
@@ -133,6 +143,7 @@ function main() {
 
   if (opts.output) {
     fs.writeFileSync(path.resolve(opts.output), output);
+    logger.debug('output.write', { output: path.resolve(opts.output), format: opts.format, count: cards.length });
   } else {
     process.stdout.write(output + '\n');
   }
@@ -140,13 +151,20 @@ function main() {
   if (opts.writeSet) {
     const updatedSet = writePromptBundleToSet(set, bundleByCardNum);
     fs.writeFileSync(setPath, JSON.stringify(updatedSet, null, 2));
+    logger.debug('set.write', { setPath, cards: updatedSet.cards.length, payload: summarize(updatedSet.cards.slice(0, 3)) });
   }
+
+  logger.log('process.end', { command: 'card-image-prompts', status: 'ok', count: cards.length });
 }
 
 if (require.main === module) {
   try {
     main();
   } catch (error) {
+    try {
+      const logger = createTradingLogger({ script: 'card-image-prompts', argv: process.argv.slice(2) });
+      logger.error('process.fail', { message: error.message, stack: error.stack });
+    } catch {}
     console.error(`Error: ${error.message}`);
     process.exitCode = 1;
   }

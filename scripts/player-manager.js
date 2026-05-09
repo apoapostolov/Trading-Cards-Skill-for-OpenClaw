@@ -2,6 +2,8 @@
 'use strict';
 const fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {execSync,execFileSync}=require('child_process');
+const {createTradingLogger,summarize:logSummarize}=require('./trading-logger.js');
+const {applyStipendSweep,resolvePlayerId:resolveSweepPlayerId,resolveDefaultStipendAmount}=require('./stipend-sweeper.js');
 
 // ─── CONFIG ──────────────────────────────────────────────────
 const BASE_DIR=process.env.TRADING_CARDS_DATA_DIR?path.resolve(process.env.TRADING_CARDS_DATA_DIR):path.join(__dirname,'..','data');
@@ -9,63 +11,207 @@ const PLAYERS_FILE=path.join(BASE_DIR,'players.json');
 const TRADES_FILE=path.join(BASE_DIR,'trades.json');
 const PLAYERS_DIR=path.join(BASE_DIR,'players');
 const SHARED_DATA=['sets','flopps','flopps-state.json','market-macro.json','scalpers','npcs','stores','store-reviews','grading-population.json'];
+const DEFAULT_PLAYER_ID='player1';
+const DEFAULT_PLAYER_PROFILE={
+  name:'player1',
+  displayName:'Player One',
+  aliases:['player1','playerone'],
+  createdAt:Date.now(),
+};
+const KNOWN_PLAYER_ALIASES={
+  default:DEFAULT_PLAYER_ID,
+  player1:DEFAULT_PLAYER_ID,
+  playerone:DEFAULT_PLAYER_ID,
+  player2:'player2',
+};
 
 // ─── HELPERS ──────────────────────────────────────────────────
 function rJ(p){try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return null}}
-function wJ(p,d){fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(d,null,2))}
+function wJ(p,d){
+  fs.mkdirSync(path.dirname(p),{recursive:true});
+  const tmp=`${p}.tmp-${process.pid}-${Date.now()}`;
+  fs.writeFileSync(tmp,JSON.stringify(d,null,2));
+  fs.renameSync(tmp,p);
+  LOG?.debug('write',{path:p,data:logSummarize(d)});
+}
 function fm$(v){return'$'+v.toFixed(2)}
+let LOG=null;
+function normalizeKey(name){
+  return String(name||'').trim().toLowerCase().replace(/[^a-z0-9_\-]+/g,'_').replace(/^_+|_+$/g,'');
+}
+function normalizePlayerRecord(id,player={}){
+  const canonicalId=normalizeKey(id);
+  const aliases=new Set([canonicalId]);
+  for(const alias of player.aliases||[]) aliases.add(normalizeKey(alias));
+  if(player.displayName) aliases.add(normalizeKey(player.displayName));
+  if(canonicalId===DEFAULT_PLAYER_ID){
+    aliases.add('apo');
+    aliases.add('apostol');
+    aliases.add('apostolov');
+  }
+  return{
+    ...player,
+    name:canonicalId||player.name||id,
+    displayName:player.displayName||canonicalId||id,
+    aliases:[...aliases].filter(Boolean),
+  };
+}
+function mergePlayerRecord(base,extra){
+  const merged={...base,...extra};
+  merged.aliases=[...(base.aliases||[]),...(extra.aliases||[])];
+  merged.aliases=[...new Set(merged.aliases.map(normalizeKey).filter(Boolean))];
+  merged.name=base.name||extra.name;
+  merged.displayName=base.displayName||extra.displayName||merged.name;
+  return merged;
+}
+function resolvePlayerId(input,reg=loadPlayers()){
+  const key=normalizeKey(input);
+  if(!key) return null;
+  const mapped=KNOWN_PLAYER_ALIASES[key]||key;
+  if(reg.players?.[mapped]) return mapped;
+  for(const [id,player] of Object.entries(reg.players||{})){
+    if(id===mapped) return id;
+    const aliases=new Set([normalizeKey(id),...(player.aliases||[]).map(normalizeKey),normalizeKey(player.displayName)]);
+    if(aliases.has(key)||aliases.has(mapped)) return id;
+  }
+  return null;
+}
+function getPlayerRecord(input,reg=loadPlayers()){
+  const id=resolvePlayerId(input,reg);
+  if(!id) return null;
+  return {id,player:reg.players[id]};
+}
+function ensurePlayerEntry(reg,id,defaults={}){
+  const canonical=normalizeKey(id);
+  const existing=reg.players[canonical]||{};
+  const next=normalizePlayerRecord(canonical,mergePlayerRecord({...defaults,name:canonical},{...existing}));
+  reg.players[canonical]=next;
+  return next;
+}
+function moveDirContents(srcDir,dstDir){
+  if(!fs.existsSync(srcDir)) return;
+  fs.mkdirSync(dstDir,{recursive:true});
+  for(const entry of fs.readdirSync(srcDir)){
+    const src=path.join(srcDir,entry);
+    const dst=path.join(dstDir,entry);
+    if(fs.existsSync(dst)) continue;
+    fs.renameSync(src,dst);
+  }
+}
 
 // ─── DAILY STIPEND ────────────────────────────────────────────
 const STIPEND_AMOUNT=5;
-function todayStr(){return new Date().toISOString().slice(0,10)}
+const STIPEND_TIME_ZONE='Europe/Sofia';
 function checkStipend(playerName){
-  const reg=loadPlayers();
-  const player=reg.players[playerName];
-  if(!player)return null;
-  const today=todayStr();
-  if(player.lastStipend===today)return null; // already given today
-  const cfgPath=path.join(playerDir(playerName),'config.json');
-  const cfg=rJ(cfgPath);
-  if(!cfg)return null;
-  cfg.wallet+=STIPEND_AMOUNT;
-  wJ(cfgPath,cfg);
-  // Also sync wallet into all collection files so card-engine doesn't clobber it
-  const colsDir=path.join(playerDir(playerName),'collections');
-  try{for(const f of fs.readdirSync(colsDir)){if(!f.endsWith('.json'))continue;const col=JSON.parse(fs.readFileSync(path.join(colsDir,f),'utf8'));if(col.wallet!==undefined){col.wallet=cfg.wallet;fs.writeFileSync(path.join(colsDir,f),JSON.stringify(col,null,2))}}}catch{}
-  player.lastStipend=today;
-  savePlayers(reg);
-  return STIPEND_AMOUNT;
+  const sweep=applyStipendSweep({dataDir:BASE_DIR,playerId:playerName,amount:null,timeZone:STIPEND_TIME_ZONE});
+  return sweep.grants[0]||null;
 }
-// Call checkStipend before any card-engine action. Returns amount if stipend was given, null if not.
+// Returns the stipend grant for one player, or null if they are already caught up.
 // Usage: node player-manager.js stipend <player>
 function cmdCheckStipend(playerName){
   if(!playerName){console.log('Usage: player-manager stipend <player>');return}
-  const safe=playerName.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
-  const given=checkStipend(safe);
-  if(given!==null)console.log(`  💰 Daily stipend: +$${given.toFixed(2)} for ${safe}`);
-  else console.log(`  ✅ No stipend needed (already received today)`);
+  const reg=loadPlayers();
+  const id=resolveSweepPlayerId(playerName,reg)||normalizeKey(playerName);
+  const grant=checkStipend(id);
+  if(grant)console.log(`  💰 Daily stipend: +$${grant.amount.toFixed(2)} (${grant.days} day${grant.days===1?'':'s'}) for ${reg.players[id]?.displayName||id}`);
+  else console.log(`  ✅ No stipend needed (already caught up)`);
 }
 // Check stipend for ALL registered players
 function cmdStipendAll(){
   const reg=loadPlayers();
-  let total=0;
-  for(const[name]of Object.entries(reg.players)){
-    const given=checkStipend(name);
-    if(given!==null){
-      console.log(`  💰 +$${given.toFixed(2)} → ${reg.players[name].displayName||name}`);
-      total+=given;
-    }
+  const sweep=applyStipendSweep({dataDir:BASE_DIR,amount:null,timeZone:STIPEND_TIME_ZONE});
+  for(const grant of sweep.grants){
+    console.log(`  💰 +$${grant.amount.toFixed(2)} (${grant.days} day${grant.days===1?'':'s'} @ $${grant.stipendAmount.toFixed(2)}/day) → ${reg.players[grant.playerId]?.displayName||grant.playerId}`);
   }
-  if(total===0)console.log('  ✅ All players have received their stipend today.');
-  else console.log(`  📊 Total stipends given: $${total.toFixed(2)}`);
+  if(sweep.total===0)console.log('  ✅ All players are already caught up.');
+  else console.log(`  📊 Total stipends given: $${sweep.total.toFixed(2)}`);
+}
+
+function cmdStipendDefault(amountArg){
+  const reg=loadPlayers();
+  if(typeof amountArg==='undefined'){
+    const amount=resolveDefaultStipendAmount(reg,STIPEND_AMOUNT);
+    console.log(`  💰 Default stipend: $${amount.toFixed(2)}/day`);
+    return;
+  }
+  const amount=parseFloat(amountArg);
+  if(!Number.isFinite(amount)||amount<=0){
+    console.log('Usage: player-manager stipend default <amount>');
+    return;
+  }
+  reg.defaultStipendAmount=amount;
+  savePlayers(reg);
+  console.log(`  ✅ Default stipend set to $${amount.toFixed(2)}/day`);
+}
+
+function cmdStipendSet(playerName,amountArg){
+  if(!playerName||typeof amountArg==='undefined'){
+    console.log('Usage: player-manager stipend set <player> <amount>');
+    return;
+  }
+  const reg=loadPlayers();
+  const id=resolveSweepPlayerId(playerName,reg);
+  if(!id){
+    console.log(`  ⚠ Player "${playerName}" not found.`);
+    return;
+  }
+  const amount=parseFloat(amountArg);
+  if(!Number.isFinite(amount)||amount<=0){
+    console.log('Usage: player-manager stipend set <player> <amount>');
+    return;
+  }
+  reg.players[id].stipendAmount=amount;
+  savePlayers(reg);
+  console.log(`  ✅ ${reg.players[id].displayName||id} stipend override set to $${amount.toFixed(2)}/day`);
+}
+
+function cmdStipendClear(playerName){
+  if(!playerName){
+    console.log('Usage: player-manager stipend clear <player>');
+    return;
+  }
+  const reg=loadPlayers();
+  const id=resolveSweepPlayerId(playerName,reg);
+  if(!id){
+    console.log(`  ⚠ Player "${playerName}" not found.`);
+    return;
+  }
+  if(reg.players[id]&&Object.prototype.hasOwnProperty.call(reg.players[id],'stipendAmount')){
+    delete reg.players[id].stipendAmount;
+    savePlayers(reg);
+    console.log(`  ✅ Cleared stipend override for ${reg.players[id].displayName||id}`);
+  } else {
+    console.log(`  ✅ ${reg.players[id].displayName||id} already uses the default stipend.`);
+  }
 }
 
 // ─── PLAYER REGISTRY ──────────────────────────────────────────
 function loadPlayers(){
   let p=rJ(PLAYERS_FILE);
-  if(!p)p={activePlayer:null,players:{}};
+  if(!p)p={activePlayer:DEFAULT_PLAYER_ID,players:{}};
   if(!p.players)p.players={};
-  if(!p.activePlayer)p.activePlayer=null;
+  let dirty=false;
+  for(const [id,player] of Object.entries(p.players)){
+    const normalized=normalizePlayerRecord(id,player);
+    if(JSON.stringify(normalized)!==JSON.stringify(player)) dirty=true;
+    p.players[id]=normalized;
+  }
+  // Ensure default player exists
+  if(!p.players[DEFAULT_PLAYER_ID]){
+    p.players[DEFAULT_PLAYER_ID]=normalizePlayerRecord(DEFAULT_PLAYER_ID,DEFAULT_PLAYER_PROFILE);
+    dirty=true;
+  }
+  // Ensure player2 exists (for demos/multiplayer)
+  if(!p.players.player2){
+    p.players.player2=normalizePlayerRecord('player2',{name:'player2',displayName:'Player Two',aliases:['player2'],createdAt:Date.now()});
+    dirty=true;
+  }
+  const nextActive=resolvePlayerId(p.activePlayer,p)||DEFAULT_PLAYER_ID;
+  if(p.activePlayer!==nextActive){
+    p.activePlayer=nextActive;
+    dirty=true;
+  }
+  if(dirty) savePlayers(p);
   return p;
 }
 function savePlayers(p){wJ(PLAYERS_FILE,p)}
@@ -74,105 +220,31 @@ function savePlayers(p){wJ(PLAYERS_FILE,p)}
 function playerDir(name){
   if(!name)return null;
   // Sanitize: lowercase, strip special chars
-  const safe=name.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
+  const safe=normalizeKey(name);
   return path.join(PLAYERS_DIR,safe);
 }
 
 // ─── MIGRATE OLD DATA ─────────────────────────────────────────
 function migrateIfNeeded(){
   const reg=loadPlayers();
-  const defaultDir=playerDir('default');
-  const legacyCollections=path.join(BASE_DIR,'collections');
-  const legacyConfig=path.join(BASE_DIR,'config.json');
-  const legacyHistory=path.join(BASE_DIR,'history.jsonl');
+  const defaultPlayerDir=playerDir(DEFAULT_PLAYER_ID);
 
-  // Check if already migrated (default player dir has config.json)
-  if(fs.existsSync(path.join(defaultDir,'config.json')))return;
-
-  // Check if there's anything to migrate
-  if(!fs.existsSync(legacyCollections)&&!fs.existsSync(legacyConfig)){
-    // Fresh install, create empty default player
-    createFreshPlayer('default');
-    reg.players['default']={name:'default',displayName:'Default',createdAt:Date.now()};
-    reg.activePlayer='default';
-    savePlayers(reg);
+  // Fresh install — create default player
+  if(!fs.existsSync(path.join(defaultPlayerDir,'config.json'))){
+    if(!reg.players[DEFAULT_PLAYER_ID]){
+      reg.players[DEFAULT_PLAYER_ID]=normalizePlayerRecord(DEFAULT_PLAYER_ID,DEFAULT_PLAYER_PROFILE);
+      reg.activePlayer=DEFAULT_PLAYER_ID;
+      savePlayers(reg);
+    }
+    ensurePlayerDir(defaultPlayerDir,DEFAULT_PLAYER_ID);
     return;
   }
 
-  // Migrate
-  console.log('  📦 Migrating single-user data to multi-user format...');
-  fs.mkdirSync(defaultDir,{recursive:true});
-  fs.mkdirSync(path.join(defaultDir,'collections'),{recursive:true});
-  fs.mkdirSync(path.join(defaultDir,'checklists'),{recursive:true});
-  fs.mkdirSync(path.join(defaultDir,'grading'),{recursive:true});
-
-  // Move collections
-  if(fs.existsSync(legacyCollections)){
-    const files=fs.readdirSync(legacyCollections);
-    for(const f of files){
-      const src=path.join(legacyCollections,f);
-      const dst=path.join(defaultDir,'collections',f);
-      fs.renameSync(src,dst);
-    }
-    // Remove empty dir
-    try{fs.rmdirSync(legacyCollections)}catch{}
+  // Already set up
+  if(reg.players[DEFAULT_PLAYER_ID]){
+    if(!reg.activePlayer||!reg.players[reg.activePlayer]) reg.activePlayer=DEFAULT_PLAYER_ID;
+    savePlayers(reg);
   }
-
-  // Move checklists
-  const legacyChecklists=path.join(BASE_DIR,'checklists');
-  if(fs.existsSync(legacyChecklists)){
-    const files=fs.readdirSync(legacyChecklists);
-    for(const f of files){
-      fs.renameSync(path.join(legacyChecklists,f),path.join(defaultDir,'checklists',f));
-    }
-    try{fs.rmdirSync(legacyChecklists)}catch{}
-  }
-
-  // Move grading
-  const legacyGrading=path.join(BASE_DIR,'grading');
-  if(fs.existsSync(legacyGrading)){
-    const files=fs.readdirSync(legacyGrading);
-    for(const f of files){
-      fs.renameSync(path.join(legacyGrading,f),path.join(defaultDir,'grading',f));
-    }
-    try{fs.rmdirSync(legacyGrading)}catch{}
-  }
-
-  // Copy config (preserve activeSet and all fields)
-  if(fs.existsSync(legacyConfig)){
-    fs.copyFileSync(legacyConfig,path.join(defaultDir,'config.json'));
-    // Ensure activeSet is preserved (migration should not lose it)
-    const origCfg=rJ(legacyConfig);
-    const newCfg=rJ(path.join(defaultDir,'config.json'));
-    if(origCfg&&origCfg.activeSet&&(!newCfg||!newCfg.activeSet)){
-      newCfg.activeSet=origCfg.activeSet;
-      wJ(path.join(defaultDir,'config.json'),newCfg);
-    }
-  } else {
-    createFreshPlayer('default');
-  }
-
-  // Copy/move history
-  if(fs.existsSync(legacyHistory)){
-    fs.copyFileSync(legacyHistory,path.join(defaultDir,'history.jsonl'));
-    // Don't delete — keep as backup
-  }
-
-  // Move marketplace if exists
-  const legacyMarketplace=path.join(BASE_DIR,'marketplace');
-  if(fs.existsSync(legacyMarketplace)){
-    const files=fs.readdirSync(legacyMarketplace);
-    fs.mkdirSync(path.join(defaultDir,'marketplace'),{recursive:true});
-    for(const f of files){
-      fs.copyFileSync(path.join(legacyMarketplace,f),path.join(defaultDir,'marketplace',f));
-    }
-  }
-
-  reg.players['default']={name:'default',displayName:'Default',createdAt:Date.now()};
-  reg.activePlayer='default';
-  savePlayers(reg);
-  linkSharedData(defaultDir);
-  console.log('  ✅ Migration complete. Default player created from existing data.');
 }
 
 function linkSharedData(playerDirPath){
@@ -193,6 +265,7 @@ function createFreshPlayer(name){
   fs.mkdirSync(path.join(dir,'marketplace'),{recursive:true});
   wJ(path.join(dir,'config.json'),{wallet:50,activeSet:null,archivedSets:[],mode:'virtual',pocketMoney:5});
   fs.writeFileSync(path.join(dir,'history.jsonl'),'');
+  LOG?.debug('create-history',{playerId:normalizeKey(name),path:path.join(dir,'history.jsonl')});
   linkSharedData(dir);
 }
 
@@ -200,8 +273,12 @@ function createFreshPlayer(name){
 function cmdRegister(name,displayName){
   if(!name){console.log('Usage: player-manager register <name> [display-name]');return}
   const reg=loadPlayers();
-  const safeName=name.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
-  if(reg.players[safeName]){console.log(`  ⚠ Player "${safeName}" already exists.`);return}
+  const safeName=normalizeKey(name);
+  const existingId=resolvePlayerId(safeName,reg);
+  if(existingId){
+    console.log(`  ⚠ Player "${safeName}" already exists as ${existingId}.`);
+    return;
+  }
 
   const dir=playerDir(safeName);
   fs.mkdirSync(path.join(dir,'collections'),{recursive:true});
@@ -212,21 +289,22 @@ function cmdRegister(name,displayName){
   // Create config with starting wallet
   wJ(path.join(dir,'config.json'),{wallet:5,activeSet:null,archivedSets:[],mode:'virtual',pocketMoney:5});
   fs.writeFileSync(path.join(dir,'history.jsonl'),'');
+  LOG?.debug('create-history',{playerId:safeName,path:path.join(dir,'history.jsonl')});
 
-  // Copy active set from default if exists
-  const defaultCfg=rJ(path.join(playerDir('default'),'config.json'));
-  if(defaultCfg&&defaultCfg.activeSet){
+  // Copy active set from main user if exists
+  const mainCfg=rJ(path.join(playerDir(DEFAULT_PLAYER_ID),'config.json'));
+  if(mainCfg&&mainCfg.activeSet){
     const cfg=rJ(path.join(dir,'config.json'));
-    cfg.activeSet=defaultCfg.activeSet;
+    cfg.activeSet=mainCfg.activeSet;
     wJ(path.join(dir,'config.json'),cfg);
     // Copy set's checklist
-    const defaultChecklist=path.join(playerDir('default'),'checklists',defaultCfg.activeSet+'.json');
-    if(fs.existsSync(defaultChecklist)){
-      fs.copyFileSync(defaultChecklist,path.join(dir,'checklists',defaultCfg.activeSet+'.json'));
+    const mainChecklist=path.join(playerDir(DEFAULT_PLAYER_ID),'checklists',mainCfg.activeSet+'.json');
+    if(fs.existsSync(mainChecklist)){
+      fs.copyFileSync(mainChecklist,path.join(dir,'checklists',mainCfg.activeSet+'.json'));
     }
   }
 
-  reg.players[safeName]={name:safeName,displayName:displayName||name,createdAt:Date.now()};
+  reg.players[safeName]={name:safeName,displayName:displayName||name,aliases:[safeName,normalizeKey(displayName||name)],createdAt:Date.now()};
   if(!reg.activePlayer)reg.activePlayer=safeName;
   savePlayers(reg);
   linkSharedData(dir);
@@ -244,8 +322,8 @@ function cmdRegister(name,displayName){
 function cmdSwitch(name){
   if(!name){console.log('Usage: player-manager player <name>');return}
   const reg=loadPlayers();
-  const safeName=name.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
-  if(!reg.players[safeName]){console.log(`  ⚠ Player "${safeName}" not found. Use 'register' first.`);return}
+  const safeName=resolvePlayerId(name,reg);
+  if(!safeName){console.log(`  ⚠ Player "${name}" not found. Use 'register' first.`);return}
   reg.activePlayer=safeName;
   savePlayers(reg);
   console.log(`  ✅ Switched to player: ${reg.players[safeName].displayName} (${safeName})`);
@@ -271,7 +349,7 @@ function cmdListPlayers(){
         }
       }
     }
-    const active=p.safeName===reg.activePlayer?' 👈 ACTIVE':'';
+    const active=safe===reg.activePlayer?' 👈 ACTIVE':'';
     console.log(`  ${active?'👉':'  '} ${p.displayName} (${safe}) — Wallet: ${fm$(cfg?.wallet||0)} | Cards: ${cardCount}${active}`);
   }
   console.log(`${'═'.repeat(52)}\n`);
@@ -281,7 +359,8 @@ function cmdListPlayers(){
 function cmdMe(){
   const reg=loadPlayers();
   if(!reg.activePlayer){console.log('  No active player.');return}
-  console.log(`  👤 Active: ${reg.players[reg.activePlayer].displayName} (${reg.activePlayer})`);
+  const player=reg.players[reg.activePlayer];
+  console.log(`  👤 Active: ${player?.displayName||reg.activePlayer} (${reg.activePlayer})`);
 }
 
 // ─── TRADE SYSTEM ──────────────────────────────────────────────
@@ -295,7 +374,9 @@ function loadTrades(){
 function saveTrades(t){wJ(TRADES_FILE,t)}
 
 function findCardInPlayer(playerName,cardNum){
-  const colDir=path.join(playerDir(playerName),'collections');
+  const reg=loadPlayers();
+  const resolved=resolvePlayerId(playerName,reg)||normalizeKey(playerName);
+  const colDir=path.join(playerDir(resolved),'collections');
   if(!fs.existsSync(colDir))return null;
   for(const f of fs.readdirSync(colDir)){
     if(!f.endsWith('.json'))continue;
@@ -314,15 +395,15 @@ function cmdTradeOffer(args){
     console.log('Usage: player-manager trade offer <player> <my_card#> for <their_card#>');
     return;
   }
-  const otherPlayer=args[0].toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
+  const reg=loadPlayers();
+  const otherPlayer=resolvePlayerId(args[0],reg);
   const myCard=args[1];
   const theirCard=args[fromIdx+1];
-  const reg=loadPlayers();
   const active=reg.activePlayer;
 
   if(!active){console.log('  ⚠ No active player.');return}
+  if(!otherPlayer){console.log(`  ⚠ Player "${args[0]}" not found.`);return}
   if(active===otherPlayer){console.log('  ⚠ Cannot trade with yourself!');return}
-  if(!reg.players[otherPlayer]){console.log(`  ⚠ Player "${otherPlayer}" not found.`);return}
 
   const myFind=findCardInPlayer(active,myCard);
   const theirFind=findCardInPlayer(otherPlayer,theirCard);
@@ -455,8 +536,8 @@ function cmdTradeHistory(){
 function cmdTradeBrowse(playerName){
   if(!playerName){console.log('Usage: player-manager trade list <player>');return}
   const reg=loadPlayers();
-  const safeName=playerName.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
-  if(!reg.players[safeName]){console.log(`  ⚠ Player "${safeName}" not found.`);return}
+  const safeName=resolvePlayerId(playerName,reg);
+  if(!safeName){console.log(`  ⚠ Player "${playerName}" not found.`);return}
   const colDir=path.join(playerDir(safeName),'collections');
   if(!fs.existsSync(colDir)){console.log('  No collection found.');return}
   console.log(`\n${'═'.repeat(52)}`);
@@ -486,10 +567,10 @@ function cmdTradeBrowse(playerName){
 
 function cmdGift(fromPlayer, toPlayer, cardNumStr){
   const reg=loadPlayers();
-  const from=fromPlayer.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
-  const to=toPlayer.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
-  if(!reg.players[from]){console.log(`  ⚠ Player "${fromPlayer}" not found.`);return}
-  if(!reg.players[to]){console.log(`  ⚠ Player "${toPlayer}" not found.`);return}
+  const from=resolvePlayerId(fromPlayer,reg);
+  const to=resolvePlayerId(toPlayer,reg);
+  if(!from){console.log(`  ⚠ Player "${fromPlayer}" not found.`);return}
+  if(!to){console.log(`  ⚠ Player "${toPlayer}" not found.`);return}
   if(from===to){console.log(`  ⚠ Cannot gift to yourself.`);return}
   const cardNum=parseInt(cardNumStr);
   if(isNaN(cardNum)){console.log('  ⚠ Invalid card number.');return}
@@ -503,7 +584,8 @@ function cmdGift(fromPlayer, toPlayer, cardNumStr){
       if(!f.endsWith('.json'))continue;
       const col=rJ(path.join(colDir,f));
       if(!col||!col.cards)continue;
-      const matches=col.cards.filter(c=>String(c.cardNum)===String(cardNum));
+      const matches=col.cards.filter(c=>String(c.cardNum)===String(cardNum).padStart(3,'0'));
+  if(!matches.length)matches.push(...col.cards.filter(c=>String(c.cardNum)===String(cardNum)));
       if(!matches.length)continue;
       // If multiple copies, gift the cheapest/dup; otherwise gift the only copy
       if(matches.length>1){
@@ -549,7 +631,14 @@ const args=process.argv.slice(2);
 const cmd=args[0];
 
 // Auto-migrate on any command
+LOG=createTradingLogger({script:'player-manager',argv:args,verbose:args.includes('--verbose')||process.env.TRADING_CARDS_VERBOSE==='1',dataDir:BASE_DIR});
+LOG.log('process.start',{command:cmd||null,dataDir:BASE_DIR});
+process.on('uncaughtException',err=>{LOG?.error('uncaught-exception',{error:err});throw err;});
+process.on('unhandledRejection',err=>{LOG?.error('unhandled-rejection',{error:err});});
 migrateIfNeeded();
+if(cmd&&cmd!=='stipend'&&cmd!=='migrate'){
+  applyStipendSweep({dataDir:BASE_DIR,amount:null,timeZone:STIPEND_TIME_ZONE});
+}
 
 switch(cmd){
   case 'register':
@@ -557,6 +646,9 @@ switch(cmd){
     break;
   case 'stipend':
     if(args[1]==='all')cmdStipendAll();
+    else if(args[1]==='default')cmdStipendDefault(args[2]);
+    else if(args[1]==='set')cmdStipendSet(args[2],args[3]);
+    else if(args[1]==='clear')cmdStipendClear(args[2]);
     else cmdCheckStipend(args[1]);
     break;
   case 'player':
@@ -594,7 +686,7 @@ switch(cmd){
     break;
   case 'set-money':
     // player-manager set-money <player> <amount> — admin
-    const pName=args[1]?.toLowerCase().replace(/[^a-z0-9_\-]/g,'_');
+    const pName=resolvePlayerId(args[1],loadPlayers())||normalizeKey(args[1]);
     const amount=parseFloat(args[2]);
     if(!pName||isNaN(amount)){console.log('Usage: player-manager set-money <player> <amount>');break}
     const cfgPath=path.join(playerDir(pName),'config.json');
@@ -627,12 +719,16 @@ switch(cmd){
     trade history               Show trade history
     trade list <player>         Browse player's collection
     set-money <player> <amt>    Set player wallet (admin)
+    stipend default [amt]       Show or set the default daily stipend
+    stipend set <player> <amt>   Override one player's daily stipend
+    stipend clear <player>      Remove a player's stipend override
     dir                         Print active player data dir
     active                      Print active player name
 
   Integration:
-    Set TRADING_CARDS_PLAYER env to override active player.
+    Canonical players: player1 (Player One) and player2 (Player Two).
     The card-engine.js is invoked with TRADING_CARDS_DATA_DIR
     pointing to the active player's directory.
 `);
 }
+LOG?.log('process.end',{command:cmd||null});

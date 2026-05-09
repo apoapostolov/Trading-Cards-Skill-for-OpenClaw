@@ -2,6 +2,10 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const {
+  createTradingLogger,
+  summarize,
+} = require('./trading-logger.js');
 const DATA_DIR = path.join(__dirname, '..', 'data');
 
 const CARDS = [
@@ -198,6 +202,20 @@ const key = `${code}-${year}`;
 const setPath = path.join(DATA_DIR, 'sets', key);
 const colPath = path.join(DATA_DIR, 'collections', key);
 const cfgPath = path.join(DATA_DIR, 'config.json');
+const logger = createTradingLogger({
+  script: 'boc-set-generator',
+  argv: process.argv.slice(2),
+  verbose: process.argv.includes('--verbose') || process.env.TRADING_CARDS_VERBOSE === '1',
+  dataDir: DATA_DIR,
+});
+logger.log('process.start', { command: 'boc-set-generator', key, setPath, colPath });
+process.on('uncaughtException', (error) => {
+  logger.error('process.uncaughtException', { message: error.message, stack: error.stack });
+  throw error;
+});
+process.on('unhandledRejection', (reason) => {
+  logger.error('process.unhandledRejection', { reason: summarize(reason) });
+});
 
 // Archive any existing set
 let cfg = { wallet: 1000, activeSet: null, archivedSets: [] };
@@ -222,9 +240,11 @@ if (cfg.activeSet) {
 fs.mkdirSync(path.dirname(setPath), { recursive: true });
 fs.mkdirSync(path.dirname(colPath), { recursive: true });
 fs.writeFileSync(setPath, JSON.stringify(set, null, 2));
+logger.debug('set.write', { setPath, cards: set.cards.length, payload: summarize(set.cards.slice(0, 3)) });
 cfg.activeSet = key;
 cfg.wallet = cfg.wallet || 1000;
 fs.writeFileSync(cfgPath, JSON.stringify(cfg, null, 2));
+logger.debug('config.write', { cfgPath, activeSet: cfg.activeSet, wallet: cfg.wallet, archivedSets: cfg.archivedSets?.length || 0 });
 
 fs.writeFileSync(colPath, JSON.stringify({
   setKey: key,
@@ -235,6 +255,7 @@ fs.writeFileSync(colPath, JSON.stringify({
   parallelCounts: {},
   wallet: cfg.wallet,
 }, null, 2));
+logger.debug('collection.write', { colPath, wallet: cfg.wallet });
 
 // Print
 const tiers = {}, subs = {};
@@ -273,3 +294,10 @@ for (const c of cards.filter(c => c.starTier === 'Superstar').slice(0, 7)) {
 console.log(`${'═'.repeat(55)}`);
 console.log(`  Ready to rip! Try: node card-engine.js open-box hobby`);
 console.log(`${'═'.repeat(55)}\n`);
+logger.log('process.end', {
+  command: 'boc-set-generator',
+  status: 'ok',
+  setKey: key,
+  cards: cards.length,
+  payload: summarize({ tiers, subs }),
+});

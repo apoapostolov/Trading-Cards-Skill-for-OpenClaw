@@ -15,7 +15,7 @@
  *   node ai-set-generator.js --set-code DRG           # custom set code
  * 
  * Config:
- *   OPENROUTER_API_KEY  — env variable, ./.env, or ~/.openclaw/.env
+ *   OPENROUTER_API_KEY  — env variable, ./.env, ~/.hermes/.env, or ~/.openclaw/.env
  *   Default model:      google/gemini-2.0-flash-001 (cheap, fast, good at creative)
  */
 
@@ -24,11 +24,14 @@ const path = require('path');
 const https = require('https');
 const http = require('http');
 const crypto = require('crypto');
+const {createTradingLogger,summarize:logSummarize} = require('./trading-logger.js');
 
 const DATA_DIR = process.env.TRADING_CARDS_DATA_DIR ? path.resolve(process.env.TRADING_CARDS_DATA_DIR) : path.join(__dirname, '..', 'data');
 const DEFAULT_ENV_FILES = [
   process.env.TRADING_CARDS_ENV_FILE ? path.resolve(process.env.TRADING_CARDS_ENV_FILE) : null,
   path.join(__dirname, '..', '.env'),
+  process.env.HOME ? path.join(process.env.HOME, '.hermes', '.env') : null,
+  process.env.HOME ? path.join(process.env.HOME, 'git', 'lifestyle', '.env') : null,
   process.env.HOME ? path.join(process.env.HOME, '.openclaw', '.env') : null,
 ].filter(Boolean);
 const ENV_FILE = DEFAULT_ENV_FILES.find((candidate) => {
@@ -41,6 +44,14 @@ const ENV_FILE = DEFAULT_ENV_FILES.find((candidate) => {
 const FLOPPS_STATE_FILE = path.join(DATA_DIR, 'flopps', 'state.json');
 const CAT = require('./categories.js');
 const { buildRichSetMetadata } = require('./set-metadata.js');
+const LOGGER = createTradingLogger({
+  script:'ai-set-generator',
+  argv:process.argv.slice(2),
+  verbose:process.argv.includes('--verbose')||process.env.TRADING_CARDS_VERBOSE==='1',
+  dataDir:DATA_DIR,
+});
+process.on('uncaughtException',err=>{LOGGER?.error('uncaught-exception',{error:err});throw err;});
+process.on('unhandledRejection',err=>{LOGGER?.error('unhandled-rejection',{error:err});});
 
 // ── Config ──────────────────────────────────────────────────────
 const DEFAULT_MODEL = 'google/gemini-2.0-flash-001';
@@ -379,8 +390,8 @@ async function callLLM(model, prompt, apiKey, systemPrompt = DEFAULT_SYSTEM_PROM
   const t0 = Date.now();
   const resp = await httpsPost(OPENROUTER_URL, body, {
     'Authorization': `Bearer ${apiKey}`,
-    'HTTP-Referer': 'https://openclaw.ai',
-    'X-Title': 'OpenClaw Trading Cards',
+    'HTTP-Referer': 'https://hermes-agent.local',
+    'X-Title': 'Hermes Trading Cards',
   });
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
 
@@ -680,6 +691,7 @@ function saveFloppsArtifacts(set, article, mode, simulationContext) {
   if (simulationContext) {
     fs.writeFileSync(path.join(outDir, 'simulation-context.json'), JSON.stringify(simulationContext, null, 2));
   }
+  LOGGER.log('write-flopps-artifacts',{setCode:set.code,outDir,mode});
   return outDir;
 }
 
@@ -992,9 +1004,10 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
   set.name = set.metadata.officialName;
 
   const key = `${setCode}-${year}`;
-  const setPath = path.join(DATA_DIR, 'sets', key);
+  const setPath = path.join(DATA_DIR, 'sets', `${key}.json`);
   fs.mkdirSync(path.dirname(setPath), { recursive: true });
   fs.writeFileSync(setPath, JSON.stringify(set, null, 2));
+  LOGGER.log('write-set',{key,setPath,summary:logSummarize({code:set.code,name:set.name,category:set.category,cards:set.cards.length})});
 
   // Initialize collection
   const configPath = path.join(DATA_DIR, 'config.json');
@@ -1003,7 +1016,7 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
   
   // If there's already an active set with cards, don't overwrite silently
   if (cfg.activeSet && cfg.activeSet !== key) {
-    const colPath = path.join(DATA_DIR, 'collections', cfg.activeSet);
+    const colPath = path.join(DATA_DIR, 'collections', `${cfg.activeSet}.json`);
     try {
       const existing = JSON.parse(fs.readFileSync(colPath, 'utf8'));
       if (existing.cards && existing.cards.length > 0) {
@@ -1018,6 +1031,7 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
 
   cfg.activeSet = key;
   fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2));
+  LOGGER.log('write-config',{key,configPath,summary:logSummarize({activeSet:cfg.activeSet,wallet:cfg.wallet,archivedSets:cfg.archivedSets?.length||0})});
 
   const col = {
     setKey: key,
@@ -1028,9 +1042,10 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
     parallelCounts: {},
     wallet: cfg.wallet,
   };
-  const colPath = path.join(DATA_DIR, 'collections', key);
+  const colPath = path.join(DATA_DIR, 'collections', `${key}.json`);
   fs.mkdirSync(path.dirname(colPath), { recursive: true });
   fs.writeFileSync(colPath, JSON.stringify(col, null, 2));
+  LOGGER.log('write-collection',{key,colPath,summary:logSummarize({setKey:col.setKey,wallet:col.wallet,cards:col.cards.length})});
 
   return key;
 }
@@ -1231,6 +1246,7 @@ Reply with ONLY a single integer. No explanation, no markdown.`;
 
 // ── Main ────────────────────────────────────────────────────────
 async function main() {
+  LOGGER.log('process.start',{argv:process.argv.slice(2),dataDir:DATA_DIR});
   const opts = parseArgs();
   const isWildcardFixtureMode = opts.flopps && (opts.floppsMode || 'launch') === 'wildcard-event' && !!process.env.FLOPPS_WILDCARD_FIXTURE;
   const hasSetFixture = !!process.env.AI_SET_GENERATOR_FIXTURE_FILE;
@@ -1277,6 +1293,7 @@ async function main() {
     if (opts.wildcardOutputFile) {
       fs.mkdirSync(path.dirname(opts.wildcardOutputFile), { recursive: true });
       fs.writeFileSync(opts.wildcardOutputFile, JSON.stringify(event, null, 2));
+      LOGGER.log('write-wildcard-output',{path:opts.wildcardOutputFile});
     }
     if (opts.jsonOutput) console.log(JSON.stringify(event, null, 2));
     else console.log(JSON.stringify(event));
@@ -1441,6 +1458,7 @@ async function main() {
         createdAt: set.created,
       });
       fs.writeFileSync(setPath, JSON.stringify(set, null, 2));
+      LOGGER.log('update-set-category',{key,setPath,category:setCategory,sport:opts.sport||null});
     } catch {}
   }
 
@@ -1498,9 +1516,11 @@ async function main() {
 
   console.error(`  💾 Saved to: data/sets/${key}`);
   console.error(`  Open packs with: node card-engine.js open-box hobby\n`);
+  LOGGER.log('process.end',{key});
 }
 
 main().catch((e) => {
+  LOGGER.error('fatal',{error:e});
   console.error(`\n  ❌ Error: ${e.message}\n`);
   process.exit(1);
 });

@@ -1,0 +1,147 @@
+{
+  "$schema": "v1",
+  "description": "Pack configuration for the trading card skill. Each pack type defines its own price, card count, slot layout, hit rate, and per-tier parallel odds.",
+  "packs": {
+    "retail": {
+      "name": "Retail Pack",
+      "price": 5,
+      "cardsPerPack": 5,
+      "packsPerBox": 1,
+      "hitRate": 0.03,
+      "slots": [
+        { "mt": 2 },
+        { "mt": 2 },
+        { "mt": 6 },
+        { "mt": 10 },
+        { "mt": 10 }
+      ],
+      "parallels": [
+        { "name": "Base",             "tier": 1,  "odds": 1,    "num": false, "ser": null, "pm": 1    },
+        { "name": "Chrome",           "tier": 2,  "odds": 3,    "num": false, "ser": null, "pm": 1.3  },
+        { "name": "Purple Shimmer",    "tier": 3,  "odds": 6,    "num": false, "ser": null, "pm": 1.8  },
+        { "name": "Blue Crackle",      "tier": 4,  "odds": 12,   "num": false, "ser": null, "pm": 2.5  },
+        { "name": "Tie-Dye",          "tier": 5,  "odds": 18,   "num": false, "ser": null, "pm": 3.5  },
+        { "name": "Pink Neon",        "tier": 6,  "odds": 24,   "num": false, "ser": null, "pm": 5    },
+        { "name": "Gold",             "tier": 7,  "odds": 36,   "num": true,  "ser": 2026, "pm": 8    },
+        { "name": "Green Lava",       "tier": 8,  "odds": 60,   "num": true,  "ser": 499,  "pm": 12   },
+        { "name": "Cyan Ice",         "tier": 9,  "odds": 80,   "num": true,  "ser": 299,  "pm": 18   },
+        { "name": "Magenta Pulse",    "tier": 10, "odds": 100,  "num": true,  "ser": 199,  "pm": 25   },
+        { "name": "Orange Blaze",     "tier": 11, "odds": 130,  "num": true,  "ser": 99,   "pm": 35   },
+        { "name": "Teal Surge",       "tier": 12, "odds": 160,  "num": true,  "ser": 75,   "pm": 45   },
+        { "name": "Red Magma",        "tier": 13, "odds": 200,  "num": true,  "ser": 50,   "pm": 60   },
+        { "name": "Black Shattered",   "tier": 14, "odds": 350,  "num": true,  "ser": 25,   "pm": 100  },
+        { "name": "White Rainbow",    "tier": 15, "odds": 500,  "num": true,  "ser": 10,   "pm": 180  },
+        { "name": "Gold Superfractor", "tier": 16, "odds": 5000, "num": true,  "ser": 1,    "pm": 400  },
+        { "name": "Black Infinite",   "tier": 17, "odds": 5000, "num": true,  "ser": 1,    "pm": 600  },
+        { "name": "Printing Plate",   "tier": 18, "odds": 5000, "num": true,  "ser": 1,    "pm": 350  }
+      ]
+    },
+    "hobby": {
+      "name": "Hobby Box",
+      "price": 120,
+      "cardsPerPack": 5,
+      "packsPerBox": 12,
+      "hitRate": 0.42,
+      "slots": [
+        { "mt": 2 },
+        { "mt": 6 },
+        { "mt": 10 },
+        { "mt": 15 },
+        { "hit": true }
+      ],
+      "parallels": [
+        { "name": "Base",             "tier": 1,  "odds": 1,    "num": false, "ser": null, "pm": 1    },
+        { "name": "Chrome",           "tier": 2,  "odds": 3,    "num": false, "ser": null, "pm": 1.3  },
+        { "name": "Purple Shimmer",    "tier": 3,  "odds": 6,    "num": false, "ser": null, "pm": 1.8  },
+        { "name": "Blue Crackle",      "tier": 4,  "odds": 12,   "num": false, "ser": null, "pm": 2.5  },
+        { "name": "Tie-Dye",          "tier": 5,  "odds": 18,   "num": false, "ser": null, "pm": 3.5  },
+        { "name": "Pink Neon",        "tier": 6,  "odds": 24,   "num": false, "ser": null, "pm": 5    },
+        { "name": "Gold",             "tier": 7,  "odds": 36,   "num": true,  "ser": 2026, "pm": 8    },
+        { "name": "Green Lava",       "tier": 8,  "odds": 60,   "num": true,  "ser": 499,  "pm": 12   },
+        { "name": "Cyan Ice",         "tier": 9,  "odds": 80,   "num": true,  "ser": 299,  "pm": 18   },
+        { "name": "Magenta Pulse",    "tier": 10, "odds": 100,  "num": true,  "ser": 199,  "pm": 25   },
+        { "name": "Orange Blaze",     "tier": 11, "odds": 130,  "num": true,  "ser": 99,   "pm": 35   },
+        { "name": "Teal Surge",       "tier": 12, "odds": 160,  "num": true,  "ser": 75,   "pm": 45   },
+        { "name": "Red Magma",        "tier": 13, "odds": 200,  "num": true,  "ser": 50,   "pm": 60   },
+        { "name": "Black Shattered",   "tier": 14, "odds": 350,  "num": true,  "ser": 25,   "pm": 100  },
+        { "name": "White Rainbow",    "tier": 15, "odds": 500,  "num": true,  "ser": 10,   "pm": 180  },
+        { "name": "Gold Superfractor", "tier": 16, "odds": 5000, "num": true,  "ser": 1,    "pm": 400  },
+        { "name": "Black Infinite",   "tier": 17, "odds": 5000, "num": true,  "ser": 1,    "pm": 600  },
+        { "name": "Printing Plate",   "tier": 18, "odds": 5000, "num": true,  "ser": 1,    "pm": 350  }
+      ]
+    },
+    "blaster": {
+      "name": "Blaster Box",
+      "price": 50,
+      "cardsPerPack": 5,
+      "packsPerBox": 6,
+      "hitRate": 0.17,
+      "slots": [
+        { "mt": 2 },
+        { "mt": 2 },
+        { "mt": 8 },
+        { "mt": 12 },
+        { "hit": true }
+      ],
+      "parallels": [
+        { "name": "Base",             "tier": 1,  "odds": 1,    "num": false, "ser": null, "pm": 1    },
+        { "name": "Chrome",           "tier": 2,  "odds": 3,    "num": false, "ser": null, "pm": 1.3  },
+        { "name": "Purple Shimmer",    "tier": 3,  "odds": 6,    "num": false, "ser": null, "pm": 1.8  },
+        { "name": "Blue Crackle",      "tier": 4,  "odds": 12,   "num": false, "ser": null, "pm": 2.5  },
+        { "name": "Tie-Dye",          "tier": 5,  "odds": 18,   "num": false, "ser": null, "pm": 3.5  },
+        { "name": "Pink Neon",        "tier": 6,  "odds": 24,   "num": false, "ser": null, "pm": 5    },
+        { "name": "Gold",             "tier": 7,  "odds": 36,   "num": true,  "ser": 2026, "pm": 8    },
+        { "name": "Green Lava",       "tier": 8,  "odds": 60,   "num": true,  "ser": 499,  "pm": 12   },
+        { "name": "Cyan Ice",         "tier": 9,  "odds": 80,   "num": true,  "ser": 299,  "pm": 18   },
+        { "name": "Magenta Pulse",    "tier": 10, "odds": 100,  "num": true,  "ser": 199,  "pm": 25   },
+        { "name": "Orange Blaze",     "tier": 11, "odds": 130,  "num": true,  "ser": 99,   "pm": 35   },
+        { "name": "Teal Surge",       "tier": 12, "odds": 160,  "num": true,  "ser": 75,   "pm": 45   },
+        { "name": "Red Magma",        "tier": 13, "odds": 200,  "num": true,  "ser": 50,   "pm": 60   },
+        { "name": "Black Shattered",   "tier": 14, "odds": 350,  "num": true,  "ser": 25,   "pm": 100  },
+        { "name": "White Rainbow",    "tier": 15, "odds": 500,  "num": true,  "ser": 10,   "pm": 180  },
+        { "name": "Gold Superfractor", "tier": 16, "odds": 5000, "num": true,  "ser": 1,    "pm": 400  },
+        { "name": "Black Infinite",   "tier": 17, "odds": 5000, "num": true,  "ser": 1,    "pm": 600  },
+        { "name": "Printing Plate",   "tier": 18, "odds": 5000, "num": true,  "ser": 1,    "pm": 350  }
+      ]
+    },
+    "jumbo": {
+      "name": "Jumbo Pack",
+      "price": 30,
+      "cardsPerPack": 10,
+      "packsPerBox": 1,
+      "hitRate": 0.50,
+      "slots": [
+        { "mt": 2 },
+        { "mt": 2 },
+        { "mt": 4 },
+        { "mt": 6 },
+        { "mt": 8 },
+        { "mt": 10 },
+        { "mt": 10 },
+        { "mt": 12 },
+        { "hit": true },
+        { "hit": true }
+      ],
+      "parallels": [
+        { "name": "Base",             "tier": 1,  "odds": 1,    "num": false, "ser": null, "pm": 1    },
+        { "name": "Chrome",           "tier": 2,  "odds": 3,    "num": false, "ser": null, "pm": 1.3  },
+        { "name": "Purple Shimmer",    "tier": 3,  "odds": 6,    "num": false, "ser": null, "pm": 1.8  },
+        { "name": "Blue Crackle",      "tier": 4,  "odds": 12,   "num": false, "ser": null, "pm": 2.5  },
+        { "name": "Tie-Dye",          "tier": 5,  "odds": 18,   "num": false, "ser": null, "pm": 3.5  },
+        { "name": "Pink Neon",        "tier": 6,  "odds": 24,   "num": false, "ser": null, "pm": 5    },
+        { "name": "Gold",             "tier": 7,  "odds": 36,   "num": true,  "ser": 2026, "pm": 8    },
+        { "name": "Green Lava",       "tier": 8,  "odds": 60,   "num": true,  "ser": 499,  "pm": 12   },
+        { "name": "Cyan Ice",         "tier": 9,  "odds": 80,   "num": true,  "ser": 299,  "pm": 18   },
+        { "name": "Magenta Pulse",    "tier": 10, "odds": 100,  "num": true,  "ser": 199,  "pm": 25   },
+        { "name": "Orange Blaze",     "tier": 11, "odds": 130,  "num": true,  "ser": 99,   "pm": 35   },
+        { "name": "Teal Surge",       "tier": 12, "odds": 160,  "num": true,  "ser": 75,   "pm": 45   },
+        { "name": "Red Magma",        "tier": 13, "odds": 200,  "num": true,  "ser": 50,   "pm": 60   },
+        { "name": "Black Shattered",   "tier": 14, "odds": 350,  "num": true,  "ser": 25,   "pm": 100  },
+        { "name": "White Rainbow",    "tier": 15, "odds": 500,  "num": true,  "ser": 10,   "pm": 180  },
+        { "name": "Gold Superfractor", "tier": 16, "odds": 5000, "num": true,  "ser": 1,    "pm": 400  },
+        { "name": "Black Infinite",   "tier": 17, "odds": 5000, "num": true,  "ser": 1,    "pm": 600  },
+        { "name": "Printing Plate",   "tier": 18, "odds": 5000, "num": true,  "ser": 1,    "pm": 350  }
+      ]
+    }
+  }
+}

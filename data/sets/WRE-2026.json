@@ -1,0 +1,808 @@
+{
+  "code": "WRE",
+  "name": "Canopy Kingdom Flagship Series",
+  "officialName": "Canopy Kingdom Flagship Series",
+  "themeName": "Canopy Kingdom",
+  "year": 2026,
+  "category": "Nature/Animals",
+  "cards": [
+    {
+      "num": "001",
+      "name": "Frost Splash",
+      "subset": "Flashback",
+      "starTier": "Common",
+      "stats": {
+        "power": 59,
+        "speed": 55,
+        "technique": 68,
+        "endurance": 59,
+        "charisma": 50
+      },
+      "desc": "Frost Splash dominates the Canopy Kingdom circuit",
+      "basePrice": 0.2343355727382004
+    },
+    {
+      "num": "002",
+      "name": "Mountain Call",
+      "subset": "Flashback",
+      "starTier": "Star",
+      "stats": {
+        "power": 63,
+        "speed": 75,
+        "technique": 83,
+        "endurance": 64,
+        "charisma": 83
+      },
+      "desc": "Mountain Call rose through Canopy Kingdom with unmatched skill",
+      "basePrice": 0.9286067603970878
+    },
+    {
+      "num": "003",
+      "name": "Boulder Prowl",
+      "subset": "Base",
+      "starTier": "Common",
+      "stats": {
+        "power": 66,
+        "speed": 52,
+        "technique": 56,
+        "endurance": 52,
+        "charisma": 71
+      },
+      "desc": "Boulder Prowl's legacy in Canopy Kingdom is unmatched",
+      "basePrice": 0.289080407936126
+    },
+    {
+      "num": "004",
+      "name": "Canyon Bloom",
+      "subset": "Base",
+      "starTier": "Star",
+      "stats": {
+        "power": 88,
+        "speed": 82,
+        "technique": 78,
+        "endurance": 60,
+        "charisma": 72
+      },
+      "desc": "Canyon Bloom's legacy in Canopy Kingdom is unmatched",
+      "basePrice": 0.8114722425816581
+    },
+    {
+      "num": "005",
+      "name": "Mountain Scale",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "stats": {
+        "power": 70,
+        "speed": 70,
+        "technique": 73,
+        "endurance": 77,
+        "charisma": 66
+      },
+      "desc": "Mountain Scale dominates the Canopy Kingdom circuit",
+      "basePrice": 0.646641458873637
+    },
+    {
+      "num": "006",
+      "name": "Sage Mane",
+      "subset": "Rookie",
+      "starTier": "Star",
+      "stats": {
+        "power": 73,
+        "speed": 67,
+        "technique": 79,
+        "endurance": 75,
+        "charisma": 74
+      },
+      "desc": "A legend of Canopy Kingdom,Sage Mane never backs down",
+      "basePrice": 0.9063739920384251
+    },
+    {
+      "num": "007",
+      "name": "Canyon Song",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "stats": {
+        "power": 72,
+        "speed": 76,
+        "technique": 58,
+        "endurance": 65,
+        "charisma": 56
+      },
+      "desc": "Canyon Song rose through Canopy Kingdom with unmatched skill",
+      "basePrice": 0.4590246086125262
+    },
+    {
+      "num": "008",
+      "name": "Blaze Fang",
+      "subset": "AllStar",
+      "starTier": "Common",
+      "stats": {
+        "power": 57,
+        "speed": 62,
+        "technique": 66,
+        "endurance": 52,
+        "charisma": 49
+      },
+      "desc": "A legend of Canopy Kingdom,Blaze Fang never backs down",
+      "basePrice": 0.2922242300119251
+    },
+    {
+      "num": "009",
+      "name": "Pebble Paw",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "stats": {
+        "power": 62,
+        "speed": 60,
+        "technique": 52,
+        "endurance": 76,
+        "charisma": 70
+      },
+      "desc": "A legend of Canopy Kingdom,Pebble Paw never backs down",
+      "basePrice": 0.645217896241229
+    },
+    {
+      "num": "010",
+      "name": "Breeze Fur",
+      "subset": "Base",
+      "starTier": "Star",
+      "stats": {
+        "power": 70,
+        "speed": 89,
+        "technique": 83,
+        "endurance": 90,
+        "charisma": 78
+      },
+      "desc": "A legend of Canopy Kingdom,Breeze Fur never backs down",
+      "basePrice": 1.4472143411985599
+    },
+    {
+      "num": "011",
+      "name": "Thorn Whisper",
+      "subset": "AllStar",
+      "starTier": "Common",
+      "stats": {
+        "power": 55,
+        "speed": 64,
+        "technique": 68,
+        "endurance": 45,
+        "charisma": 45
+      },
+      "desc": "Thorn Whisper rose through Canopy Kingdom with unmatched skill",
+      "basePrice": 0.22821279424242674
+    },
+    {
+      "num": "012",
+      "name": "Breeze Wing",
+      "subset": "Rookie",
+      "starTier": "Superstar",
+      "stats": {
+        "power": 94,
+        "speed": 80,
+        "technique": 86,
+        "endurance": 92,
+        "charisma": 84
+      },
+      "desc": "Breeze Wing dominates the Canopy Kingdom circuit",
+      "basePrice": 2.901932754437439
+    },
+    {
+      "num": "013",
+      "name": "Moss Swoop",
+      "subset": "Base",
+      "starTier": "Common",
+      "stats": {
+        "power": 58,
+        "speed": 64,
+        "technique": 47,
+        "endurance": 52,
+        "charisma": 64
+      },
+      "desc": "Moss Swoop's legacy in Canopy Kingdom is unmatched",
+      "basePrice": 0.17790862265974283
+    },
+    {
+      "num": "014",
+      "name": "River Claw",
+      "subset": "Base",
+      "starTier": "Common",
+      "stats": {
+        "power": 46,
+        "speed": 48,
+        "technique": 59,
+        "endurance": 52,
+        "charisma": 64
+      },
+      "desc": "River Claw dominates the Canopy Kingdom circuit",
+      "basePrice": 0.10465860818512739
+    },
+    {
+      "num": "015",
+      "name": "Shadow Shade",
+      "subset": "Rookie",
+      "starTier": "Star",
+      "stats": {
+        "power": 66,
+        "speed": 64,
+        "technique": 72,
+        "endurance": 61,
+        "charisma": 80
+      },
+      "desc": "Shadow Shade rose through Canopy Kingdom with unmatched skill",
+      "basePrice": 1.1995700272964314
+    },
+    {
+      "num": "016",
+      "name": "Pebble Fang",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "stats": {
+        "power": 77,
+        "speed": 68,
+        "technique": 53,
+        "endurance": 62,
+        "charisma": 65
+      },
+      "desc": "Pebble Fang rose through Canopy Kingdom with unmatched skill",
+      "basePrice": 0.3803316754172556
+    },
+    {
+      "num": "017",
+      "name": "Feather Wing",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "stats": {
+        "power": 52,
+        "speed": 63,
+        "technique": 62,
+        "endurance": 58,
+        "charisma": 70
+      },
+      "desc": "The Canopy Kingdom chronicles feature Feather Wing",
+      "basePrice": 0.6177008940372616
+    },
+    {
+      "num": "018",
+      "name": "Frost Tail",
+      "subset": "Base",
+      "starTier": "Common",
+      "stats": {
+        "power": 58,
+        "speed": 50,
+        "technique": 60,
+        "endurance": 65,
+        "charisma": 44
+      },
+      "desc": "The Canopy Kingdom chronicles feature Frost Tail",
+      "basePrice": 0.15258052791468799
+    },
+    {
+      "num": "019",
+      "name": "Thorn Dive",
+      "subset": "Base",
+      "starTier": "Common",
+      "stats": {
+        "power": 43,
+        "speed": 45,
+        "technique": 66,
+        "endurance": 60,
+        "charisma": 43
+      },
+      "desc": "The Canopy Kingdom chronicles feature Thorn Dive",
+      "basePrice": 0.25475968546234073
+    },
+    {
+      "num": "020",
+      "name": "Thorn Stripe",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "stats": {
+        "power": 42,
+        "speed": 40,
+        "technique": 44,
+        "endurance": 72,
+        "charisma": 53
+      },
+      "desc": "Thorn Stripe rose through Canopy Kingdom with unmatched skill",
+      "basePrice": 0.19845517948269842
+    },
+    {
+      "num": "021",
+      "name": "Feather Shade",
+      "subset": "Base",
+      "starTier": "Common",
+      "stats": {
+        "power": 49,
+        "speed": 67,
+        "technique": 57,
+        "endurance": 46,
+        "charisma": 69
+      },
+      "desc": "Feather Shade dominates the Canopy Kingdom circuit",
+      "basePrice": 0.11708487216383219
+    },
+    {
+      "num": "022",
+      "name": "Ember Fang",
+      "subset": "AllStar",
+      "starTier": "Common",
+      "stats": {
+        "power": 69,
+        "speed": 74,
+        "technique": 55,
+        "endurance": 58,
+        "charisma": 46
+      },
+      "desc": "A legend of Canopy Kingdom,Ember Fang never backs down",
+      "basePrice": 0.16318916138261558
+    },
+    {
+      "num": "023",
+      "name": "Breeze Wing",
+      "subset": "Flashback",
+      "starTier": "Common",
+      "stats": {
+        "power": 49,
+        "speed": 47,
+        "technique": 47,
+        "endurance": 63,
+        "charisma": 43
+      },
+      "desc": "Breeze Wing's legacy in Canopy Kingdom is unmatched",
+      "basePrice": 0.28211815706454213
+    },
+    {
+      "num": "024",
+      "name": "Mountain Beak",
+      "subset": "AllStar",
+      "starTier": "Common",
+      "stats": {
+        "power": 48,
+        "speed": 51,
+        "technique": 62,
+        "endurance": 50,
+        "charisma": 59
+      },
+      "desc": "Mountain Beak rose through Canopy Kingdom with unmatched skill",
+      "basePrice": 0.2735478649381548
+    },
+    {
+      "num": "025",
+      "name": "Mountain Trunk",
+      "subset": "AllStar",
+      "starTier": "Common",
+      "stats": {
+        "power": 55,
+        "speed": 74,
+        "technique": 55,
+        "endurance": 52,
+        "charisma": 58
+      },
+      "desc": "Mountain Trunk's legacy in Canopy Kingdom is unmatched",
+      "basePrice": 0.1081942066550255
+    },
+    {
+      "num": "026",
+      "name": "Misty Fur",
+      "subset": "Base",
+      "starTier": "Common",
+      "stats": {
+        "power": 54,
+        "speed": 66,
+        "technique": 62,
+        "endurance": 52,
+        "charisma": 41
+      },
+      "desc": "Misty Fur dominates the Canopy Kingdom circuit",
+      "basePrice": 0.10478014186955989
+    },
+    {
+      "num": "027",
+      "name": "Crest Bloom",
+      "subset": "AllStar",
+      "starTier": "Common",
+      "stats": {
+        "power": 61,
+        "speed": 75,
+        "technique": 64,
+        "endurance": 72,
+        "charisma": 47
+      },
+      "desc": "A legend of Canopy Kingdom,Crest Bloom never backs down",
+      "basePrice": 0.2369903485290706
+    },
+    {
+      "num": "028",
+      "name": "Sage Leap",
+      "subset": "Base",
+      "starTier": "Superstar",
+      "stats": {
+        "power": 87,
+        "speed": 71,
+        "technique": 87,
+        "endurance": 81,
+        "charisma": 89
+      },
+      "desc": "The Canopy Kingdom chronicles feature Sage Leap",
+      "basePrice": 2.112357417703606
+    },
+    {
+      "num": "029",
+      "name": "Sage Pelt",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "stats": {
+        "power": 58,
+        "speed": 51,
+        "technique": 76,
+        "endurance": 52,
+        "charisma": 62
+      },
+      "desc": "Sage Pelt rose through Canopy Kingdom with unmatched skill",
+      "basePrice": 0.42232969149481503
+    },
+    {
+      "num": "030",
+      "name": "Fern Wing",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "stats": {
+        "power": 90,
+        "speed": 84,
+        "technique": 93,
+        "endurance": 78,
+        "charisma": 88
+      },
+      "desc": "The Canopy Kingdom chronicles feature Fern Wing",
+      "basePrice": 1.90885031002108
+    }
+  ],
+  "seed": 42,
+  "created": "2026-05-08T10:56:39.785Z",
+  "metadata": {
+    "schemaVersion": 3,
+    "source": "procedural",
+    "code": "WRE",
+    "officialName": "Canopy Kingdom Flagship Series",
+    "themeName": "Canopy Kingdom",
+    "category": "Nature/Animals",
+    "setCategory": "character",
+    "sport": null,
+    "collectionTheme": null,
+    "propertyGenre": null,
+    "propertySynopsis": null,
+    "seasons": null,
+    "cadenceDays": 45,
+    "releaseWindow": "2026 Midsummer Chrome Window",
+    "brandFamily": "flagship",
+    "productLine": "Flagship Series",
+    "productArchetype": "flagship",
+    "marketPosition": "mass flagship",
+    "tagline": "Own the season",
+    "creativeDirection": {
+      "artisticStyle": "heroic portrait montage",
+      "layoutStyle": "classic stats grid",
+      "finishProfile": "spot UV title hits",
+      "typographyDirection": "broadcast bold",
+      "paletteDirection": "aged paper heritage",
+      "photographyApproach": "hero portrait focus"
+    },
+    "productIdentity": {
+      "officialName": "Canopy Kingdom Flagship Series",
+      "theme": "Canopy Kingdom",
+      "collectorHook": "high-volume flagship checklist built to feed the secondary market",
+      "checklistPhilosophy": "character world-building through a flagship collector frame",
+      "boxBreakIdentity": "tuned for breaker showcases and social clips"
+    },
+    "packaging": {
+      "hobbyConfiguration": {
+        "packsPerBox": 12,
+        "cardsPerPack": 5
+      },
+      "blasterConfiguration": {
+        "packsPerBox": 6,
+        "cardsPerPack": 5
+      },
+      "jumboConfiguration": {
+        "packsPerBox": 1,
+        "cardsPerPack": 10
+      },
+      "retailConfiguration": {
+        "packsPerBox": 1,
+        "cardsPerPack": 5
+      },
+      "shelfPitch": "chrome finish and chase-driven color ladder"
+    },
+    "chaseArchitecture": {
+      "premiumCardCount": 3,
+      "hitPrograms": [
+        {
+          "id": "relic",
+          "name": "Relic",
+          "format": "standard",
+          "subtype": null,
+          "rarity": 0.2,
+          "priceMultiplier": 4,
+          "description": "🏅 Relic"
+        },
+        {
+          "id": "autograph",
+          "name": "Autograph",
+          "format": "standard",
+          "subtype": null,
+          "rarity": 0.15,
+          "priceMultiplier": 6,
+          "description": "✍️ Autograph"
+        },
+        {
+          "id": "booklet",
+          "name": "Booklet",
+          "format": "booklet",
+          "subtype": null,
+          "rarity": 0.06,
+          "priceMultiplier": 3,
+          "description": "📖 Booklet"
+        },
+        {
+          "id": "dual-auto",
+          "name": "Dual Auto",
+          "format": "standard",
+          "subtype": null,
+          "rarity": 0.012,
+          "priceMultiplier": 12,
+          "description": "✍️✍️ Dual Autograph"
+        },
+        {
+          "id": "auto-patch",
+          "name": "Auto Patch",
+          "format": "standard",
+          "subtype": null,
+          "rarity": 0.003,
+          "priceMultiplier": 18,
+          "description": "✍️🏅 Auto Patch"
+        }
+      ],
+      "insertPrograms": [],
+      "parallelFamilies": [
+        {
+          "family": "base",
+          "count": 1
+        },
+        {
+          "family": "chrome finish",
+          "count": 1
+        },
+        {
+          "family": "color rainbow",
+          "count": 10
+        },
+        {
+          "family": "specialty finish",
+          "count": 1
+        },
+        {
+          "family": "gold",
+          "count": 1
+        },
+        {
+          "family": "dark premium",
+          "count": 1
+        },
+        {
+          "family": "ultimate chase",
+          "count": 2
+        },
+        {
+          "family": "production relic",
+          "count": 1
+        }
+      ],
+      "parallelLineup": [
+        {
+          "name": "Base",
+          "family": "base",
+          "finishStyle": "standard gloss",
+          "colorway": "standard",
+          "serial": null,
+          "scarcityBand": "base",
+          "tier": 1,
+          "multiplier": 1
+        },
+        {
+          "name": "Chrome",
+          "family": "chrome finish",
+          "finishStyle": "reflective chromium",
+          "colorway": "Chrome",
+          "serial": null,
+          "scarcityBand": "core rainbow",
+          "tier": 2,
+          "multiplier": 1.3
+        },
+        {
+          "name": "Purple Shimmer",
+          "family": "color rainbow",
+          "finishStyle": "reflective chromium",
+          "colorway": "Purple Shimmer",
+          "serial": null,
+          "scarcityBand": "core rainbow",
+          "tier": 3,
+          "multiplier": 1.8
+        },
+        {
+          "name": "Blue Crackle",
+          "family": "color rainbow",
+          "finishStyle": "reflective chromium",
+          "colorway": "Blue Crackle",
+          "serial": null,
+          "scarcityBand": "core rainbow",
+          "tier": 4,
+          "multiplier": 2.5
+        },
+        {
+          "name": "Tie-Dye",
+          "family": "specialty finish",
+          "finishStyle": "specialty foil",
+          "colorway": "Tie-Dye",
+          "serial": null,
+          "scarcityBand": "short print",
+          "tier": 5,
+          "multiplier": 3.5
+        },
+        {
+          "name": "Pink Neon",
+          "family": "color rainbow",
+          "finishStyle": "specialty foil",
+          "colorway": "Pink Neon",
+          "serial": null,
+          "scarcityBand": "short print",
+          "tier": 6,
+          "multiplier": 5
+        },
+        {
+          "name": "Gold",
+          "family": "gold",
+          "finishStyle": "metallic gold foil",
+          "colorway": "Gold",
+          "serial": 2026,
+          "scarcityBand": "broad numbered",
+          "tier": 7,
+          "multiplier": 8
+        },
+        {
+          "name": "Green Lava",
+          "family": "color rainbow",
+          "finishStyle": "reflective chromium",
+          "colorway": "Green Lava",
+          "serial": 499,
+          "scarcityBand": "mid-numbered",
+          "tier": 8,
+          "multiplier": 12
+        },
+        {
+          "name": "Cyan Ice",
+          "family": "color rainbow",
+          "finishStyle": "reflective chromium",
+          "colorway": "Cyan Ice",
+          "serial": 299,
+          "scarcityBand": "mid-numbered",
+          "tier": 9,
+          "multiplier": 18
+        },
+        {
+          "name": "Magenta Pulse",
+          "family": "color rainbow",
+          "finishStyle": "reflective chromium",
+          "colorway": "Magenta Pulse",
+          "serial": 199,
+          "scarcityBand": "mid-numbered",
+          "tier": 10,
+          "multiplier": 25
+        },
+        {
+          "name": "Orange Blaze",
+          "family": "color rainbow",
+          "finishStyle": "specialty foil",
+          "colorway": "Orange Blaze",
+          "serial": 99,
+          "scarcityBand": "rare numbered",
+          "tier": 11,
+          "multiplier": 35
+        },
+        {
+          "name": "Teal Surge",
+          "family": "color rainbow",
+          "finishStyle": "reflective chromium",
+          "colorway": "Teal Surge",
+          "serial": 75,
+          "scarcityBand": "rare numbered",
+          "tier": 12,
+          "multiplier": 45
+        },
+        {
+          "name": "Red Magma",
+          "family": "color rainbow",
+          "finishStyle": "specialty foil",
+          "colorway": "Red Magma",
+          "serial": 50,
+          "scarcityBand": "rare numbered",
+          "tier": 13,
+          "multiplier": 60
+        },
+        {
+          "name": "Black Shattered",
+          "family": "dark premium",
+          "finishStyle": "dark gloss",
+          "colorway": "Black Shattered",
+          "serial": 25,
+          "scarcityBand": "rare numbered",
+          "tier": 14,
+          "multiplier": 100
+        },
+        {
+          "name": "White Rainbow",
+          "family": "color rainbow",
+          "finishStyle": "specialty foil",
+          "colorway": "White Rainbow",
+          "serial": 10,
+          "scarcityBand": "ultra-rare numbered",
+          "tier": 15,
+          "multiplier": 180
+        },
+        {
+          "name": "Gold Superfractor",
+          "family": "ultimate chase",
+          "finishStyle": "metallic gold foil",
+          "colorway": "Gold Superfractor",
+          "serial": 1,
+          "scarcityBand": "one-of-one",
+          "tier": 16,
+          "multiplier": 400
+        },
+        {
+          "name": "Black Infinite",
+          "family": "ultimate chase",
+          "finishStyle": "dark gloss",
+          "colorway": "Black Infinite",
+          "serial": 1,
+          "scarcityBand": "one-of-one",
+          "tier": 17,
+          "multiplier": 600
+        },
+        {
+          "name": "Printing Plate",
+          "family": "production relic",
+          "finishStyle": "metal plate",
+          "colorway": "Printing Plate",
+          "serial": 1,
+          "scarcityBand": "one-of-one",
+          "tier": 18,
+          "multiplier": 350
+        }
+      ],
+      "chaseNarrative": "the product relies on escalating finish prestige to make duplicates feel chaseable"
+    },
+    "contentStructure": {
+      "cardCount": 30,
+      "subsetCount": 4,
+      "tierDistribution": {
+        "Common": 16,
+        "Star": 5,
+        "Uncommon": 6,
+        "Superstar": 3
+      },
+      "rookieOrProspectBias": 0.233
+    },
+    "provenance": {
+      "seed": 42,
+      "createdAt": "2026-05-08T10:56:39.785Z",
+      "generator": "procedural",
+      "researchBasis": [
+        "flagship/checklist scale",
+        "chrome rainbow logic",
+        "heritage template reuse",
+        "museum or gilded premium packaging",
+        "insert-and-hit ladder design"
+      ]
+    }
+  }
+}

@@ -67,6 +67,31 @@ The order of operations should be:
 
 The simulation state is the source of truth. The article is an interpretation of the state, not the thing that invents the state.
 
+### Real-World Day Catch-Up
+
+The Flopps sim uses real elapsed days since `market.createdAt` (`Math.floor((now - createdAt) / 86400000)`), not manual increments. When a command fires after a gap, it iterates each missed day:
+
+- Each day gets its own stock price tick
+- Scheduled announcements (teaser -7, launch 0, sell-through +14, quarterly every 90) fire on the correct day even during catch-up
+- A summary prints: days caught up, price movement, milestone bulletins
+- `flopps-status` shows real-world dates for launches (e.g. "14 May 2026" not "day 45")
+
+This makes the sim behave like the stipend system: auto-catch-up on first interaction after any absence.
+
+### State File Duality
+
+Flopps state is stored in two places:
+- Player-scoped: `data/players/<id>/flopps/state.json` (read/written by commands run with `TRADING_CARDS_DATA_DIR`)
+- Global: `data/flopps/state.json` (legacy, may be out of sync)
+
+The player-scoped one is the source of truth when running under `TRADING_CARDS_DATA_DIR`. If editing manually, keep both in sync.
+
+### Catch-Up History Duplication Bug
+
+The catch-up mechanism (`maybeAnnounceFloppsNews`) appends new stock history entries without deduplicating. After repeated catch-up runs (e.g. from timeouts or interrupted commands), the same day numbers accumulate multiple entries — days 36-39 appearing 3x each is common. This inflates the history from ~25 entries to 40+ and causes the catch-up itself to hang as it iterates over the growing list.
+
+**Fix:** Manually deduplicate `stock.history` and `dayHistory` in the state file, keeping only the last entry per day (see Pitfalls in SKILL.md for the one-liner).
+
 ## Flopps Executive Cast
 
 Use the same cast consistently so the company feels like a real institution.

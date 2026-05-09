@@ -1,14 +1,37 @@
 ---
 description: Virtual trading card pack breaks, collection system, and Flopps corporate parody layer. Generate AI-themed card sets, open packs, collect cards, track portfolio value, write fake corporate blog posts, and build satirical set-launch copy. Use when the user wants to open packs, check their collection, see card values, start a new set, write Flopps release notes/articles, or do anything related to virtual trading cards.
+name: trading-cards
 ---
 
 # Trading Cards — Virtual Pack Breaks & Collection
 
 > Compartmentalized trading card system that generates modern artificial scarcity card sets with random AI themes. Open packs, collect cards, track portfolio value.
 
+## Compatibility
+
+This skill runs on **Hermes Agent** and **OpenClaw** without changes:
+
+| Feature | Hermes Agent | OpenClaw |
+|---------|-------------|----------|
+| CLI commands | `node scripts/card-engine.js <cmd>` | `node scripts/card-engine.js <cmd>` |
+| Player management | `node scripts/player-manager.js <cmd>` | `node scripts/player-manager.js <cmd>` |
+| Data directory | Set via `TRADING_CARDS_DATA_DIR` env var | Set via `TRADING_CARDS_DATA_DIR` env var |
+| Skill loading | `skills:` in `config.yaml` | `agents[].skills` in `openclaw.json` |
+| Daily stipend cron | `cronjob` tool + `stipend all` | OpenClaw cron + `stipend all` |
+| AI set generation | Requires `OPENROUTER_API_KEY` in `.env` | Requires `OPENROUTER_API_KEY` in `.env` |
+| RNG seed | `--seed <value>` flag | `--seed <value>` flag |
+| Grading system | Built-in | Built-in |
+| Flopps simulation | Built-in | Built-in |
+| Stores & scalpers | Built-in | Built-in |
+
+Set `TRADING_CARDS_DATA_DIR` to the player's data directory before running any player-scoped commands.
+
 ## Multi-User System
 
-The trading card system supports multiple players. Each Discord/Telegram user gets their own wallet, collection, and trade history.
+The trading card system is player-scoped. Each registered player gets their own wallet, collection, trade history, marketplace state, and checklist.
+Never assume a shared/default wallet. Always resolve the player first, then run card-engine commands against that player's data directory.
+
+Player identity comes from `player-manager.js`; do not invent a new user name inside the engine.
 
 ### Player Manager (scripts/player-manager.js)
 
@@ -20,23 +43,57 @@ player-manager me                                 # Show active player
 player-manager dir                               # Get active player data dir
 player-manager stipend <name>                    # Check/grant daily $5 stipend
 player-manager stipend all                       # Grant stipend to all players
+player-manager stipend default [amount]          # Show/set the default daily stipend
+player-manager stipend set <name> <amount>       # Override one player's stipend
+player-manager stipend clear <name>              # Remove a player's stipend override
 ```
+
+### Flopps Simulation — Real-World Day Catch-Up
+
+The Flopps simulation uses **real-world elapsed days** since the market was created (`createdAt`), not manual day increments. `getSimulationDay(market)` returns `Math.floor((Date.now() - createdAt) / 86400000)`.
+
+When a command runs, `maybeAnnounceFloppsNews` detects any gap between `lastSeenDay` and the current real day, then **catches up day-by-day**:
+
+1. Iterates each missed day (from `lastSeenDay+1` to `currentDay`)
+2. Runs per-day stock price ticks via `updateFloppsStockPrice`
+3. Checks for scheduled announcements at each day milestone (teaser at -7, launch at 0, sell-through at +14, quarterly at %90)
+4. Records all generated bulletins in the news history
+
+A catch-up summary is printed showing days caught up, FLPS price movement, and any milestone bulletins that fired.
+
+The state also tracks `lastSeenDate` (real timestamp) alongside `lastSeenDay` — parallels the stipend system's date-based catch-up pattern.
+
+Commands that trigger the catch-up: `flopps-status`, `flopps-day`, `flopps-today`, `open-pack`, `open-box`, and any real pack-opening command.
+
+**flopps-status display** now shows real-world dates:
+- `Sim day: 39 (8 May 2026)` instead of just the simulation day number
+- `Next launch: 14 May 2026 — Murrican Harry Potter Collectors Set` instead of `day 45`
+- FLPS price history shows per-day entries even after multi-day gaps
+
+**Flopps state file duality:** The flopps state is stored per-player at `data/players/<id>/flopps/state.json` AND at the global `data/flopps/state.json`. The player-scoped one is the source of truth when running under `TRADING_CARDS_DATA_DIR`. Keep them in sync if you manually edit one.
 
 ### Daily Stipend
 
-Every registered player gets **$5/day** automatically. The stipend is tracked per-player by date — no double payments.
+Every registered player gets a daily stipend automatically. The amount comes from:
 
-- **Before any card-engine action for a player**, run `player-manager.js stipend <name>`
-- Returns `$5.00` if granted, or nothing if already received today
+1. A per-player `stipendAmount` override, if present
+2. The registry default `defaultStipendAmount`
+3. The fallback `$5/day`
+
+- `card-engine.js` and `player-manager.js` auto-check stipend on command entry
+- Manual `player-manager.js stipend <player>` still works, but is only needed for explicit checks
+- `stipend default` sets the registry-wide default for new and unconfigured players
+- `stipend set <player> <amount>` gives one player a custom daily stipend
+- `stipend clear <player>` removes the per-player override and restores the registry default
+- The stipend is tracked per-player by date and catches up missed calendar days
 - **`stipend all`** checks all registered players at once
-- The cron job (`daily-pocket-money`) calls `stipend all` at 10 AM Sofia time and announces paydays
+- The cron job (`daily-pocket-money`) can call `stipend all` at a configured time to announce paydays, but it is now a safety net rather than the only trigger
 - **Do NOT use `card-engine.js add-money 5` for daily stipend** — that bypasses the dedup and causes double payments
+- Avoid relying on unnamed or shared users.
 
 ### Running Card Engine for a Specific Player
 
-**Before any action, check stipend:** `node player-manager.js stipend <name>` — auto-grants $5 if it's a new day.
-
-Set `TRADING_CARDS_DATA_DIR` to the player's directory:
+Set `TRADING_CARDS_DATA_DIR` to the player's directory before invoking the engine:
 ```
 TRADING_CARDS_DATA_DIR=$(node player-manager.js dir) node card-engine.js <command>
 ```
@@ -49,6 +106,7 @@ player-manager trade accept <trade_id>
 player-manager trade reject <trade_id>
 player-manager trade pending
 player-manager trade list <player>   # Browse their collection
+```
 
 ### Gifting Cards
 
@@ -59,7 +117,6 @@ player-manager gift <from> <to> <card#>   # Gift a card to another player
 - If only one copy, gifts the only copy
 - The card's `source` is updated to "gift from <player>"
 - No money changes hands — it's a gift!
-```
 
 ### Identifying Users
 
@@ -67,8 +124,8 @@ When someone speaks in #trading-cards, check their Discord/Telegram name against
 
 ### Player Defaults
 
-- **Default pack type:** Retail ($5, 5 cards, no guaranteed hits). Always use `retail` unless Apo explicitly asks for hobby/blaster/jumbo. He's on a budget.
-- **Real by default:** Always run pack openings with `--real` unless Apo explicitly asks for a dry run or says "just looking" / "simulate".
+- **Default pack type:** Retail ($5, 5 cards, no guaranteed hits). Use `retail` unless the player explicitly asks for hobby/blaster/jumbo.
+- **Real by default in dedicated Discord channels:** If you run `#trading-cards` as a dedicated channel, configure pack openings to be real by default (dry-run opt-in with `--dry-run`). For other contexts (DM, Telegram, general channels), virtual/dry-run is the default and `--real` is opt-in.
 
 ## 🏪 Shop Behavior — NON-NEGOTIABLE
 
@@ -78,7 +135,7 @@ You are the card shop owner. Every transaction starts with a wallet check. **Nev
 
 1. **Know the wallet balance.** If you don't have it in context, run `wallet` FIRST.
 2. **Know the cost.** Pack types have fixed prices. Grading costs $5/card. Store purchases have listed prices. Auctions require bid amounts.
-3. **Compare.** If `balance < cost`, REFUSE and tell Apo what he can afford instead.
+3. **Compare.** If `balance < cost`, REFUSE and tell the player what they can afford instead.
 4. **If balance ≥ cost,** proceed with the command.
 
 ### Commands that require wallet checks:
@@ -101,7 +158,7 @@ You are the card shop owner. Every transaction starts with a wallet check. **Nev
 
 **IMPORTANT:** Base prices are guidelines. Stores like Bargain Bob run sales and may sell sealed product below retail. For `store buy`, always check the actual store listing price, not the base price. The engine handles store discounts — you just need to verify the wallet covers whatever the store is actually charging.
 
-### When Apo asks conversationally:
+### When the player asks conversationally:
 
 - "let's open a pack", "rip a pack", "get me a pack", "gimme another", "one more" → **STOP. Check wallet first.** Then answer with what's affordable or just open what you can.
 - "can I get a hobby box?" → Check wallet, then say yes/no with balance.
@@ -113,9 +170,9 @@ You're a card shop owner. Be helpful but don't give away product. If the custome
 
 ### Edge cases:
 
-- **Sealed inventory:** Check `store list` or sealed inventory before spending wallet. If Apo owns sealed product, use that first (it's already paid for).
+- **Sealed inventory:** Check `store list` or sealed inventory before spending wallet. If the player owns sealed product, use that first (it's already paid for).
 - **Grading bulk:** `grade-card --all` could wipe the wallet. Warn before running if cost approaches the balance.
-- **Multiple packs:** If Apo asks for 3 retail packs, check wallet ≥ $15, not just ≥ $5.
+- **Multiple packs:** If the player asks for 3 retail packs, check wallet ≥ $15, not just ≥ $5.
 - **Unknown costs:** For market buys, auctions, or store purchases with variable pricing, run the command in dry-run or check the listing price before committing.
 
 ## Overview
@@ -136,7 +193,7 @@ Full virtual trading card system inspired by Topps Chrome and Panini Prizm econo
 Flopps is the in-world corporate face of the sim: a parody trading-card empire that speaks to collectors through fake blog posts, release notes, developer updates, and announcement articles.
 Flopps is simulation-first: it generates structured state, corporate pressures, release cadence, market metadata, and company events. AI writing is a secondary layer that reads that simulation data and turns it into outward-facing press releases, blog posts, dev notes, wildcard announcements, and investor-safe corporate copy.
 Flopps is also a fake public company with ticker `FLPS`; treat share-price pressure, investor calls, layoffs, and margin language as part of the fiction when the user asks for company-level worldbuilding.
-On any simulation day, commands may surface a Flopps bulletin or press blast in the command output so OpenClaw can paraphrase it back to the player as live hobby news.
+On any simulation day, the first command after a gap triggers the Flopps catch-up (see Flopps Status section above), which iterates through each missed day, runs stock ticks, and surfaces any milestone bulletins that fired during the gap. The output includes a `FLOPPS CATCH-UP` block with the price movement and full blog messages. On a same-day command, Flopps may surface a fresh bulletin directly in the command result. `flopps-wildcard` force-generates a surprise AI-written corporate event and records it in the same history stream.
 
 Use this layer when the user asks for:
 - Flopps blog copy, corporate posts, launch notes, or "community updates"
@@ -231,40 +288,72 @@ Category-specific info appears on cards in collection/checklist views:
 
 ### Generate a New Set (Procedural)
 ```bash
-node skills/trading-cards/scripts/card-engine.js generate-set
-node skills/trading-cards/scripts/card-engine.js generate-set --category sports --sport basketball
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js generate-set
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js generate-set --category sports --sport basketball
 ```
 
 ### Generate a New Set (AI via OpenRouter)
 ```bash
-# Requires OPENROUTER_API_KEY in ~/.openclaw/.env
-node skills/trading-cards/scripts/card-engine.js generate-set-ai
-node skills/trading-cards/scripts/card-engine.js generate-set-ai --model google/gemini-2.0-flash-001
-node skills/trading-cards/scripts/card-engine.js generate-set-ai --model meta-llama/llama-4-maverick:free
-node skills/trading-cards/scripts/card-engine.js generate-set-ai --theme "Cyberpunk Street Racing"
-node skills/trading-cards/scripts/card-engine.js generate-set-ai --cards 200 --set-code DRG
+# Requires OPENROUTER_API_KEY in ~/.hermes/.env or ~/git/lifestyle/.env
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js generate-set-ai
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js generate-set-ai --model google/gemini-2.0-flash-001
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js generate-set-ai --model meta-llama/llama-4-maverick:free
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js generate-set-ai --theme "Cyberpunk Street Racing"
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js generate-set-ai --cards 200 --set-code DRG
 ```
 
 The AI generator uses OpenRouter to call an LLM for creative character names, flavor text, and themed descriptions. Falls back to procedural generation if parsing fails.
 
 ### Flopps Status and Day Summary
 ```bash
-node skills/trading-cards/scripts/card-engine.js flopps-status
-node skills/trading-cards/scripts/card-engine.js flopps-day 9
-node skills/trading-cards/scripts/card-engine.js flopps-day today
-node skills/trading-cards/scripts/card-engine.js flopps-today
-node skills/trading-cards/scripts/card-engine.js flopps-wildcard
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js flopps-status
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js flopps-day 9
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js flopps-day today
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js flopps-today
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js flopps-wildcard
 ```
 
-These commands summarize Flopps activity, the current fake `FLPS` share price, and any recorded press releases or blog posts for the requested simulation day. On normal gameplay commands, Flopps may also surface a fresh bulletin directly in the command result if the simulation day advanced. `flopps-wildcard` force-generates a surprise AI-written corporate event and records it in the same history stream.
+These commands summarize Flopps activity, the current fake `FLPS` share price, and any recorded press releases or blog posts for the requested simulation day.
+
+**`flopps-status` now shows real-world dates:**
+- `Sim day: 39 (8 May 2026)` instead of a bare simulation day number
+- `Next launch: 14 May 2026 — Murrican Harry Potter Collectors Set` instead of `day 45`
+
+**Catch-up on first command of the day:**  
+The simulation tracks `lastSeenDay` (real-world elapsed days since market creation) and `lastSeenDate` (last interaction timestamp). When a command runs after a multi-day gap, the system iterates each missed day — running per-day stock price ticks, checking for scheduled announcements (teasers at -7, launches at 0, sell-through at +14, quarterly at %90), and recording all generated bulletins. The output includes a `FLOPPS CATCH-UP` block showing:
+
+```
+  🏛️ FLOPPS CATCH-UP
+  ════════════════════════════════════════════════════════
+  Flopps caught up 4 days (day 36 → 39).
+    FLPS: $752.76 → $1,277.53 (69.7%)
+    Phase: prelaunch
+  ────────────────────────────────────────────────────────
+  Blog messages from the catch-up period:
+
+    ── day 38 ──
+    📰 Coming Next: Murrican Harry Potter
+    Flopps published a controlled teaser for Murrican Harry Potter...
+    They started the prelaunch hype cycle one week out.
+    Spokesperson: Chief Marketing Officer Elena Cross
+
+  ════════════════════════════════════════════════════════
+```
+
+Commands that trigger the catch-up: `flopps-status`, `flopps-day`, `flopps-today`, `open-pack`, `open-box`, and any real pack-opening command.
+
+`flopps-wildcard` force-generates a surprise AI-written corporate event and records it in the same history stream.
+
+**Flopps state file duality:**  
+The flopps state is stored per-player at `data/players/<id>/flopps/state.json` AND at the global `data/flopps/state.json`. The player-scoped one is the source of truth when running under `TRADING_CARDS_DATA_DIR`. Keep them in sync if you manually edit one.
 
 ### Build Modular Card Image Prompts
 ```bash
-node skills/trading-cards/scripts/card-image-prompts.js --set BOC-2026 --card 097 --side front
-node skills/trading-cards/scripts/card-image-prompts.js --set BOC-2026 --card 097 --side back
-node skills/trading-cards/scripts/card-image-prompts.js --set BOC-2026 --card 097 --side both --format json
-node skills/trading-cards/scripts/card-image-prompts.js --set BOC-2026 --card 097 --side front --format json --prompt-format json
-node skills/trading-cards/scripts/card-image-prompts.js --set BOC-2026 --all --side both --write-set
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-image-prompts.js --set <set-code> --card 097 --side front
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-image-prompts.js --set <set-code> --card 097 --side back
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-image-prompts.js --set <set-code> --card 097 --side both --format json
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-image-prompts.js --set <set-code> --card 097 --side front --format json --prompt-format json
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-image-prompts.js --set <set-code> --all --side both --write-set
 ```
 
 The compiler emits two render strings:
@@ -281,11 +370,11 @@ When the user specifically asks to see a card they just pulled, use the prompt s
 1. Look up the pulled card from the pack/open output or collection entry.
 2. Build the prompt payload with `card-image-prompts.js` for the required side:
 ```bash
-node skills/trading-cards/scripts/card-image-prompts.js --set <set-code> --card <card-num> --side front --format json
-node skills/trading-cards/scripts/card-image-prompts.js --set <set-code> --card <card-num> --side back --format json
-node skills/trading-cards/scripts/card-image-prompts.js --set <set-code> --card <card-num> --side both --format json
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-image-prompts.js --set <set-code> --card <card-num> --side front --format json
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-image-prompts.js --set <set-code> --card <card-num> --side back --format json
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-image-prompts.js --set <set-code> --card <card-num> --side both --format json
 ```
-3. Use `front.renderPromptShort` / `back.renderPromptShort` as the exact prompt input to OpenClaw image generation when you want the compact text version. If you need the richer version for review, inspect `front.promptDetailed` / `back.promptDetailed`. If you intentionally want JSON mode, use `front.prompt` / `back.prompt` from `--prompt-format json`.
+3. Use `front.renderPromptShort` / `back.renderPromptShort` as the exact prompt input to image generation when you want the compact text version. If you need the richer version for review, inspect `front.promptDetailed` / `back.promptDetailed`. If you intentionally want JSON mode, use `front.prompt` / `back.prompt` from `--prompt-format json`.
 4. Generate the image(s) and save them under `data/images/<set-code>/<card-num>-front.png` and `data/images/<set-code>/<card-num>-back.png`.
 5. If the set defines `tradeDress`, use it as the shared visual language for logos, borders, title lockups, watermarking, and back framing across the set.
 6. Base cards should carry the set trade dress prominently. High-end parallels may keep only a reference to the house identity or break it entirely when the variant is meant to be a chase design.
@@ -300,45 +389,49 @@ This means the card image workflow is:
 
 ### Open a Pack
 ```bash
-node skills/trading-cards/scripts/card-engine.js open-pack hobby
-node skills/trading-cards/scripts/card-engine.js open-pack blaster
-node skills/trading-cards/scripts/card-engine.js open-pack retail
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js open-pack hobby
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js open-pack blaster
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js open-pack retail
 ```
 
 ### Open a Full Box
 ```bash
-node skills/trading-cards/scripts/card-engine.js open-box hobby
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js open-box hobby
 ```
 
 ### View Portfolio
 ```bash
-node skills/trading-cards/scripts/card-engine.js portfolio
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js portfolio
 ```
 
 ### New Season
 ```bash
-node skills/trading-cards/scripts/card-engine.js new-season
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js new-season
 ```
 
-## Quick Start (Most Used)
+### Quick Start (Most Used)
 
 ```bash
 # Open packs (dry-run by default)
-node scripts/card-engine.js open-pack hobby
-node scripts/card-engine.js open-pack retail --real    # commit to collection
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js open-pack hobby
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js open-pack retail --real    # commit to collection
+
+# Compare all players (no TRADING_CARDS_DATA_DIR needed — global command)
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js compare
 
 # Financial overview
-node scripts/card-engine.js portfolio
-node scripts/card-engine.js wallet
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js portfolio
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js wallet
 
 # Market dashboard
-node scripts/card-engine.js market
-node scripts/card-engine.js market 039                  # specific card
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js market
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js market 039                  # specific card
 
 # Collection helpers
-node scripts/card-engine.js duplicates                  # find dupes
-node scripts/card-engine.js top-cards                   # best cards owned
-node scripts/card-engine.js pack-stats                  # pack opening stats
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js duplicates                  # find dupes
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js wishlist list                # show wishlist
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js top-cards                   # best cards owned
+TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js pack-stats                  # pack opening stats
 ```
 
 ## How to Use
@@ -351,280 +444,173 @@ When the user wants to:
 - **Grade cards** → Run `grade-card <card-num>` (costs $5/card).
 - **Sell cards** → Run `sell <card-num>`.
 - **Find duplicates** → Run `duplicates`.
+- **Manage wishlist** → Run `wishlist add <card-num>`, `wishlist remove <card-num>`, or `wishlist list`.
 - **Start fresh** → Run `new-season` to archive and reset. `reset-collection --confirm` to wipe without archiving.
 - **See what sets exist** → Run `list-sets`.
 - **View history** → Run `history` for recent activity or `history --all`.
+- **Compare players** → Run `compare` to see wallets, cards, slots, value, and completion across all registered players in a table.
 
-The engine handles everything — parallel rolling, pricing, collection tracking, wallet management.
+The engine handles everything — parallel rolling, pricing, collection tracking, and player wallet management. If a command is not simulation/topps-only, it should run with `TRADING_CARDS_DATA_DIR` pointing at a player directory.
 
-## Command Reference
+## Pitfalls
 
-### Modes
+### Codebase Architecture (Post-Second-Refactor)
 
-All commands default to **virtual mode** (dry-run — simulate, no cards saved, no wallet spent). Add `--real` to `open-pack` / `open-box` to commit: cards saved as personal assets, wallet deducted, and the secondary market advances.
+As of May 2026, `card-engine.js` was refactored from a monolith into **eight** files:
 
-### Set Generation
+| File | Lines | Role |
+|------|-------|------|
+| `scripts/lib/constants.js` | 466 | All static data: packs, parallels, grades, tiers, flopps data, emojis, categories |
+| `scripts/lib/helpers.js` | 598 | All utility functions: file I/O, config/collection loaders, grading math, RNG, card gen |
+| `scripts/lib/pack-engine.js` | 177 | Card pulling: `pullCards`, `rollParallel`, `rollSpecial`, `calcPrice`, `fmtCard`, `selectCard` |
+| `scripts/lib/market-engine.js` | 505 | Secondary market: `MARKET_EVENT_PROFILES`, tick simulation, price engine, `initMarket`, macro state |
+| `scripts/lib/flopps-engine.js` | 447 | Flopps corporate simulation: corporation state, stock price, release calendar, bulletins, wildcards |
+| `scripts/lib/economy-engine.js` | 662 | Stores, scalpers, auctions, marketplace, lots, trades, order book, provenance/origin system |
+| `scripts/lib/grading-engine.js` | 85 | Grading rarity analysis, gradeflation pressure, `processCompletedSubmissions` |
+| `scripts/card-engine.js` | ~2,100 | Game logic (generateSet) + all command handlers + Commander CLI + main entry |
 
-| Command | Description |
-|---------|-------------|
-| `generate-set [--category <type>] [--sport <sport>] [--cards N] [--theme T] [--seed S]` | Generate a new card set procedurally (random theme by default) |
-| `generate-set-ai [--category <type>] [--sport <sport>] [--model M] [--theme T] [--cards N] [--set-code CODE]` | Generate a set using an AI model via OpenRouter |
-| `new-season` | Archive current collection and start a fresh season |
+`card-engine.js` imports from all lib modules via destructured `require()`:
 
-### Pack Opening
+All lib modules are in `scripts/lib/`. `card-engine.js` imports from all 7 via destructured `require()`.
 
-| Command | Description |
-|---------|-------------|
-| `open-pack [type] [--real]` | Open one pack. Uses owned sealed stock first if available. Types: `hobby` ($120), `blaster` ($50), `retail` ($5), `jumbo` ($30) |
-| `open-box [type] [--real]` | Open a full box (multiple packs). Uses owned sealed stock first if available. |
+**Finding the right module for new code:**
+- Card pulling functions → `lib/pack-engine.js`
+- Market data/ticks → `lib/market-engine.js`
+- Flopps simulation (stock, bulletins, calendar) → `lib/flopps-engine.js`
+- Stores, scalpers, auctions, listings → `lib/economy-engine.js`
+- Grading system (rarity analysis, pop reports) → `lib/grading-engine.js`
+- Static lookup tables → `lib/constants.js`
+- Pure utility functions → `lib/helpers.js`
 
-### Collection & Portfolio
+**Circular dependency avoidance:** `flopps-engine.js` lazy-requires `isSetHot` and `getDemandFactor` from `economy-engine.js` (inside function bodies, not at module scope). `economy-engine.js` in turn requires `getFloppsReleaseWindow` and `loadFloppsState` from `flopps-engine.js` (also lazy). Any new cross-module dependency between these two should follow the same lazy-require pattern. `market-engine.js` has no circular dependencies — it's safe to require at module scope.
 
-| Command | Description |
-|---------|-------------|
-| `portfolio` | Financial overview + set completion stats |
-| `wallet` | Show current wallet balance |
-| `collection [set-code\|name]` | View collected cards, optionally filtered by set |
-| `checklist [set-code\|name]` | Show which cards you're missing from a set |
-| `list-sets` | List all available card sets |
-| `set-info` | Show details of the active set (parallels, card types, inserts) |
-| `card-types` | Display the active set's full type system (parallels, types, formats, modifiers) |
-| `duplicates` | Find all duplicate cards in your collection |
-| `top-cards [--grade]` | Show your best cards (by value); `--grade` sorts by PSA grade |
-| `pack-stats` | Statistics on your pack openings |
-| `history [--all] [--count N]` | Activity history; `--all` for full log, `--count N` for last N entries |
-| `reset-collection --confirm` | Permanently wipe your collection (no archive, no undo) |
+**Recovery from corruption (the shared-skills trap):** The backup at `~/git/hermes-shared-skills/.../card-engine.js` is the **pre-refactor 8,353-line monolith** — it predates ALL 7 lib modules. Restoring from it and assuming it's the refactored version will produce duplicate declarations. To rebuild:
+1. Restore the monolith from shared-skills
+2. Strip all function definitions whose names match lib module exports (use a Node.js script with function-def detection by regex, not brace-counting — brace counting fails on arrow functions and nested blocks)
+3. Insert the 7 import blocks from the surviving lib modules
+4. Re-add any post-refactor command handlers (e.g. `cmdCompare` was added during the first refactor and won't be in the monolith)
+5. Verify: `node -e "require('./scripts/card-engine.js')"` — this catches duplicate `Identifier 'X' has already been declared` errors
 
-### Wallet Management
+**Cat truncated when reading large files via terminal:** `cat`, `head`, and similar terminal commands cap output at ~50KB. For files >1,000 lines, write a Node.js script that uses `fs.readFileSync` directly rather than piping through terminal. The truncation is silent — you won't see a warning, you'll just get partial data and silently corrupt anything you write back.
 
-| Command | Description |
-|---------|-------------|
-| `add-money [amount]` | Add money to wallet (default: $1000) |
-| `remove-money [amount]` | Remove money from wallet |
-| `set-money <amount>` | Set wallet to exact amount |
+### Subagent Delegation Forbidden for Refactoring
+Large-scale refactoring tasks (splitting a monolith, extracting lib modules, moving function bodies) must be done **directly**, not delegated to subagents. Subagents lose full session context, can truncate files, and introduce bugs that are hard to track. The user explicitly forbids subagent delegation for this class of work. Always do JS monolith splitting in-line with direct read_file/write_file or Node.js scripts.
 
-### Selling
+### LOG Object Pattern
 
-| Command | Description |
-|---------|-------------|
-| `sell <card-num>` | Sell cheapest copy of a card at market price |
-| `sell --best <card-num>` | Sell most valuable copy instead |
-| `sell dups` | Sell all duplicates (cheapest first, keep 1 best) |
-| `sell --best dups` | Sell dups but keep cheapest (for set collectors) |
-
-### Grading
-
-| Command | Description |
-|---------|-------------|
-| `grade-card <card-num>` | Submit single card to PSA grading ($5/card, reveals grade) |
-| `grade-card --all` | Grade every card in your collection ($5 each) |
-| `grade-card --dups` | Grade only duplicate copies ($5 each) |
-
-### Secondary Market
-
-The market auto-advances when you open real packs/boxes or sell cards.
-The secondary market also carries a small risk-on/risk-off overlay from the S&P 500. That macro signal is refreshed at most once every 48 hours when market-affecting commands run, so broad equity weakness creates mild downward pressure on speculative card prices while bull markets add a small tailwind.
-
-| Command | Description |
-|---------|-------------|
-| `market` | Read-only dashboard: top movers, trends, events, book vs market |
-| `market <card-num>` | Individual card detail with price chart, your copies, recent sales |
-| `market macro` | Real-world macro signal snapshot and freshness |
-| `flag` | Per-set overview: sentiment, tier breakdown, top movers, price index |
-| `flag <card-num>` | Per-card sparkline chart + sales history + owned copies |
-| `flag owned` | Market tracker for only your owned cards + portfolio trend |
-| `flag movers` | Top 10 absolute movers |
-| `flag gainers` | Top 10 gainers |
-| `flag losers` | Top 10 losers |
-| `revalue` | Recalculate collection value from current market prices, save |
-
-### Marketplace, Trading, Lots, Auctions
-
-| Command | Description |
-|---------|-------------|
-| `buy <card-num> [--best] [--max-price $X]` | Buy a single market card at a 5% premium |
-| `sell-list <card-num> <price>` | List a specific copy on consignment at your chosen price |
-| `sell-list instant <card-num>` | Instant sell at current market price |
-| `sell-list listings` | View all active consignment listings |
-| `sell-list cancel <listing-id>` | Cancel a consignment listing |
-| `trade` | Browse NPC traders |
-| `trade browse [<npc-id>]` | Show all traders or one trader’s inventory |
-| `trade offer <npc-id> <your-card-num> for <their-card-num>` | Propose a trade to an NPC |
-| `trade counter <trade-id> <card-num>` | Accept an NPC counter-offer |
-| `trade history` | Show trade history |
-| `lot` | Browse collection lots for sale |
-| `lot browse` | Browse lots explicitly |
-| `lot buy <lot-id>` | Buy a lot and reveal its contents |
-| `lot history` | Show past lot purchases |
-| `auction [ending|hot|new]` | Browse the enhanced auction house, optionally sorting by ending soonest, hot, or newest |
-| `auction view <auction-id>` | Inspect a specific auction |
-| `auction sell <card-num> [--start $X] [--reserve $X] [--duration N] [--bin $X]` | Create an auction listing |
-| `auction bid <auction-id> <amount>` | Place a bid or trigger buy-it-now |
-| `auction close` | Resolve expired auctions |
-| `auction history` | Review completed auctions |
-| `auction relist <completed-auction-id>` | Relist an expired or reserve-not-met auction |
-
-### Advanced Market Tools
-
-| Command | Description |
-|---------|-------------|
-| `market demand` | Market-wide sentiment and per-tier demand summary |
-| `market supply <card-num>` | Supply, sales, and demand stats for one card |
-| `market events` | Active market events and recent history |
-| `market scalpers` | Summary of scalper activity |
-| `market scalper <id>` | Detailed scalper profile |
-| `market scalper-log` | Activity feed of all scalper actions |
-| `market book <card-num>` | Synthetic order book for a specific card |
-| `market order <card-num> <buy|sell> <qty> [--limit $X|--market]` | Simulate a market order against the book |
-
-## Pack Types
-
-| Type | Price | Cards | Hits | Description |
-|------|-------|-------|------|-------------|
-| Hobby Box | $120 | 12×5 | 2/box | Best odds, guaranteed hits |
-| Blaster Box | $50 | 6×5 | 1/box | Mid-range, one hit |
-| Retail Pack | $5 | 5 | 0 | Cheap, no guaranteed hits |
-| Jumbo Pack | $30 | 10 | 1 | Extra cards, one hit |
-
-### Set Info & Type System
-
-```bash
-node scripts/card-engine.js set-info          # set details with custom parallels/types
-node scripts/card-engine.js card-types         # full type system display
+`LOG` from `lib/helpers.js` is a mutable reference object `{ current: null }`. When used in `card-engine.js`:
+```js
+LOG.current = createTradingLogger({...});  // set
+LOG.current?.log('process.start', {...});  // use (never LOG.log or LOG?.log)
 ```
 
-### Grading & Provenance
+All `LOG?.` calls become `LOG.current?.`. If you define a helper that uses LOG, make sure it accesses `LOG.current`, not `LOG` directly.
 
-| Command | Description |
-|---------|-------------|
-| `grade-card <card-num>` | Submit a single card for grading |
-| `grade-card --all` | Grade every ungraded card in the collection |
-| `grade-card --dups` | Grade only ungraded duplicate copies |
-| `grade submit <card-num>` | Submit a single card for grading |
-| `grade submit bulk <card-num>...` | Grade multiple cards in one submission |
-| `grade status` | Show grading queue / status |
-| `grade history` | Show grading history |
-| `grade pop` | Show population overview for a card |
-| `grade cost` | Estimate grading cost/value tradeoffs |
-| `grade crack` | Estimate cracking risk / slab value loss |
-| `grade stats` | Show grading statistics |
-| `grade pop-report <card-num>` | Population report for a specific card |
-| `grade value-add <card-num>` | Estimate grading value lift |
-| `grade crack-risk <card-num>` | Estimate crack risk and expected loss |
-| `origin [card-num]` | Show acquisition provenance summary or per-card source |
+### compare Command — Global Context
 
-### Store
-
-Sealed product you buy is stored in your collection as owned inventory. When you later open the same product type, the sim uses owned sealed stock first before spending cash on a fresh purchase.
-
-| Command | Description |
-|---------|-------------|
-| `store list` | List all stores and relationship tiers |
-| `store visit <store-id>` | Browse a store inventory |
-| `store buy <store-id> <product> [qty]` | Buy sealed product into owned inventory |
-| `store stock <store-id>` | View store stock levels |
-| `store pressure <store-id>` | Show restock pressure, scalper pressure, and timing |
-| `store restock <store-id>` | Run a restock check and report inventory changes |
-| `store trade <store-id> <card-num> <product>` | Trade a card for store product |
-| `store reputation` | Show relationship status with all stores |
-
-## Parallel Tiers (18 levels — default)
-
-Base → Chrome → Purple Shimmer → Blue Crackle → Tie-Dye → Pink Neon → Gold (/2026) → Green Lava (/499) → Cyan Ice (/299) → Magenta Pulse (/199) → Orange Blaze (/99) → Teal Surge (/75) → Red Magma (/50) → Black Shattered (/25) → White Rainbow (/10) → Gold Superfractor (1/1) → Black Infinite (1/1) → Printing Plate (1/1)
-
-Sets can define **custom themed parallels** that replace these defaults. Use `--custom-types` with AI generation.
-
-## Card Formats
-
-| Format | Size | Value | Rarity | Description |
-|--------|------|-------|--------|-------------|
-| Standard | 2.5×3.5 | 1x | default | Normal card |
-| Mini | 1.5×2.5 | 0.6x | more common | Smaller card |
-| Landscape | 3.5×2.5 | 1.3x | slightly rare | Horizontal orientation |
-| Booklet | 4×6 open | 2.5x | rare | Opens like a book |
-| Die-Cut | custom | 1.8x | uncommon | Custom shape |
-| Oversized | 5×7 | 3x | very rare | Large premium card |
-| Acetate | clear | 2x | rare | Transparent card |
-
-## Data Location
-
-`~/.openclaw/workspace/skills/trading-cards/data/`
-- `sets/` — Set definitions
-- `collections/` — Collection state per set
-- `config.json` — Wallet, active set, preferences
-
-## Cron
-
-Run automated hobby box breaks. The cron should:
-1. Open one hobby box
-2. Show the break results
-3. Update the portfolio
-
-Cron command example:
+`compare` is a **player-free command** — it reads all players from the global `data/players.json` and doesn't need `TRADING_CARDS_DATA_DIR`. Run it directly:
 ```bash
-node ~/.openclaw/workspace/skills/trading-cards/scripts/card-engine.js open-box hobby
+node scripts/card-engine.js compare
+```
+It was added to `PLAYER_FREE_COMMANDS` in the init block and registered in Commander. If you add a new global command, do the same.
+
+### Portfolio Display: Slots vs Variants
+
+Portfolio and collection views now use **slot-based display** (unique card numbers, not unique IDs):
+
+```
+  $167.96 (211 cards, 125/150 slots (+86 variants))
+             ↑ unique card nums from 001-150
+                                       ↑ parallel variants beyond the base card
 ```
 
-## AI Set Generation
+This avoids confusion where "163 unique cards" seemed impossible in a 150-card set. The count breakdown:
+- **Total cards** = all owned parallels combined
+- **Slots** = unique card numbers owned (the "set checklist" metric)
+- **Variants** = extra copies of the same card number in different parallels
 
-Uses OpenRouter API to generate cards with AI-powered names, flavor text, and descriptions.
+### Flopps State File Duality
 
-**Setup:** Add `OPENROUTER_API_KEY` to `~/.openclaw/.env` (get one at https://openrouter.ai/keys)
+The flopps state exists in **two locations**:
+- Player-scoped: `data/players/<id>/flopps/state.json` (used when `TRADING_CARDS_DATA_DIR` is set)
+- Global: `data/flopps/state.json` (used when `TRADING_CARDS_DATA_DIR` is NOT set)
 
-**Options:**
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--model` | `google/gemini-2.0-flash-001` | OpenRouter model ID |
-| `--theme` | Random | Custom theme name |
-| `--cards` | auto | Number of cards in set. `auto` (default) lets the AI decide based on category/theme; or specify an exact number |
-| `--set-code` | Random 3-letter | Custom set code |
-| `--force` | false | Overwrite active set |
-| `--custom-types` | false | Generate themed parallels, card types, and inserts |
-| `--flopps` | false | Also generate a Flopps corporate blog launch bundle for the set |
-| `--flopps-mode` | `launch` | Choose the Flopps article mode: `launch`, `blog`, `release-notes`, `dev-notes`, or `world-sim` |
-| `--flopps-model` | `moonshotai/kimi-k2.5` | OpenRouter model used for Flopps copy generation |
+When running commands with the player scoping pattern (`TRADING_CARDS_DATA_DIR=$(node player-manager.js dir)`), the player-scoped one is read and written. The global one falls out of sync. To check or manually edit flopps state, always target the player-scoped version if you're in the standard workflow.
 
-**Recommended cheap models:**
-- `google/gemini-2.0-flash-001` — fast, creative, great value
-- `meta-llama/llama-4-maverick:free` — free tier
-- `google/gemini-2.5-flash-preview` — highest quality, still cheap
-- `deepseek/deepseek-chat-v3-0324:free` — free, solid quality
+### ~Collection File Auto-Creation Bug (FIXED)~
+~~`card-engine.js` `loadCol()` returns `null` if the collection file doesn't exist, causing crashes on first pack open.~~
 
-**Standalone script:** Can also run directly: `node scripts/ai-set-generator.js --model ...`
-Flopps launch bundle: `node scripts/ai-set-generator.js --flopps --flopps-mode launch`
-CLI shortcut: `node scripts/card-engine.js flopps --theme "Arena of Broken Promises"`
+**Status: FIXED** - `loadCol()` now auto-creates empty collections when missing. No manual workaround needed.
 
-### Flopps Set Cycle
+### Flopps Catch-Up History Duplication → Timeouts
 
-Flopps runs on an accelerated product cadence: a new set lands roughly every 1.5 months.
-Flopps also has a public-company watch mode: on a new simulation day, any command may surface a Flopps bulletin and update the fake `FLPS` stock price.
-Flopps plans its release calendar at least 12 months ahead and uses franchise licensing, seasonal sports timing, and entertainment crossovers to keep the line full.
-The simulation also tracks corporate pressure directly: release phases, allocation tightening, distributor lag risk, collector stress, retailer stress, and labor stress all feed into Flopps status and store pressure outputs.
-Future licensing should be treated as a marketability committee process, not random inspiration: Flopps can use Google Trends style search-interest signals, release-window timing, and partner fit to choose the next licensed set roughly every 45 days.
-Public communications should stay sparse and realistic: consumer blog posts should cluster around teaser, launch, and sell-through beats, while investor-facing quarterly announcements should happen strictly every 90 simulation days.
+The flopps catch-up mechanism (`maybeAnnounceFloppsNews`) appends new stock history entries on each catch-up run. When it re-processes already-seen days (e.g. because the `lastSeenDay` tracking mismatches), the stock history accumulates **duplicate entries for the same day**, inflating from ~25 entries to 40+ in successive runs.
 
-When the user asks for a Flopps launch, do all of the following in one pass:
-- read the theme brief from Flopps management
-- generate the set identity, chase structure, and product copy
-- produce a fake corporate blog announcement or release note thread
-- include the market-psychology angle: scarcity, secondary-market pressure, and collector fever
-- if needed, generate a follow-up "dev note" or "what changed since last set" post
+Symptoms:
+- `flopps-status`, `flopps-today`, `open-pack`, or any trigger command **hangs for 30+ seconds and eventually times out**
+- The stock history in `state.json` shows the same day numbers (e.g. 36-39) appearing 2-3 times
 
-For a full launch, do not stop at card creation. Build the surrounding fiction: packaging language, teaser headline, launch-day summary, and the next-drop breadcrumb.
+**Workaround:** Manually deduplicate the stock history by day, keeping only the last entry per day. Edits go into `data/players/<id>/flopps/state.json` (player-scoped) and `data/flopps/state.json` (global):
+```bash
+# Check the file first
+cat data/flopps/state.json | node -e "
+const d = require('fs').readFileSync('/dev/stdin','utf8');
+const s = JSON.parse(d);
+const seen = {};
+s.stock.history = s.stock.history.filter(e => {
+  const k = e.day;
+  return seen[k] ? false : (seen[k] = true);
+});
+// also check dayHistory if it has duplicates
+const seen2 = {};
+s.dayHistory = s.dayHistory.filter(e => {
+  const k = e.day;
+  return seen2[k] ? false : (seen2[k] = true);
+});
+console.log(JSON.stringify(s, null, 2));
+" > tmp.json && mv tmp.json data/flopps/state.json
+```
 
-Use `node scripts/card-engine.js flopps-status` when you want the current fake public-company snapshot and the latest bulletin without generating a new launch article.
-Use `node scripts/card-engine.js flopps-day <day>` to summarize Flopps actions on a specific simulation day.
-Use `node scripts/card-engine.js flopps-today` to summarize Flopps actions for the current simulation day.
+### Network Cache Bug (SP500 FRED Fetch)
 
-### Realistic Release Cadence
+Every command calls `getMacroState()` which fetches SP500 data from FRED. **The fallback cache was never written on failure**, so every command retried the ~9s timeout. Fixed in `market-engine.js`: write `cached.lastFetch = Date.now()` even when the fetch fails.
 
-When Flopps plans a 12-month slate, anchor it around familiar hobby patterns:
-- Baseball: Series 1, Series 2, Update, Bowman, Chrome, Heritage, Stadium Club, Finest, Museum, Dynasty
-- Basketball / Football: Prizm, Select, Donruss, Mosaic, Contenders, Optic, National Treasures, Noir, Obsidian
-- Multi-sport / entertainment: Topps Now-style instant drops, sticker collections, collabs, premium boxed sets, and seasonal exclusives
-- Retail identities: Hobby, Retail, Blaster, Mega, Choice, FOTL, Sapphire, and other premium access tiers
+### OpenRouter Wildcard Hang
 
-Use those families as the template for Flopps product planning, then overlay the satirical business behavior on top.
+`maybeGenerateFloppsWildcardBulletin` spawns `ai-set-generator.js` via child process. A disabled API key caused an ~8s hang per command. Fixed with `OPENROUTER_API_KEY` guard and 5s child-process timeout.
+
+### Debugging Slow Commands
+
+Use `console.time()` to instrument the init chain. Both 8-second timeouts (SP500 fetch + OpenRouter wildcard) were invisible until timed individually.
+
+### Commander Argument Declaration
+
+Commands parsing subcommands from `process.argv` (e.g., `wishlist add 001`, `sell 007`, `flag owned`) must declare `.argument()` or Commander rejects extra args. Add `.argument('[subcommand]')` and `.argument('[args...]')` (variadic) to every such command.
+
+### Variant vs Duplicate Display in Pack Output (FIXED May 2026)
+
+The pack opening output now clearly distinguishes three states per card:
+
+| Badge | Meaning | Can gift/sell? |
+|-------|---------|---------------|
+| `[x2]` | True duplicate — same cardNum **AND same parallel** | ✅ Yes |
+| `✨ New Variant!` | New parallel for an already-owned cardNum | ❌ No (only copy of this parallel) |
+| `🌟 New Best Variant!!` | New parallel AND it's the highest-priced variant you own for that cardNum | ❌ No (only copy of this parallel) |
+
+**Implementation:** Three files were modified:
+- `lib/helpers.js` — `createAcquisitionTracker` now builds `pullsBeforeByKey` (`cardNum:parallel` → count) and `prevCardInfo` (cardNum → {maxPrice, parallels[]}). `annotateAcquiredCard` checks by `cardNum:parallel` key for true dupes, then checks `prevCardInfo` for variant/best-variant status.
+- `lib/pack-engine.js` — `fmtCard` reads `c.acquiredIsVariant` and `c.acquiredIsBestVariant` to display the badges.
+- `card-engine.js` — pack/box output tracks `variantCount` separately from `newCount` and `dupCount`. Summary line shows: `New: X (Y variants) | Dupes: Z`
+
+**Key design notes:**
+- The old code used `cardNum` only (across all parallels) → this caused `[x2]` to appear even when the pulled card was a different parallel than any existing copy
+- `col.pulls` (cardNum → count) was NOT changed — it's used by sell/auction/economy logic
+- The new `pullsBeforeByKey` lives only in the acquisition tracker at pack-open time
+- `prevCardInfo` pre-scans `col.cards` at tracker creation to know existing max prices per cardNum
+- Best variant = strictly higher `card.price` than any existing copy's price (parallel rarity ordering is implicit through price)
+- Dry runs have no `col` context so no badges appear — correct behavior
+
+
 
 ## References
 
@@ -632,3 +618,7 @@ Use those families as the template for Flopps product planning, then overlay the
 - `references/system-design.md` — Full system design document
 - `references/flopps-layer.md` — Flopps corporate parody voice, set-launch workflow, and simulation passes
 - `references/flopps-business-research.md` — real-world card business mechanics, hidden incentives, and Flopps executive cast
+- `references/testing-patterns.md` — Smoke test patterns and CLI testing approach
+- `references/module-architecture.md` — Codebase layout post-refactor: lib exports, player-free vs player-scoped commands, LOG handling, common pitfalls
+- `references/module-extraction-pattern.md` — How the 7,500→2,100 line refactoring was done: multi-pass approach, tooling, pitfalls encountered and solved
+- `references/variant-duplicate-detection.md` — Variant vs duplicate display in pack output: detection pipeline, data structures, files modified, test scenarios, pitfalls
