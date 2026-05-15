@@ -33,6 +33,8 @@ Never assume a shared/default wallet. Always resolve the player first, then run 
 
 **Sets are global.** All card sets live in `data/sets/` and are shared across every player. When a set is created (via `ai-set-generator`, `boc-set-generator`, or manually), it becomes available to all players immediately. No per-player set paths — saying "my set" means "the set I'm collecting from," not a private copy.
 
+**Set creation triggers an announcement.** Both set generators emit a `[SET_ANNOUNCEMENT]` line. The downstream agent — when running the generator — MUST then announce the set to all registered players using `player-manager announce-set <setCode>` or by constructing the @-mention message directly. This ensures every player knows a new set has landed.
+
 Player identity comes from `player-manager.js`; do not invent a new user name inside the engine.
 
 ### Player Manager (scripts/player-manager.js)
@@ -48,6 +50,7 @@ player-manager stipend all                       # Grant stipend to all players
 player-manager stipend default [amount]          # Show/set the default daily stipend
 player-manager stipend set <name> <amount>       # Override one player's stipend
 player-manager stipend clear <name>              # Remove a player's stipend override
+player-manager announce-set <setCode>             # Generate an @-mention announcement for a new set
 ```
 
 ### Flopps Simulation — Real-World Day Catch-Up

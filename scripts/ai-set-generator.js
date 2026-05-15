@@ -1559,7 +1559,15 @@ async function main() {
   }
 
   console.error(`  💾 Saved to: data/sets/${key}`);
-  console.error(`  Open packs with: node card-engine.js open-box hobby\n`);
+  console.error(`  Open packs with: node card-engine.js open-box hobby`);
+
+  // Emit structured announcement for downstream agent to relay with @mentions
+  const announceName=savedSet?.officialName||savedSet?.name||themeName;
+  const announceCode=savedSet?.code||setCode;
+  const announceYear=savedSet?.year||year;
+  const announceCards=savedSet?.cards?.length||allCards.length;
+  const announceKey=announceCode+(announceYear?`-${announceYear}`:'');
+  console.log(`\n[SET_ANNOUNCEMENT] ${announceKey}|${announceName}|${announceCards} cards`);
   LOGGER.log('process.end',{key});
 }
 

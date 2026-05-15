@@ -291,9 +291,13 @@ for (const c of cards.filter(c => c.starTier === 'Superstar').slice(0, 7)) {
   console.log(`    ${code}-${c.num} ${c.name} [${c.subset}]`);
   console.log(`      "${c.desc}"`);
 }
-console.log(`${'═'.repeat(55)}`);
+console.log(`${'\u2550'.repeat(55)}`);
 console.log(`  Ready to rip! Try: node card-engine.js open-box hobby`);
-console.log(`${'═'.repeat(55)}\n`);
+console.log(`${'\u2550'.repeat(55)}`);
+
+// Emit structured announcement for downstream agent
+console.log(`\n[SET_ANNOUNCEMENT] ${key}|${setName}|${cards.length} cards`);
+console.log(``);
 logger.log('process.end', {
   command: 'boc-set-generator',
   status: 'ok',

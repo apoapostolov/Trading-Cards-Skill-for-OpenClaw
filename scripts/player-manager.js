@@ -329,6 +329,43 @@ function cmdSwitch(name){
   console.log(`  ✅ Switched to player: ${reg.players[safeName].displayName} (${safeName})`);
 }
 
+// ─── SET ANNOUNCEMENT ────────────────────────────────────────
+function cmdAnnounceSet(setRef){
+  if(!setRef){console.log('Usage: player-manager announce-set <setCode>');return}
+  const reg=loadPlayers();
+  const playerIds=Object.keys(reg.players||{});
+  if(!playerIds.length){console.log('  No players registered.');return}
+
+  const setDir=path.join(BASE_DIR,'sets');
+  const candidate=setRef.endsWith('.json')
+    ? path.join(setDir,setRef)
+    : path.join(setDir,setRef+'.json');
+  const setPath=fs.existsSync(candidate)?candidate:null;
+  if(!setPath){console.log(`  \u26A0 Set "${setRef}" not found in ${setDir}`);return}
+  const set=rJ(setPath);
+  if(!set){console.log(`  \u26A0 Could not read set at ${setPath}`);return}
+
+  const setName=set.officialName||set.name||setRef;
+  const setCode=set.code||setRef;
+  const year=set.year||'';
+  const cards=set.cards?.length||0;
+  const category=set.setCategory||set.category||'';
+  const fullCode=setCode+(year?`-${year}`:'');
+
+  const mentions=playerIds.map(id=>`@${reg.players[id]?.displayName||id}`).join(' ');
+
+  console.log(`\n${'\u2500'.repeat(55)}`);
+  console.log(`  \uD83D\uDCE2 NEW SET ANNOUNCEMENT`);
+  console.log(`${'\u2500'.repeat(55)}`);
+  console.log(`  ${setName}`);
+  console.log(`  Code: ${fullCode}${category?`  |  ${category}`:''}`);
+  console.log(`  Cards: ${cards}`);
+  console.log(``);
+  console.log(`  ${mentions} — a new set has landed! Time to rip some packs.`);
+  console.log(`${'\u2500'.repeat(55)}`);
+  console.log(`  Open packs: node card-engine.js open-box hobby\n`);
+}
+
 // ─── LIST PLAYERS ─────────────────────────────────────────────
 function cmdListPlayers(){
   const reg=loadPlayers();
@@ -659,6 +696,9 @@ switch(cmd){
   case 'list':
     cmdListPlayers();
     break;
+  case 'announce-set':
+    cmdAnnounceSet(args[1]);
+    break;
   case 'me':
     cmdMe();
     break;
@@ -722,6 +762,7 @@ switch(cmd){
     stipend default [amt]       Show or set the default daily stipend
     stipend set <player> <amt>   Override one player's daily stipend
     stipend clear <player>      Remove a player's stipend override
+    announce-set <setCode>      Announce a new set with @-mentions to all players
     dir                         Print active player data dir
     active                      Print active player name
 
