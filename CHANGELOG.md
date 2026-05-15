@@ -10,6 +10,8 @@
   actions (open packs, sell/buy, grade, trade, auction, stores, lots, Flopps world)
 - **`help` command is player-free** — runs without a player context, accessible to
   anyone
+- **SKILL.md guidance** — new "When the Player Is Confused — Recommend help"
+  section tells agents to stop guessing and run `help` when a user is lost
 
 ### Changed
 - **`wallet` now shows ALL collections** — cash, total collection value across every
