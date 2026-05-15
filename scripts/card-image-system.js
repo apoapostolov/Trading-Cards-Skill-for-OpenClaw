@@ -1309,6 +1309,7 @@ function formatStats(card) {
 function buildGeneralSegment({ side, set, card, variantProfile, formatProfile, tradeDressProfile, noveltyProfile }) {
   return compact([
     `Generate a real Flopps-style premium collectible trading card render with a centered portrait card layout, a clear title bar showing the set logo or wordmark, and a readable stats back.`,
+    '[FLOPPS brand — parody of Topps. Render "Flopps" on the card.]',
     'This is a trading-card product, not a poster, magazine spread, or generic illustration.',
     `Side: ${side}.`,
     `Set: ${clean(set?.name || set?.code || 'unknown set')}.`,
@@ -1486,8 +1487,8 @@ function buildRenderPromptShort(card, set, side, formatProfile, variantProfile, 
   const bakedSubject = (variantProfile.tradeDressMode === 'baked' && side === 'front' && card.imagePrompt)
     ? clean(card.imagePrompt)
     : null;
-  // The brand is FLOPS — a parody of TOPPS. The letter T is always replaced with FL.
-  const floppsRule = 'The brand name is FLOPPS (parody of TOPPS — same double-P). Replace every leading T with FL: Topps becomes Flopps, Top becomes Flop, Topps Chrome becomes Flopps Chrome. The word "Flopps" must appear on the card.';
+  // Brand: Flopps = Topps parody (T→FL). Bracketed so it doesn't bleed into card content.
+  const floppsRule = '[FLOPPS brand — parody of Topps. Render "Flopps" on the card.]';
   const setLogoLine = `Set logo/wordmark on card: "${clean(set?.name || set?.code || '')}"`;
   const foilDesc = (variantProfile.tradeDressMode !== 'baked' && variantProfile.foil && variantProfile.foil !== 'source-prompt-defined finish')
     ? `Foil: ${variantProfile.foil}. Palette: ${variantProfile.palette}. Pattern: ${variantProfile.pattern}.`
