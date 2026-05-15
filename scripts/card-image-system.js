@@ -1313,7 +1313,7 @@ function buildGeneralSegment({ side, set, card, variantProfile, formatProfile, t
     'This is a trading-card product, not a poster, magazine spread, or generic illustration.',
     `Side: ${side}.`,
     `Set: ${clean(set?.name || set?.code || 'unknown set')}.`,
-    `Set logo/wordmark: ${clean(set?.name || set?.code || 'the set name')}.`,
+    `Set logo/wordmark: ${clean(set?.themeName || set?.name || set?.code || 'the set name')}.`,
     'Keep the composition print-ready, legible, and centered inside the requested card ratio.',
     `Respect the ${formatProfile.ratio} layout and the card-safe text zones.`,
     `Set trade dress: ${tradeDressProfile.name}.`,
@@ -1489,7 +1489,7 @@ function buildRenderPromptShort(card, set, side, formatProfile, variantProfile, 
     : null;
   // Brand: Flopps = Topps parody (T→FL). Bracketed so it doesn't bleed into card content.
   const floppsRule = '[FLOPPS brand — parody of Topps. Render "Flopps" on the card.]';
-  const setLogoLine = `Set logo/wordmark on card: "${clean(set?.name || set?.code || '')}"`;
+  const setLogoLine = `Set logo/wordmark on card: "${clean(set?.themeName || set?.name || set?.code || '')}"`;
   const foilDesc = (variantProfile.tradeDressMode !== 'baked' && variantProfile.foil && variantProfile.foil !== 'source-prompt-defined finish')
     ? `Foil: ${variantProfile.foil}. Palette: ${variantProfile.palette}. Pattern: ${variantProfile.pattern}.`
     : '';
