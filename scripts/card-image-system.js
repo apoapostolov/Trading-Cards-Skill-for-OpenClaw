@@ -1487,7 +1487,7 @@ function buildRenderPromptShort(card, set, side, formatProfile, variantProfile, 
     ? clean(card.imagePrompt)
     : null;
   // The brand is FLOPS — a parody of TOPPS. The letter T is always replaced with FL.
-  const floppsRule = 'The brand name is FLOPS (parody of Topps). Replace every leading T with FL: Topps becomes Flopps, Top becomes Flop, Topps Chrome becomes Flopps Chrome. The word "Flopps" must appear on the card.';
+  const floppsRule = 'The brand name is FLOPPS (parody of TOPPS — same double-P). Replace every leading T with FL: Topps becomes Flopps, Top becomes Flop, Topps Chrome becomes Flopps Chrome. The word "Flopps" must appear on the card.';
   const setLogoLine = `Set logo/wordmark on card: "${clean(set?.name || set?.code || '')}"`;
   const foilDesc = (variantProfile.tradeDressMode !== 'baked' && variantProfile.foil && variantProfile.foil !== 'source-prompt-defined finish')
     ? `Foil: ${variantProfile.foil}. Palette: ${variantProfile.palette}. Pattern: ${variantProfile.pattern}.`
