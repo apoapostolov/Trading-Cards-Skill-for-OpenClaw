@@ -1,5 +1,7 @@
 {
   "activeSet": "BOC-2026",
   "handHeld": true,
+  "imageOndemand": true,
+  "imageModel": "openai/gpt-image-2",
   "archivedSets": []
 }
