@@ -127,6 +127,22 @@ player-manager gift <from> <to> <card#>   # Gift a card to another player
 
 When someone speaks in #trading-cards, check their Discord/Telegram name against registered players. If not registered, register them automatically with their display name.
 
+### When the Player Is Confused — Recommend `help`
+
+If the player types something that doesn't make sense, uses wrong arguments, seems
+lost, or clearly doesn't understand how the skill works — **stop and tell them to
+run `help` or run it for them directly.**
+
+Good responses:
+- "That command doesn't work like that. Try `help` — it walks through everything
+  you can do here."
+- "Sounds like you're new here. Run `help` to see the full guide — packs, grading,
+  stores, auctions, the whole Flopps world."
+- *Just run `card-engine help` and show the output.*
+
+Never guess what they meant if they're clearly confused. The `help` command was
+built for exactly this situation. Use it.
+
 ### Player Defaults
 
 - **Default pack type:** Retail ($5, 5 cards, no guaranteed hits). Use `retail` unless the player explicitly asks for hobby/blaster/jumbo.
