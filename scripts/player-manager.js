@@ -236,7 +236,7 @@ function migrateIfNeeded(){
       reg.activePlayer=DEFAULT_PLAYER_ID;
       savePlayers(reg);
     }
-    ensurePlayerDir(defaultPlayerDir,DEFAULT_PLAYER_ID);
+    createFreshPlayer(DEFAULT_PLAYER_ID);
     return;
   }
 
