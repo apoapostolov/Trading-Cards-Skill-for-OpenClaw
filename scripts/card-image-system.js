@@ -1621,7 +1621,16 @@ function buildPromptPayload(card, set, side, options = {}) {
   const novelty = buildNoveltySegment(noveltyProfile);
   const physical = buildPhysicalSegment(formatProfile, conditionProfile, serializationProfile);
   const image = buildImageSegment(card, set, side, tradeDressProfile, variantProfile, noveltyProfile);
-  const handHeld = options.handHeld !== undefined ? options.handHeld : (set && set.handHeld !== undefined ? set.handHeld : true);
+  // Read handHeld from global config, CLI flag override, default true
+  let handHeld = true;
+  if (options.handHeld !== undefined) {
+    handHeld = options.handHeld;
+  } else {
+    try {
+      const globalCfg = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+      if (globalCfg.handHeld !== undefined) handHeld = globalCfg.handHeld;
+    } catch {}
+  }
   const renderPromptShort = buildRenderPromptShort(card, set, side, formatProfile, variantProfile, tradeDressProfile, noveltyProfile, conditionProfile, serializationProfile, handHeld);
   const renderPromptDetailed = buildRenderPromptDetailed(card, set, side, formatProfile, variantProfile, tradeDressProfile, noveltyProfile, typeProfile, conditionProfile, serializationProfile, image);
   const promptFormat = clean(options.promptFormat || 'text').toLowerCase() === 'json' ? 'json' : 'text';
