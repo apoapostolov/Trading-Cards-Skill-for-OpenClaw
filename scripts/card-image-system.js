@@ -1478,11 +1478,18 @@ function buildImageSegment(card, set, side, tradeDressProfile, variantProfile, n
 
 function buildRenderPromptShort(card, set, side, formatProfile, variantProfile, tradeDressProfile, noveltyProfile, conditionProfile, serializationProfile) {
   const subject = clean(card.name || card.cardNum || 'the card');
+  // For baked prompt sets, use the rich baked description as the subject line
+  // instead of a generic "Single centered hero subject: NAME" — the AI generator's
+  // imagePrompt already describes exactly what to draw. Keep all the structural
+  // trading card framing (ratio, nameplate, typography) since gpt-image-2 needs it.
+  const bakedSubject = (variantProfile.tradeDressMode === 'baked' && side === 'front' && card.imagePrompt)
+    ? clean(card.imagePrompt)
+    : null;
   const parts = [
     `Topps Chrome-style collectible trading card, ${side}.`,
     formatProfile.ratio,
     side === 'front'
-      ? `Single centered hero subject: ${subject}.`
+      ? `Single centered subject: ${bakedSubject || subject}.`
       : `Readable stats panel and flavor banner for ${subject}.`,
     `Set emblem: ${tradeDressProfile.identity}.`,
     variantProfile.tradeDressMode === 'baked'
