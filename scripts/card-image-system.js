@@ -1308,15 +1308,16 @@ function formatStats(card) {
 
 function buildGeneralSegment({ side, set, card, variantProfile, formatProfile, tradeDressProfile, noveltyProfile }) {
   return compact([
-    'Generate a real Topps-style premium collectible trading card render with a centered portrait card layout, a clear title bar, a set logo or wordmark, and a readable stats back.',
+    `Generate a real Flopps-style premium collectible trading card render with a centered portrait card layout, a clear title bar showing the set logo or wordmark, and a readable stats back.`,
     'This is a trading-card product, not a poster, magazine spread, or generic illustration.',
     `Side: ${side}.`,
     `Set: ${clean(set?.name || set?.code || 'unknown set')}.`,
+    `Set logo/wordmark: ${clean(set?.name || set?.code || 'the set name')}.`,
     'Keep the composition print-ready, legible, and centered inside the requested card ratio.',
     `Respect the ${formatProfile.ratio} layout and the card-safe text zones.`,
     `Set trade dress: ${tradeDressProfile.name}.`,
     `Trade dress mode for this card: ${variantProfile.tradeDressMode || 'carry'}.`,
-    `Use a ${variantProfile.family} card finish with controlled reflections, premium print materials, and a clear Topps trading-card structure.`,
+    `Use a ${variantProfile.family} card finish with controlled reflections, premium print materials, and a clear Flopps trading-card structure.`,
     noveltyProfile.isNoveltyCard ? `Novelty subtype: ${noveltyProfile.subtype}.` : '',
     'Avoid poster composition, wallpaper composition, magazine spread layouts, random extra subjects, warped logos, and illegible typography.',
   ]);
@@ -1485,18 +1486,27 @@ function buildRenderPromptShort(card, set, side, formatProfile, variantProfile, 
   const bakedSubject = (variantProfile.tradeDressMode === 'baked' && side === 'front' && card.imagePrompt)
     ? clean(card.imagePrompt)
     : null;
+  // The brand is FLOPS — a parody of TOPPS. The letter T is always replaced with FL.
+  const floppsRule = 'The brand name is FLOPS (parody of Topps). Replace every leading T with FL: Topps becomes Flopps, Top becomes Flop, Topps Chrome becomes Flopps Chrome. The word "Flopps" must appear on the card.';
+  const setLogoLine = `Set logo/wordmark on card: "${clean(set?.name || set?.code || '')}"`;
+  const foilDesc = (variantProfile.tradeDressMode !== 'baked' && variantProfile.foil && variantProfile.foil !== 'source-prompt-defined finish')
+    ? `Foil: ${variantProfile.foil}. Palette: ${variantProfile.palette}. Pattern: ${variantProfile.pattern}.`
+    : '';
   const parts = [
-    `Topps Chrome-style collectible trading card, ${side}.`,
+    `Flopps Chrome-style collectible trading card, ${side}.`,
+    floppsRule,
     formatProfile.ratio,
     side === 'front'
       ? `Single centered subject: ${bakedSubject || subject}.`
       : `Readable stats panel and flavor banner for ${subject}.`,
-    `Set emblem: ${tradeDressProfile.identity}.`,
+    setLogoLine,
+    `Set emblem style: ${tradeDressProfile.identity}.`,
     variantProfile.tradeDressMode === 'baked'
       ? 'Use the baked set-specific layout.'
       : `Use a ${variantProfile.family} finish with the ${variantProfile.tradeDressMode} trade-dress mode.`,
+    foilDesc,
     side === 'front'
-      ? 'Clean lower-third nameplate, crisp chrome border, realistic printed-card finish, tight card-safe crop.'
+      ? 'Clean lower-third nameplate, realistic printed-card finish, tight card-safe crop.'
       : 'Crisp stats grid, serial rail, readable flavor text, realistic printed-card finish.',
     handHeld ? 'Real-world photography framing of the card itself, not a full-frame digital render.' : '',
     conditionProfile.key === 'graded'
