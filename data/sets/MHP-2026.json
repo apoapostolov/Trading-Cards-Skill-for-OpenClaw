@@ -1,0 +1,2288 @@
+{
+  "code": "MHP",
+  "name": "Murrican Harry Potter Flagship Series",
+  "officialName": "Murrican Harry Potter Flagship Series",
+  "themeName": "Murrican Harry Potter",
+  "year": 2026,
+  "category": "Custom",
+  "cards": [
+    {
+      "num": "001",
+      "name": "Harry Freedomwizard",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He wields a wand carved from a baseball bat and dreams of the freedom to cast spells in the suburbs.",
+      "stats": {
+        "power": 45,
+        "speed": 50,
+        "technique": 42,
+        "endurance": 60,
+        "charisma": 55
+      },
+      "basePrice": 0.25,
+      "imagePrompt": "Digital art portrait of a young boy in a denim robe holding a wooden bat-wand, suburban sunset background, rustic American aesthetic.",
+      "imagePromptBack": "Silver metallic finish, minimalist stats panel on the left, card number 001, holographic foil text, clean sans-serif typography.",
+      "imagePromptBackFlavor": "Born in the heartland, Harry discovered his latent magical abilities while trying to hit a curveball with a cursed hickory stick. He now wanders the state fairs looking for his destiny."
+    },
+    {
+      "num": "002",
+      "name": "Hermione Ledger",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "A meticulous accountant of the arcane who ensures every spell cast is properly filed on her taxes.",
+      "stats": {
+        "power": 52,
+        "speed": 48,
+        "technique": 70,
+        "endurance": 45,
+        "charisma": 50
+      },
+      "basePrice": 0.15,
+      "imagePrompt": "Vector illustration of a studious girl in a blazer holding a calculator and a parchment scroll, crisp lighting, collegiate palette.",
+      "imagePromptBack": "Silver border with clean white text, stats panel centered below the portrait, silver holographic finish, card number 002.",
+      "imagePromptBackFlavor": "Hermione manages the magical regulations bureau with an iron fist and a red pen. She knows that even a levitation charm requires a permit in this jurisdiction."
+    },
+    {
+      "num": "003",
+      "name": "Ron Truckstop",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Known for his love of magical snacks, he spent his youth guarding the enchanted vending machines of the Midwest.",
+      "stats": {
+        "power": 60,
+        "speed": 40,
+        "technique": 45,
+        "endurance": 70,
+        "charisma": 48
+      },
+      "basePrice": 0.2,
+      "imagePrompt": "Artistic rendering of a lanky youth in a flannel shirt eating a glowing pastry, neon diner sign background, warm moody lighting.",
+      "imagePromptBack": "Common silver theme, stats panel aligned right, holographic finish, card number 003, crisp readability.",
+      "imagePromptBackFlavor": "Always hungry for adventure, Ron spent seasons working at the mystic roadside diners that keep the magical highways running. He never leaves home without a snack."
+    },
+    {
+      "num": "004",
+      "name": "Draco Dollar-Sign",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He believes that the true power of sorcery lies in real estate holdings and aggressive portfolio management.",
+      "stats": {
+        "power": 55,
+        "speed": 55,
+        "technique": 60,
+        "endurance": 50,
+        "charisma": 65
+      },
+      "basePrice": 0.28,
+      "imagePrompt": "Sleek digital art of a posh young man in a silk suit holding a golden staff, high-end skyscraper background, expensive aesthetic.",
+      "imagePromptBack": "Silver aesthetic, stats table, holographic accents, card 004, professional layout.",
+      "imagePromptBackFlavor": "He measures magic in market capitalization rather than mana points. His family empire spans the continent, but his heart is firmly invested in luxury goods."
+    },
+    {
+      "num": "005",
+      "name": "Neville Pave-it",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "An apprentice landscape architect who uses growth charms to keep the neighborhood shrubs perfectly trimmed.",
+      "stats": {
+        "power": 48,
+        "speed": 40,
+        "technique": 65,
+        "endurance": 55,
+        "charisma": 45
+      },
+      "basePrice": 0.12,
+      "imagePrompt": "Detailed art of a gardener boy with magical shears, blooming clover motif, soft green and brown color palette, whimsical style.",
+      "imagePromptBack": "Silver border design, stats layout, card 004, holographic foil effect.",
+      "imagePromptBackFlavor": "Neville is the secret architect behind the pristine lawns of the magical suburbs. He believes that every plant deserves a chance to grow, especially weeds."
+    },
+    {
+      "num": "006",
+      "name": "Luna Looney-Tuner",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "The local radio DJ who broadcasts secret messages through static and cosmic background radiation.",
+      "stats": {
+        "power": 55,
+        "speed": 60,
+        "technique": 75,
+        "endurance": 50,
+        "charisma": 70
+      },
+      "basePrice": 0.6,
+      "imagePrompt": "Atmospheric art of a girl wearing oversized headphones and nebula-patterned clothes, radio tower background, purple and blue tones.",
+      "imagePromptBack": "Green uncommon border, stats panel with energy graph, holographic finish, card number 006.",
+      "imagePromptBackFlavor": "Luna captures the unseen signals that drift across the plains. Listen closely to the static, and you might hear the future of the world being whispered."
+    },
+    {
+      "num": "007",
+      "name": "Ginny Gas-Tank",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "A racing prodigy who enchants muscle cars to run on pure ozone and lightning strikes.",
+      "stats": {
+        "power": 70,
+        "speed": 80,
+        "technique": 60,
+        "endurance": 75,
+        "charisma": 65
+      },
+      "basePrice": 0.7,
+      "imagePrompt": "Dynamic action shot of a girl leaning against a glowing metallic racing vehicle, sparks flying, desert highway, high contrast art.",
+      "imagePromptBack": "Uncommon green border, technical stats layout, holographic trim, card number 007.",
+      "imagePromptBackFlavor": "When the road stretches out for miles, Ginny is the fastest thing on it. She treats her engine like a living beast that needs a firm, magical hand."
+    },
+    {
+      "num": "008",
+      "name": "Seamus Smokestack",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "He specializes in industrial-grade alchemy, purifying the polluted rivers of the forbidden zone.",
+      "stats": {
+        "power": 75,
+        "speed": 55,
+        "technique": 65,
+        "endurance": 70,
+        "charisma": 50
+      },
+      "basePrice": 0.45,
+      "imagePrompt": "Gritty digital art of a youth holding a bubbling test tube, refinery pipes in the background, charcoal and industrial orange tones.",
+      "imagePromptBack": "Uncommon green design, stats grid, holographic finish, card number 008.",
+      "imagePromptBackFlavor": "The cleanup crew of the magical world is often overlooked, but Seamus works tirelessly to reverse the damage caused by unregulated potion manufacturing."
+    },
+    {
+      "num": "009",
+      "name": "Dean Dribbler",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "He uses minor gravity-defying charms to become the greatest point guard in the mystical streetball league.",
+      "stats": {
+        "power": 65,
+        "speed": 80,
+        "technique": 70,
+        "endurance": 60,
+        "charisma": 60
+      },
+      "basePrice": 0.55,
+      "imagePrompt": "Cool sports-themed art of a player with a glowing basketball, urban court backdrop, sunset lighting, vibrant style.",
+      "imagePromptBack": "Green border, stats panel with sports icons, holographic finish, card number 009.",
+      "imagePromptBackFlavor": "In the underground courts of the city, Dean\u2019s moves are legendary. He calls them physics-bending, the refs call them a technical violation of reality."
+    },
+    {
+      "num": "010",
+      "name": "Professor McMurica",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "An elderly sorceress who protects the constitution of the magical realm from those who would undermine it.",
+      "stats": {
+        "power": 85,
+        "speed": 65,
+        "technique": 90,
+        "endurance": 80,
+        "charisma": 75
+      },
+      "basePrice": 1.25,
+      "imagePrompt": "Regal portrait of an older woman with a star-spangled cloak, library of magical law books, dignified style, blue and gold hues.",
+      "imagePromptBack": "Blue star-tier border, stats breakdown, embossed holographic finish, card number 010.",
+      "imagePromptBackFlavor": "She is the stern guardian of the rules. Do not cross her path while holding a wand, for she knows every clause of the magical bylaws by heart."
+    },
+    {
+      "num": "011",
+      "name": "Albus Appletree",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "The wise headmaster of a school located inside a giant hollowed-out oak tree in the Midwest.",
+      "stats": {
+        "power": 88,
+        "speed": 60,
+        "technique": 90,
+        "endurance": 85,
+        "charisma": 80
+      },
+      "basePrice": 1.4,
+      "imagePrompt": "Ethereal painting of an old man with a long beard holding a glowing wooden staff, forest interior light, magical aura.",
+      "imagePromptBack": "Blue star-tier aesthetic, stats panel with gold font, holographic sheen, card number 011.",
+      "imagePromptBackFlavor": "His wisdom is deep as the roots of his home. Many travel from coast to coast just to ask his advice on the most trivial of life's mysteries."
+    },
+    {
+      "num": "012",
+      "name": "Severus Shadow-Whisper",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "A double agent of the secret service who hides his true allegiance behind a mask of indifference.",
+      "stats": {
+        "power": 80,
+        "speed": 75,
+        "technique": 85,
+        "endurance": 70,
+        "charisma": 60
+      },
+      "basePrice": 1.1,
+      "imagePrompt": "Moody digital character art of a man in a black trenchcoat, silhouettes of city streets, dark blue and grey tones.",
+      "imagePromptBack": "Star blue border, detailed stats, holographic finish, card number 012.",
+      "imagePromptBackFlavor": "He plays both sides of the curtain, ensuring that neither the light nor the dark ever fully wins. Silence is his loudest weapon."
+    },
+    {
+      "num": "013",
+      "name": "Sirius Star-Gazer",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "A rugged traveler who maps the constellations to unlock the hidden gateways between states.",
+      "stats": {
+        "power": 75,
+        "speed": 85,
+        "technique": 70,
+        "endurance": 80,
+        "charisma": 75
+      },
+      "basePrice": 0.95,
+      "imagePrompt": "Adventure-themed art of a man with a telescope and map, night sky background, cosmic dust aesthetic, detailed linework.",
+      "imagePromptBack": "Blue border design, stats layout, holographic finish, card number 013.",
+      "imagePromptBackFlavor": "When the moon sits at the right angle, he can step through the space between stars. He keeps the secrets of the galaxy in his pack."
+    },
+    {
+      "num": "014",
+      "name": "Bellatrix Boulevard",
+      "subset": "Flashback",
+      "starTier": "Superstar",
+      "desc": "A chaotic spell-caster who left a trail of neon ruins across the neon-lit avenues of the metropolis.",
+      "stats": {
+        "power": 92,
+        "speed": 85,
+        "technique": 75,
+        "endurance": 80,
+        "charisma": 90
+      },
+      "basePrice": 2.5,
+      "imagePrompt": "Intense energy-focused art of a woman holding vibrant violet flames, city boulevard background, chaotic lighting, purple palette.",
+      "imagePromptBack": "Superstar purple border, technical stats, holographic shimmer, card number 014.",
+      "imagePromptBackFlavor": "She is the storm that hit the city, a whirlwind of uncontrolled energy. Many still talk about the night the streetlights turned into serpents."
+    },
+    {
+      "num": "015",
+      "name": "Lucius Ledger-Lord",
+      "subset": "Flashback",
+      "starTier": "Superstar",
+      "desc": "Once the king of the corporate magical world, he manipulated the economy of potions for personal gain.",
+      "stats": {
+        "power": 85,
+        "speed": 70,
+        "technique": 95,
+        "endurance": 75,
+        "charisma": 95
+      },
+      "basePrice": 2.8,
+      "imagePrompt": "Sophisticated art of a man in a pinstripe suit with a golden cane, high-rise boardroom background, purple and gold tones.",
+      "imagePromptBack": "Superstar purple border, stats table, holographic finish, card number 015.",
+      "imagePromptBackFlavor": "He built an empire on debt and charm. Even now, in exile, he controls the board from the shadows of his penthouse office."
+    },
+    {
+      "num": "016",
+      "name": "Remus Rainfall",
+      "subset": "Flashback",
+      "starTier": "Superstar",
+      "desc": "A weather-wizard who disappeared during the great drought, leaving behind only the scent of ozone.",
+      "stats": {
+        "power": 80,
+        "speed": 75,
+        "technique": 90,
+        "endurance": 95,
+        "charisma": 70
+      },
+      "basePrice": 2.1,
+      "imagePrompt": "Mystical art of a man walking through a storm, raindrops suspended in time, lightning flash, purple and dark grey palette.",
+      "imagePromptBack": "Superstar purple theme, stats layout, holographic finish, card number 016.",
+      "imagePromptBackFlavor": "He controlled the clouds to save the farms, but the weight of the sky eventually became too much. He is the legend of the lost summer."
+    },
+    {
+      "num": "017",
+      "name": "Voldy-Mortgage",
+      "subset": "Flashback",
+      "starTier": "Legendary",
+      "desc": "The shadow-tyrant who sought to foreclose on the entire magical continent to consolidate power.",
+      "stats": {
+        "power": 98,
+        "speed": 80,
+        "technique": 95,
+        "endurance": 85,
+        "charisma": 90
+      },
+      "basePrice": 4.5,
+      "imagePrompt": "Menacing digital illustration of a hooded creature with glowing red eyes, shattered building background, gold and black theme.",
+      "imagePromptBack": "Legendary gold border, stats card, heavy holographic embossing, card number 017.",
+      "imagePromptBackFlavor": "His name was never spoken, only signed on legal documents that drained the magic from the land. He remains the ultimate threat to the republic."
+    },
+    {
+      "num": "018",
+      "name": "Godric Grit",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "The original frontier architect who founded the academy on the back of a migratory mountain range.",
+      "stats": {
+        "power": 95,
+        "speed": 75,
+        "technique": 90,
+        "endurance": 98,
+        "charisma": 85
+      },
+      "basePrice": 4.75,
+      "imagePrompt": "Epic portrait of a pioneer-style wizard holding a mountain-carved sword, rugged beard, dawn sun, gold hues.",
+      "imagePromptBack": "Legendary gold border, detailed stats, holographic finish, card number 018.",
+      "imagePromptBackFlavor": "They say he laid the first stone of the school by hand. He represents the hard work and gritty determination of the founding magical generation."
+    },
+    {
+      "num": "019",
+      "name": "Salazar Slate",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "The master of foundation stones who built the underground labyrinth where the forbidden rituals are stored.",
+      "stats": {
+        "power": 90,
+        "speed": 85,
+        "technique": 98,
+        "endurance": 92,
+        "charisma": 80
+      },
+      "basePrice": 4.25,
+      "imagePrompt": "Intimidating art of a man in ancient stone-forged armor, cavern background, glowing runes, gold and obsidian palettes.",
+      "imagePromptBack": "Gold legendary theme, stats layout, holographic finish, card number 019.",
+      "imagePromptBackFlavor": "He saw the world as a structure to be controlled. His legacy is etched into the very foundations of the earth beneath the main academy."
+    },
+    {
+      "num": "020",
+      "name": "Rowena Real-estate",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "She organized the very first governing council to regulate the chaotic energies of the untamed wilderness.",
+      "stats": {
+        "power": 85,
+        "speed": 90,
+        "technique": 95,
+        "endurance": 85,
+        "charisma": 98
+      },
+      "basePrice": 4.9,
+      "imagePrompt": "Majestic portrait of a woman with a scrolls-belt and crown, hall of government background, gold filigree, high-contrast style.",
+      "imagePromptBack": "Gold legendary border, statistics dashboard, holographic finish, card number 020.",
+      "imagePromptBackFlavor": "Governance and magic were her twins. She ensured that the new continent would be a place of order, not just chaos and raw power."
+    },
+    {
+      "num": "021",
+      "name": "Cletus the Wand-Maker",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He whittles his wands out of reclaimed backyard oak and dreams of pure magic.",
+      "stats": {
+        "power": 55,
+        "speed": 40,
+        "technique": 62,
+        "endurance": 58,
+        "charisma": 45
+      },
+      "basePrice": 0.15,
+      "imagePrompt": "A grizzled man carving a magic wand on a porch, rustic style, digital art trading card",
+      "imagePromptBack": "Distressed wood background, green stats panel, copper finish.",
+      "imagePromptBackFlavor": "Cletus believes a wand should hold a grudge and a good secret. Don't ask him where he gets his phoenix feathers."
+    },
+    {
+      "num": "022",
+      "name": "Deputy Dementor",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Patrolling the local DMV to ensure no one leaves with a smile.",
+      "stats": {
+        "power": 60,
+        "speed": 45,
+        "technique": 50,
+        "endurance": 70,
+        "charisma": 40
+      },
+      "basePrice": 0.2,
+      "imagePrompt": "A hooded figure in a cheap sheriff's vest holding a badge, dark misty swamp background",
+      "imagePromptBack": "Cold blue steel aesthetic, stats grid, cold matte finish.",
+      "imagePromptBackFlavor": "The Deputy doesn't need a search warrant to drain your optimism. He works the graveyard shift at the county line."
+    },
+    {
+      "num": "023",
+      "name": "Larry the Lightning-Scarred",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Got his scar from an unfortunate run-in with a backyard transformer during a storm.",
+      "stats": {
+        "power": 65,
+        "speed": 75,
+        "technique": 55,
+        "endurance": 60,
+        "charisma": 60
+      },
+      "basePrice": 0.55,
+      "imagePrompt": "A teenager in a hoodie with a glowing scar on his forehead, electric sparks nearby",
+      "imagePromptBack": "Neon blue circuit board design, gold stats display, glossy finish.",
+      "imagePromptBackFlavor": "Larry claims he was chosen by destiny, but his neighbor says he was just trying to jump his BMX over a live wire."
+    },
+    {
+      "num": "024",
+      "name": "Granger the Gearhead",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "She can rebuild a combustion-engine broomstick in less than ten minutes flat.",
+      "stats": {
+        "power": 50,
+        "speed": 60,
+        "technique": 75,
+        "endurance": 65,
+        "charisma": 50
+      },
+      "basePrice": 0.25,
+      "imagePrompt": "A teenage girl with grease smudges on her face holding a wrench, steampunk workshop",
+      "imagePromptBack": "Oil-stained paper aesthetic, silver stats border, metallic finish.",
+      "imagePromptBackFlavor": "Why use charms when you have high-octane fuel and a bit of elbow grease? She makes the engine purr like a dragon."
+    },
+    {
+      "num": "025",
+      "name": "Potter the Quarterback",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "Throws the Golden Snitch like a perfectly spiraled pigskin across the stadium.",
+      "stats": {
+        "power": 88,
+        "speed": 92,
+        "technique": 85,
+        "endurance": 80,
+        "charisma": 90
+      },
+      "basePrice": 2.75,
+      "imagePrompt": "A athletic wizard in a gridiron jersey, holding a glowing ball, stadium lights, cinematic",
+      "imagePromptBack": "Leather-texture background, gold stats framing, holographic finish.",
+      "imagePromptBackFlavor": "He's the captain of the state championship team. When Potter takes the field, even the goalposts start cheering."
+    },
+    {
+      "num": "026",
+      "name": "Big Al of House Slyther",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Always looking for the shortcut to get the most candy on Halloween.",
+      "stats": {
+        "power": 55,
+        "speed": 65,
+        "technique": 45,
+        "endurance": 50,
+        "charisma": 70
+      },
+      "basePrice": 0.22,
+      "imagePrompt": "A cunning boy in a green letterman jacket, smirk on his face, suburban street",
+      "imagePromptBack": "Emerald green felt backing, stats chart, matte finish.",
+      "imagePromptBackFlavor": "Big Al knows which houses give out full-sized candy bars and which ones are protected by anti-theft hexes."
+    },
+    {
+      "num": "027",
+      "name": "Coach Dumbledore",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "He\u2019s seen every play in the book and a few that are illegal in three states.",
+      "stats": {
+        "power": 95,
+        "speed": 80,
+        "technique": 98,
+        "endurance": 92,
+        "charisma": 95
+      },
+      "basePrice": 4.8,
+      "imagePrompt": "An elderly man in a velvet coaching jacket, long white beard, whistle around neck",
+      "imagePromptBack": "Vellum parchment style, gold-leaf stats, embossed finish.",
+      "imagePromptBackFlavor": "A legend of the game. He doesn't need a playbook when he can read the opposition's mind from the sidelines."
+    },
+    {
+      "num": "028",
+      "name": "Snape the Shop Teacher",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "He takes ten points from your grade if your sawdust isn't swept into a perfect pile.",
+      "stats": {
+        "power": 65,
+        "speed": 50,
+        "technique": 80,
+        "endurance": 70,
+        "charisma": 30
+      },
+      "basePrice": 0.45,
+      "imagePrompt": "A stern man in a dusty apron, holding a caliper, school woodshop background",
+      "imagePromptBack": "Blackboard-style background, chalk-white stats, matte finish.",
+      "imagePromptBackFlavor": "He teaches precision and misery in equal measure. Mess up a wood joint and you're cleaning the shop floor."
+    },
+    {
+      "num": "029",
+      "name": "Luna the Conspiracy Theorist",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "She claims the local radio station is run by invisible government pixies.",
+      "stats": {
+        "power": 40,
+        "speed": 55,
+        "technique": 60,
+        "endurance": 75,
+        "charisma": 65
+      },
+      "basePrice": 0.28,
+      "imagePrompt": "A girl wearing tin-foil hat and oversized glasses, starry night background",
+      "imagePromptBack": "Cosmic purple background, neon star stats, holographic finish.",
+      "imagePromptBackFlavor": "They call her odd, but she's the only one who noticed the school bus has been driving in loops for three weeks."
+    },
+    {
+      "num": "030",
+      "name": "Weasley Twin Hustlers",
+      "subset": "Flashback",
+      "starTier": "Star",
+      "desc": "Two heads are better than one when you\u2019re running a shell game in the cafeteria.",
+      "stats": {
+        "power": 70,
+        "speed": 85,
+        "technique": 80,
+        "endurance": 60,
+        "charisma": 80
+      },
+      "basePrice": 1.25,
+      "imagePrompt": "Identical twin pranksters, bright orange hair, holding playing cards, mischievous smiles",
+      "imagePromptBack": "Red and orange checkerboard, bold stats, glossy finish.",
+      "imagePromptBackFlavor": "They invented the 'Three-Card Monte' of the wizarding world. One twin distracts you, the other takes your lunch money."
+    },
+    {
+      "num": "031",
+      "name": "Sheriff Hagrid",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "He keeps the giant guard dogs at the county line and the moonshine in the shed.",
+      "stats": {
+        "power": 90,
+        "speed": 40,
+        "technique": 60,
+        "endurance": 95,
+        "charisma": 85
+      },
+      "basePrice": 1.4,
+      "imagePrompt": "A giant man in a sheriff uniform, rustic cabin background, massive hound by his side",
+      "imagePromptBack": "Wood-grain texture, heavy-duty stats display, matte finish.",
+      "imagePromptBackFlavor": "You don't cross the county line when Hagrid is on duty. He\u2019s got enough deputies in his backyard to start a war."
+    },
+    {
+      "num": "032",
+      "name": "Malfoy the Rich Kid",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He bought his way onto the team with a custom-built, carbon-fiber broomstick.",
+      "stats": {
+        "power": 55,
+        "speed": 70,
+        "technique": 50,
+        "endurance": 45,
+        "charisma": 60
+      },
+      "basePrice": 0.3,
+      "imagePrompt": "A blonde boy in an expensive tailored suit, arrogant expression, luxury car nearby",
+      "imagePromptBack": "Platinum silver background, black stats, metallic finish.",
+      "imagePromptBackFlavor": "His dad owns the local wand-manufacturing plant, and it shows in his attitude. Money can't buy talent, but it helps."
+    },
+    {
+      "num": "033",
+      "name": "McGonagall the Principal",
+      "subset": "Legend",
+      "starTier": "Superstar",
+      "desc": "Don't run in the halls, or she will turn you into a paperclip before you reach detention.",
+      "stats": {
+        "power": 85,
+        "speed": 75,
+        "technique": 95,
+        "endurance": 80,
+        "charisma": 85
+      },
+      "basePrice": 2.9,
+      "imagePrompt": "A sharp-dressed woman with glasses, intense stare, school hallway, regal stance",
+      "imagePromptBack": "Plaid pattern background, stats grid, satin finish.",
+      "imagePromptBackFlavor": "The iron lady of the school board. She has a strict no-nonsense policy and an even stricter transfiguration spell."
+    },
+    {
+      "num": "034",
+      "name": "Neville the Gardener",
+      "subset": "Rookie",
+      "starTier": "Common",
+      "desc": "He knows every plant that can snap your fingers off and which ones cure the common cold.",
+      "stats": {
+        "power": 60,
+        "speed": 45,
+        "technique": 75,
+        "endurance": 80,
+        "charisma": 55
+      },
+      "basePrice": 0.25,
+      "imagePrompt": "A bashful boy with a trowel, wearing a greenhouse apron, carnivorous plants around",
+      "imagePromptBack": "Leaf-green background, earth-tone stats, matte finish.",
+      "imagePromptBackFlavor": "Neville used to be the kid who tripped over his own feet, now he\u2019s the only one who can handle the greenhouse."
+    },
+    {
+      "num": "035",
+      "name": "Filch the Custodian",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Always creeping around the dark halls with a mop and a grudge.",
+      "stats": {
+        "power": 50,
+        "speed": 60,
+        "technique": 55,
+        "endurance": 70,
+        "charisma": 30
+      },
+      "basePrice": 0.15,
+      "imagePrompt": "A hunched man holding a lantern and a broom, dark school basement, creepy shadows",
+      "imagePromptBack": "Dusty grey concrete aesthetic, faint stats, rough textured finish.",
+      "imagePromptBackFlavor": "He missed his chance to be a mage, so he spends his life scrubbing the floors where the magic happens."
+    },
+    {
+      "num": "036",
+      "name": "Cedric the Rodeo Champ",
+      "subset": "Flashback",
+      "starTier": "Star",
+      "desc": "He rode the fastest Bucking Broom in the Midwest circuit for three years running.",
+      "stats": {
+        "power": 80,
+        "speed": 90,
+        "technique": 85,
+        "endurance": 85,
+        "charisma": 80
+      },
+      "basePrice": 1.35,
+      "imagePrompt": "A handsome boy in a western vest, holding a magic lasso, rodeo arena background",
+      "imagePromptBack": "Sunset orange sky, leather stats panel, glossy finish.",
+      "imagePromptBackFlavor": "A pure-hearted competitor. He earned his spurs on the broom-rodeo circuit before vanishing into the night."
+    },
+    {
+      "num": "037",
+      "name": "Padma the Debate Captain",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "She has a spell to counter every argument before you even open your mouth.",
+      "stats": {
+        "power": 60,
+        "speed": 70,
+        "technique": 85,
+        "endurance": 70,
+        "charisma": 75
+      },
+      "basePrice": 0.5,
+      "imagePrompt": "A girl in a school uniform holding a gavel, books stacked high behind her",
+      "imagePromptBack": "Deep navy blue, crisp white stats, matte finish.",
+      "imagePromptBackFlavor": "Winning the debate is easy when you\u2019ve practiced silence-inducing charms on your opponents."
+    },
+    {
+      "num": "038",
+      "name": "Voldy the Real Estate Mogul",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "He\u2019s trying to buy the school to turn it into a high-rise luxury condo development.",
+      "stats": {
+        "power": 98,
+        "speed": 70,
+        "technique": 95,
+        "endurance": 96,
+        "charisma": 30
+      },
+      "basePrice": 4.95,
+      "imagePrompt": "A pale, suit-wearing man with a cold stare, skyscraper background, dark aura",
+      "imagePromptBack": "Monochrome black and white, sharp stats grid, matte finish.",
+      "imagePromptBackFlavor": "He has no nose for local culture, just for profit. He wants to tear down the historic library for a parking deck."
+    },
+    {
+      "num": "039",
+      "name": "Cho the Tennis Ace",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "Her serves are enchanted with a 'curveball' hex that defies the laws of physics.",
+      "stats": {
+        "power": 75,
+        "speed": 90,
+        "technique": 92,
+        "endurance": 85,
+        "charisma": 80
+      },
+      "basePrice": 2.2,
+      "imagePrompt": "A teenage girl holding a tennis racket, neon glowing tennis ball, court background",
+      "imagePromptBack": "Tennis green, yellow stats, high-gloss finish.",
+      "imagePromptBackFlavor": "She moves across the court like she's apparating. The ball is just a distraction from her lethal accuracy."
+    },
+    {
+      "num": "040",
+      "name": "Dobby the House Elf-Consultant",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "He\u2019ll wash your dishes, fold your socks, and give you stock market advice.",
+      "stats": {
+        "power": 45,
+        "speed": 80,
+        "technique": 70,
+        "endurance": 60,
+        "charisma": 70
+      },
+      "basePrice": 0.4,
+      "imagePrompt": "A small creature in a mismatched sweater, holding a laundry basket, bright home kitchen",
+      "imagePromptBack": "Soft cotton texture, bright stats, matte finish.",
+      "imagePromptBackFlavor": "Dobby is a free elf now, and he charges a premium for his laundry services and investment tips."
+    },
+    {
+      "num": "041",
+      "name": "Kyle the Quaffle-Back",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He hits harder than a rogue bludger on a Friday night.",
+      "stats": {
+        "power": 72,
+        "speed": 65,
+        "technique": 44,
+        "endurance": 68,
+        "charisma": 50
+      },
+      "basePrice": 0.22,
+      "imagePrompt": "Young wizard in a varsity leather jacket holding a quaffle, stadium lights, digital art trading card",
+      "imagePromptBack": "Distressed denim background with stats panel in red and gold, holographic edge finish",
+      "imagePromptBackFlavor": "Kyle has never read a book, but he can throw a ball through a hoop from three zip codes away. He's the MVP of the basement draft league."
+    },
+    {
+      "num": "042",
+      "name": "Trucker Hagrid",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Always has a fresh bucket of KFC and a story about a dragon on the interstate.",
+      "stats": {
+        "power": 75,
+        "speed": 40,
+        "technique": 50,
+        "endurance": 74,
+        "charisma": 60
+      },
+      "basePrice": 0.18,
+      "imagePrompt": "Hagrid with a trucker hat and long beard leaning against a massive semi-truck, sunset background",
+      "imagePromptBack": "Plaid flannel textured background, stats box shaped like a license plate, matte finish",
+      "imagePromptBackFlavor": "I shouldn't have told you that, but the giant spiders are migrating down Route 66 this season."
+    },
+    {
+      "num": "043",
+      "name": "Cletus the Custodian",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He uses a mop, but he calls it a wand and claims it cleans souls.",
+      "stats": {
+        "power": 45,
+        "speed": 42,
+        "technique": 55,
+        "endurance": 60,
+        "charisma": 40
+      },
+      "basePrice": 0.12,
+      "imagePrompt": "Old wizard in janitor overalls holding a mop as a scepter, dark school hallway, moody lighting",
+      "imagePromptBack": "Floor wax swirl pattern background, stats panel in yellow hazard stripes, semi-gloss finish",
+      "imagePromptBackFlavor": "Cletus has seen things in the boys' bathroom that would turn a Dementor's stomach."
+    },
+    {
+      "num": "044",
+      "name": "Mall-Rat Malfoy",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Spending his dad's galleons on designer robes and hair gel at the local strip mall.",
+      "stats": {
+        "power": 52,
+        "speed": 60,
+        "technique": 65,
+        "endurance": 55,
+        "charisma": 70
+      },
+      "basePrice": 0.45,
+      "imagePrompt": "Blonde wizard teenager with heavily slicked hair, leather vest, mall arcade background, vibrant",
+      "imagePromptBack": "Neon aesthetic background, stats panel with silver inlay, holographic card finish",
+      "imagePromptBackFlavor": "My father owns the entire food court, and he\u2019ll hear about your poor fashion choices immediately!"
+    },
+    {
+      "num": "045",
+      "name": "Suburban Sorceress Hermione",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Chief of the PTA and master of the domestic charm spell.",
+      "stats": {
+        "power": 55,
+        "speed": 50,
+        "technique": 70,
+        "endurance": 65,
+        "charisma": 60
+      },
+      "basePrice": 0.25,
+      "imagePrompt": "Woman in an apron waving a wand while a lawnmower pushes itself, suburban house exterior",
+      "imagePromptBack": "Pastel wallpaper pattern background, elegant font for stats, matte laminated finish",
+      "imagePromptBackFlavor": "If you don't file the spell permits for your hedge trimming, expect a very sternly worded letter from the HOA."
+    },
+    {
+      "num": "046",
+      "name": "Shotgun Dumbledore",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "The headmaster who guards the school with a 12-gauge and a twinkle in his eye.",
+      "stats": {
+        "power": 95,
+        "speed": 80,
+        "technique": 98,
+        "endurance": 92,
+        "charisma": 95
+      },
+      "basePrice": 4.8,
+      "imagePrompt": "Wise old wizard with a long beard holding a double-barrel shotgun, glowing blue aura, majestic pose",
+      "imagePromptBack": "Starry night sky background, gold-embossed stats panel, premium lenticular finish",
+      "imagePromptBackFlavor": "Happiness can be found in the darkest of times, provided you remember to keep your safety off."
+    },
+    {
+      "num": "047",
+      "name": "Debra the Diviner",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "She reads fortunes exclusively through expired coupons and lottery scratchers.",
+      "stats": {
+        "power": 40,
+        "speed": 45,
+        "technique": 60,
+        "endurance": 50,
+        "charisma": 55
+      },
+      "basePrice": 0.15,
+      "imagePrompt": "Middle-aged witch sitting at a kitchen table with crystal ball and piles of junk mail, low-key lighting",
+      "imagePromptBack": "Coupon-clipping collage background, stats panel in ink-stamped style, matte finish",
+      "imagePromptBackFlavor": "The stars say you're going to get a 2-for-1 deal on frozen peas, but your love life remains a disaster."
+    },
+    {
+      "num": "048",
+      "name": "Pick-up Truck Potter",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "The boy who lived to drive circles in the field.",
+      "stats": {
+        "power": 70,
+        "speed": 85,
+        "technique": 65,
+        "endurance": 75,
+        "charisma": 80
+      },
+      "basePrice": 1.1,
+      "imagePrompt": "Harry with a flat-brim cap driving a red Ford truck, lightning scar visible, rural field sunset",
+      "imagePromptBack": "Mud splatter effect background, stats panel with tire tread border, glossy finish",
+      "imagePromptBackFlavor": "He survived the dark lord, but he still can't parallel park his dual-wheel truck to save his life."
+    },
+    {
+      "num": "049",
+      "name": "Biker Sirius",
+      "subset": "Flashback",
+      "starTier": "Uncommon",
+      "desc": "Escaped Azkaban to live the open road dream on a Harley.",
+      "stats": {
+        "power": 65,
+        "speed": 80,
+        "technique": 60,
+        "endurance": 70,
+        "charisma": 75
+      },
+      "basePrice": 0.65,
+      "imagePrompt": "Wizard with tattoos on a motorcycle, leather jacket, highway background, dust in the air",
+      "imagePromptBack": "Chrome and leather pattern background, stats panel in burnt orange, rough texture finish",
+      "imagePromptBackFlavor": "I don't need a map when the road is paved with defiance and high-octane fuel."
+    },
+    {
+      "num": "050",
+      "name": "Barista Snape",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He will judge your latte order with a sneer that haunts your dreams.",
+      "stats": {
+        "power": 45,
+        "speed": 55,
+        "technique": 75,
+        "endurance": 50,
+        "charisma": 40
+      },
+      "basePrice": 0.2,
+      "imagePrompt": "Severe looking man behind an espresso machine, dark apron, dimly lit coffee shop background",
+      "imagePromptBack": "Coffee bean stain motif, stats panel in dark slate, matte finish",
+      "imagePromptBackFlavor": "Obviously, your choice of oat milk represents a fundamental character flaw that cannot be corrected."
+    },
+    {
+      "num": "051",
+      "name": "Deep-Fryer Dobby",
+      "subset": "Rookie",
+      "starTier": "Star",
+      "desc": "The house-elf who found his calling in the fast-food industry.",
+      "stats": {
+        "power": 60,
+        "speed": 90,
+        "technique": 80,
+        "endurance": 70,
+        "charisma": 85
+      },
+      "basePrice": 0.95,
+      "imagePrompt": "House-elf in a paper hat holding a frying basket, sparkling oil splash, cartoonish digital style",
+      "imagePromptBack": "Grease-spotted paper bag style, stats panel in vibrant burger-joint colors, metallic finish",
+      "imagePromptBackFlavor": "Dobby is a free elf, and Dobby makes the crispest tenders in the tri-state area!"
+    },
+    {
+      "num": "052",
+      "name": "Line-Backer Ron",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "Eating chicken legs and crushing quarterbacks on the gridiron.",
+      "stats": {
+        "power": 90,
+        "speed": 75,
+        "technique": 65,
+        "endurance": 85,
+        "charisma": 70
+      },
+      "basePrice": 2.2,
+      "imagePrompt": "Ginger wizard in football pads holding a chicken leg, stadium field, action pose",
+      "imagePromptBack": "Turf green background, stats panel in team colors, high-gloss finish",
+      "imagePromptBackFlavor": "He's not the brightest player on the field, but he\u2019s the only one who can cast a touchdown hex."
+    },
+    {
+      "num": "053",
+      "name": "Militia Moody",
+      "subset": "Legend",
+      "starTier": "Superstar",
+      "desc": "Constant vigilance, especially when the neighborhood watch is on patrol.",
+      "stats": {
+        "power": 85,
+        "speed": 70,
+        "technique": 90,
+        "endurance": 80,
+        "charisma": 60
+      },
+      "basePrice": 2.75,
+      "imagePrompt": "Wizard with a cybernetic eye and combat vest, camouflage background, gritty digital art",
+      "imagePromptBack": "Tactical grid background, stats panel in hazard orange, sandpaper-touch finish",
+      "imagePromptBackFlavor": "I\u2019ve got eyes in the back of my head, and they\u2019re all looking for suspicious activity in the cul-de-sac."
+    },
+    {
+      "num": "054",
+      "name": "Country Club Narcissa",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "She handles the club finances with a cold, elegant indifference.",
+      "stats": {
+        "power": 55,
+        "speed": 50,
+        "technique": 70,
+        "endurance": 60,
+        "charisma": 85
+      },
+      "basePrice": 0.55,
+      "imagePrompt": "Elegant witch with sun hat and golf club, manicured lawn, luxurious clubhouse backdrop",
+      "imagePromptBack": "Polished marble pattern background, stats panel with gold foil, silk-touch finish",
+      "imagePromptBackFlavor": "Membership is a privilege, not a right, and you clearly have not earned the privilege."
+    },
+    {
+      "num": "055",
+      "name": "Tailgate Tonks",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "She changes her hair color to match the team she is rooting for that week.",
+      "stats": {
+        "power": 70,
+        "speed": 75,
+        "technique": 75,
+        "endurance": 70,
+        "charisma": 90
+      },
+      "basePrice": 1.25,
+      "imagePrompt": "Young woman with neon blue hair and a jersey, waving a flag, tailgating party background",
+      "imagePromptBack": "Confetti and streamers background, stats panel in electric purple, holographic glitter finish",
+      "imagePromptBackFlavor": "Win or lose, my hair is going to look fantastic, and the drinks will be cold."
+    },
+    {
+      "num": "056",
+      "name": "Bounty Hunter Bellatrix",
+      "subset": "Flashback",
+      "starTier": "Superstar",
+      "desc": "The most feared debt collector in the magical underworld.",
+      "stats": {
+        "power": 85,
+        "speed": 80,
+        "technique": 85,
+        "endurance": 75,
+        "charisma": 65
+      },
+      "basePrice": 2.5,
+      "imagePrompt": "Woman with wild hair holding a lasso, desert badlands background, intense eyes",
+      "imagePromptBack": "Wanted poster design, stats panel in weathered parchment, rugged finish",
+      "imagePromptBackFlavor": "You can run, you can hide, but you owe this magical bank three thousand galleons, and I'm here to collect."
+    },
+    {
+      "num": "057",
+      "name": "Garage Band Fred & George",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "They play punk rock spells that always end in a minor explosion.",
+      "stats": {
+        "power": 60,
+        "speed": 65,
+        "technique": 75,
+        "endurance": 65,
+        "charisma": 80
+      },
+      "basePrice": 0.6,
+      "imagePrompt": "Twin wizards with band instruments, garage full of magical trash, chaotic lighting",
+      "imagePromptBack": "Graffiti covered wall background, stats panel in neon spray paint, matte finish",
+      "imagePromptBackFlavor": "Turn the amps to eleven, the neighbors are complaining, and the neighbors are about to be frogs."
+    },
+    {
+      "num": "058",
+      "name": "Hiker Luna",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "She tracks cryptids through the National Parks with nothing but a map and dreams.",
+      "stats": {
+        "power": 45,
+        "speed": 60,
+        "technique": 65,
+        "endurance": 80,
+        "charisma": 75
+      },
+      "basePrice": 0.15,
+      "imagePrompt": "Girl with oversized hiking backpack and binoculars, wilderness mountain background, peaceful",
+      "imagePromptBack": "Topographic map pattern background, stats panel in forest green, soft touch finish",
+      "imagePromptBackFlavor": "The Nargles are hiding in the GPS signal, but I think I found a footprint of a Sasquatch-Wizard."
+    },
+    {
+      "num": "059",
+      "name": "Repo Man Lupin",
+      "subset": "Flashback",
+      "starTier": "Uncommon",
+      "desc": "He only works the nights when the moon is full, making his job very difficult.",
+      "stats": {
+        "power": 75,
+        "speed": 70,
+        "technique": 70,
+        "endurance": 85,
+        "charisma": 55
+      },
+      "basePrice": 0.5,
+      "imagePrompt": "Wizard in a worn-out trench coat standing under a bright full moon, city street",
+      "imagePromptBack": "Wolf fur texture background, stats panel in silver, matte finish",
+      "imagePromptBackFlavor": "I have to get this car back to the dealership before I turn into a werewolf, so please step out."
+    },
+    {
+      "num": "060",
+      "name": "Elder Legend Merlin",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "The original wizard who paved the way for every magical redneck.",
+      "stats": {
+        "power": 98,
+        "speed": 85,
+        "technique": 95,
+        "endurance": 90,
+        "charisma": 98
+      },
+      "basePrice": 4.5,
+      "imagePrompt": "Ancient wizard with glowing staff and Americana robes, swirling vortex, legendary aura",
+      "imagePromptBack": "Golden celestial chart background, stats panel with intricate border, foil embossed finish",
+      "imagePromptBackFlavor": "I taught this land how to brew shine and cast light before your mountains were even hills."
+    },
+    {
+      "num": "061",
+      "name": "Cletus the Custodian",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He doesn't need a wand to fix the plumbing that the ghosts keep breaking.",
+      "stats": {
+        "power": 62,
+        "speed": 45,
+        "technique": 55,
+        "endurance": 70,
+        "charisma": 50
+      },
+      "basePrice": 0.15,
+      "imagePrompt": "Grumpy elderly janitor holding a glowing mop, Hogwarts-style basement, cinematic lighting, digital art trading card.",
+      "imagePromptBack": "Distressed parchment background with rusted pipe borders, stats panel in bottom right, matte finish.",
+      "imagePromptBackFlavor": "Keeping the dungeons clean is a thankless job, but someone has to mop up after the troll incidents."
+    },
+    {
+      "num": "062",
+      "name": "Sheriff Hagridson",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He patrols the Forbidden Forest on a Harley Davidson instead of a motorcycle.",
+      "stats": {
+        "power": 70,
+        "speed": 50,
+        "technique": 45,
+        "endurance": 75,
+        "charisma": 60
+      },
+      "basePrice": 0.2,
+      "imagePrompt": "Giant bearded man in a leather vest riding a flying motorcycle, desert highway background, trading card art.",
+      "imagePromptBack": "Leather-texture backdrop with sheriff badge motifs, stats displayed in a wooden scroll frame, gloss finish.",
+      "imagePromptBackFlavor": "The law of the land is enforced by the biggest man in the county. Nobody messes with the Sheriff."
+    },
+    {
+      "num": "063",
+      "name": "Dwayne 'The Rock' Troll",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Finally realized his dream of joining the wrestling team instead of guarding bathrooms.",
+      "stats": {
+        "power": 78,
+        "speed": 55,
+        "technique": 50,
+        "endurance": 80,
+        "charisma": 70
+      },
+      "basePrice": 0.55,
+      "imagePrompt": "Muscular troll wearing a wrestling championship belt, arena floodlights, dynamic action pose, digital illustration.",
+      "imagePromptBack": "Neon blue and gold color scheme, stats in a metallic frame, holographic foil finish.",
+      "imagePromptBackFlavor": "Can you smell what the Troll is cooking? It's usually something quite pungent."
+    },
+    {
+      "num": "064",
+      "name": "Barista Hermione",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "She brews potions and espressos with equal efficiency and a dash of sass.",
+      "stats": {
+        "power": 50,
+        "speed": 75,
+        "technique": 70,
+        "endurance": 60,
+        "charisma": 65
+      },
+      "basePrice": 0.25,
+      "imagePrompt": "Young witch wearing a flannel apron, steam rising from a magical coffee mug, coffee shop interior, trading card.",
+      "imagePromptBack": "Rustic wood and coffee sleeve textures, stats listed on a menu board motif, matte finish.",
+      "imagePromptBackFlavor": "One double-shot espresso with a hint of Felix Felicis for that morning meeting."
+    },
+    {
+      "num": "065",
+      "name": "Senator Albus Dumble-D",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "He runs the school with the firm grasp of a veteran politician and the wisdom of an eagle.",
+      "stats": {
+        "power": 90,
+        "speed": 85,
+        "technique": 95,
+        "endurance": 90,
+        "charisma": 98
+      },
+      "basePrice": 4.5,
+      "imagePrompt": "Elderly wizard in a starry suit and tie, eagle pin on lapel, white marble podium background, regal portrait.",
+      "imagePromptBack": "Gold-leaf and velvet red design, complex stats display with intricate patterns, gold foil finish.",
+      "imagePromptBackFlavor": "A vote for Dumble-D is a vote for magical excellence and national security."
+    },
+    {
+      "num": "066",
+      "name": "Pizza Delivery Hedwig",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Guaranteed delivery within 30 minutes or the curse is on us.",
+      "stats": {
+        "power": 40,
+        "speed": 90,
+        "technique": 60,
+        "endurance": 50,
+        "charisma": 55
+      },
+      "basePrice": 0.12,
+      "imagePrompt": "White snowy owl wearing a pizza delivery cap, carrying a box, sunset city skyline, digital painting.",
+      "imagePromptBack": "Checked red and white tablecloth pattern, stats arranged like a delivery receipt, glossy finish.",
+      "imagePromptBackFlavor": "Hot and fresh from the oven to the owlery, no matter the weather."
+    },
+    {
+      "num": "067",
+      "name": "Cowboy Draco",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "He claims his family owns the biggest ranch in the wizarding world.",
+      "stats": {
+        "power": 65,
+        "speed": 70,
+        "technique": 60,
+        "endurance": 55,
+        "charisma": 75
+      },
+      "basePrice": 0.45,
+      "imagePrompt": "Blond boy in a Stetson hat and duster coat, holding a wand like a revolver, desert background, trading card.",
+      "imagePromptBack": "Rustic western wood texture, stats in a wanted-poster style frame, matte finish.",
+      "imagePromptBackFlavor": "My father will hear about the quality of this cattle feed."
+    },
+    {
+      "num": "068",
+      "name": "Quarterback Ron",
+      "subset": "AllStar",
+      "starTier": "Star",
+      "desc": "He finally found his calling passing the Quaffle like a pro gridiron hero.",
+      "stats": {
+        "power": 75,
+        "speed": 80,
+        "technique": 65,
+        "endurance": 70,
+        "charisma": 60
+      },
+      "basePrice": 0.9,
+      "imagePrompt": "Red-haired teenager in football gear, holding a Quaffle, stadium crowds blurred in background, action shot.",
+      "imagePromptBack": "Gridiron yard lines on green turf, stats in a scoreboard motif, semi-gloss finish.",
+      "imagePromptBackFlavor": "Touchdown! Gryffindor leads by seven as the whistle blows."
+    },
+    {
+      "num": "069",
+      "name": "Professor Snape-a-Roo",
+      "subset": "Flashback",
+      "starTier": "Superstar",
+      "desc": "A master of potions and sarcastic commentary in the classroom.",
+      "stats": {
+        "power": 75,
+        "speed": 60,
+        "technique": 95,
+        "endurance": 85,
+        "charisma": 40
+      },
+      "basePrice": 2.2,
+      "imagePrompt": "Slovenly wizard with stringy hair and black robes, glowing green cauldron, dark dungeon, trading card.",
+      "imagePromptBack": "Parchment stained with ink and potion spills, stats in an apothecary ledger style, rough finish.",
+      "imagePromptBackFlavor": "I can teach you how to bewitch the mind and ensnare the senses, if you aren't as dense as a brick."
+    },
+    {
+      "num": "070",
+      "name": "Suburban Neville",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "His backyard herb garden is the envy of the entire neighborhood association.",
+      "stats": {
+        "power": 55,
+        "speed": 50,
+        "technique": 70,
+        "endurance": 60,
+        "charisma": 50
+      },
+      "basePrice": 0.2,
+      "imagePrompt": "Young man in gardening gloves, giant glowing Mandrake in a suburban backyard, digital art.",
+      "imagePromptBack": "Floral patterns and picket fence styling, stats in a garden club document frame, matte finish.",
+      "imagePromptBackFlavor": "The Mimbulus Mimbletonia is actually quite relaxing once you get used to the goo."
+    },
+    {
+      "num": "071",
+      "name": "Trucker Sirius",
+      "subset": "Flashback",
+      "starTier": "Star",
+      "desc": "He\u2019s been on the run, driving his 18-wheeler across the country for years.",
+      "stats": {
+        "power": 80,
+        "speed": 75,
+        "technique": 65,
+        "endurance": 90,
+        "charisma": 70
+      },
+      "basePrice": 1.1,
+      "imagePrompt": "Man with long hair and a beard, cabin of a large semi-truck, rain-slicked highway, trading card.",
+      "imagePromptBack": "Road map and asphalt texture, stats in a trucker logbook layout, gloss finish.",
+      "imagePromptBackFlavor": "I\u2019m just a drifter, looking for the next exit and a decent diner."
+    },
+    {
+      "num": "072",
+      "name": "Congresswoman McGonagall",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "She keeps the legislative body in check with a strict code of conduct.",
+      "stats": {
+        "power": 85,
+        "speed": 70,
+        "technique": 90,
+        "endurance": 80,
+        "charisma": 95
+      },
+      "basePrice": 4.2,
+      "imagePrompt": "Severe woman in a sharp blazer and cat-eye glasses, capitol building background, trading card portrait.",
+      "imagePromptBack": "Patriotic red, white, and blue design, stats in a formal document style, silver foil finish.",
+      "imagePromptBackFlavor": "Order! We will maintain decorum or I shall transform this entire chamber into a courtroom."
+    },
+    {
+      "num": "073",
+      "name": "Skater Luna",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "She finds the most interesting paths while riding her magical skateboard.",
+      "stats": {
+        "power": 50,
+        "speed": 85,
+        "technique": 80,
+        "endurance": 65,
+        "charisma": 70
+      },
+      "basePrice": 0.65,
+      "imagePrompt": "Girl with whimsical expression riding a levitating skateboard, colorful graffiti background, trading card.",
+      "imagePromptBack": "Street art patterns and bright neon colors, stats in a skate-label aesthetic, glossy finish.",
+      "imagePromptBackFlavor": "The Nargles live in the axles; that's why it wobbles when you do a kickflip."
+    },
+    {
+      "num": "074",
+      "name": "Firefighter Weasley Twins",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "They use experimental enchantments to stop forest fires and chaos.",
+      "stats": {
+        "power": 85,
+        "speed": 80,
+        "technique": 85,
+        "endurance": 80,
+        "charisma": 80
+      },
+      "basePrice": 2.5,
+      "imagePrompt": "Two gingers in heavy firefighter gear, holding wands pointed at a magical flame, digital card.",
+      "imagePromptBack": "Embers and charred wood textures, stats in a fire-department patch style, matte finish.",
+      "imagePromptBackFlavor": "Double the trouble, but twice the fire suppression capability."
+    },
+    {
+      "num": "075",
+      "name": "Gamer Dudley",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He\u2019s undefeated in the latest Wizard Conquest RPG on his console.",
+      "stats": {
+        "power": 60,
+        "speed": 40,
+        "technique": 75,
+        "endurance": 45,
+        "charisma": 40
+      },
+      "basePrice": 0.25,
+      "imagePrompt": "Large boy sitting on a couch with a glowing controller, multiple monitors, neon lit room, digital art.",
+      "imagePromptBack": "Pixels and circuit board motifs, stats in a screen-overlay style, glossy finish.",
+      "imagePromptBackFlavor": "I\u2019m level 99. You guys are still grinding in the mud."
+    },
+    {
+      "num": "076",
+      "name": "Construction Worker Filch",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Building the new wing of the castle with enchanted bricks and a bad mood.",
+      "stats": {
+        "power": 70,
+        "speed": 50,
+        "technique": 60,
+        "endurance": 75,
+        "charisma": 30
+      },
+      "basePrice": 0.18,
+      "imagePrompt": "Man in a yellow hard hat holding a magical blueprint, castle construction site, trading card.",
+      "imagePromptBack": "Blueprint lines on blue paper, stats in a construction-permit layout, matte finish.",
+      "imagePromptBackFlavor": "Don't touch the blueprints or I'll have you suspended from the rafters."
+    },
+    {
+      "num": "077",
+      "name": "Investment Banker Lucius",
+      "subset": "Legend",
+      "starTier": "Star",
+      "desc": "Always closing deals in the boardrooms of Wall Street and the Ministry.",
+      "stats": {
+        "power": 70,
+        "speed": 60,
+        "technique": 85,
+        "endurance": 75,
+        "charisma": 90
+      },
+      "basePrice": 1.4,
+      "imagePrompt": "Elegant blond man in a tailored pinstripe suit, Wall Street background, holding a briefcase, digital art.",
+      "imagePromptBack": "Stock tickers and gold coins, stats in a ledger table format, metallic foil finish.",
+      "imagePromptBackFlavor": "There is no such thing as a bad investment if you control the outcome."
+    },
+    {
+      "num": "078",
+      "name": "Gym Teacher Hooch",
+      "subset": "AllStar",
+      "starTier": "Uncommon",
+      "desc": "She keeps the students in shape with intense broom-flying circuits.",
+      "stats": {
+        "power": 65,
+        "speed": 85,
+        "technique": 70,
+        "endurance": 80,
+        "charisma": 60
+      },
+      "basePrice": 0.5,
+      "imagePrompt": "Exhausted woman in a whistle-and-tracksuit outfit, flying broom in hand, sports field, digital art.",
+      "imagePromptBack": "Whistle and stopwatch design, stats in a stopwatch aesthetic, semi-gloss finish.",
+      "imagePromptBackFlavor": "Move it! I want to see you hit 60 miles per hour on those bristles!"
+    },
+    {
+      "num": "079",
+      "name": "Summer Camp Harry",
+      "subset": "Flashback",
+      "starTier": "Star",
+      "desc": "Learning to survive and thrive during his first summer at wizard camp.",
+      "stats": {
+        "power": 65,
+        "speed": 70,
+        "technique": 65,
+        "endurance": 70,
+        "charisma": 75
+      },
+      "basePrice": 0.85,
+      "imagePrompt": "A young boy with a tie-dye shirt holding a makeshift wand, campfire background, summer vibes.",
+      "imagePromptBack": "Camp patch embroidery style, stats on a wood-grain sign background, matte finish.",
+      "imagePromptBackFlavor": "I survived the ropes course and the potion-brewing contest."
+    },
+    {
+      "num": "080",
+      "name": "Detective Moody",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "His glass eye sees the truth even through the most deceptive illusions.",
+      "stats": {
+        "power": 85,
+        "speed": 70,
+        "technique": 90,
+        "endurance": 95,
+        "charisma": 50
+      },
+      "basePrice": 2.8,
+      "imagePrompt": "Gritty detective with a magical prosthetic eye, trench coat, rain-soaked city street, trading card.",
+      "imagePromptBack": "Case file and evidence board design, stats in redacted-folder style, gloss finish.",
+      "imagePromptBackFlavor": "CONSTANT VIGILANCE! The bad guys don't take a day off, and neither do I."
+    },
+    {
+      "num": "081",
+      "name": "Cletus Crouch, Auror Deputy",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Patrols the Forbidden Bayou looking for illegal wand smuggling operations.",
+      "stats": {
+        "power": 55,
+        "speed": 60,
+        "technique": 52,
+        "endurance": 68,
+        "charisma": 45
+      },
+      "basePrice": 0.22,
+      "imagePrompt": "Auror wearing a ten-gallon hat and a badge, holding a shotgun-wand hybrid, swamp background, digital art",
+      "imagePromptBack": "Rustic wood texture frame, leather border, stats panel in bottom right, worn brass finish, autumn colors",
+      "imagePromptBackFlavor": "Cletus doesn't need spells when he has a double-barrel dragon-shot. He's been guarding the swamp border for thirty years."
+    },
+    {
+      "num": "082",
+      "name": "Brenda Bulk-Barn",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Specializes in bulk-ordering Gillyweed for the local swim team.",
+      "stats": {
+        "power": 42,
+        "speed": 40,
+        "technique": 65,
+        "endurance": 55,
+        "charisma": 70
+      },
+      "basePrice": 0.15,
+      "imagePrompt": "Middle-aged woman in a striped apron, holding a giant bag of mystical herbs, fluorescent grocery store lights",
+      "imagePromptBack": "Receipt paper texture, holographic overlay, stats panel in center, pastel color palette",
+      "imagePromptBackFlavor": "Brenda knows that if you're going to dive into the black lake, you're going to need more than just one serving of Gillyweed."
+    },
+    {
+      "num": "083",
+      "name": "Earl 'The Enchanter' Jenkins",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "A former high school quarterback who casts fireballs with a perfect spiral.",
+      "stats": {
+        "power": 75,
+        "speed": 72,
+        "technique": 60,
+        "endurance": 65,
+        "charisma": 78
+      },
+      "basePrice": 0.55,
+      "imagePrompt": "Young wizard in a varsity jacket, tossing a glowing ember like a football, dynamic action pose",
+      "imagePromptBack": "Turf texture, stadium lighting motif, stats panel on metallic side bar, glossy finish",
+      "imagePromptBackFlavor": "Earl brings the intensity of a Friday Night Lights game to every duel. His fireball accuracy is legendary in the tri-state area."
+    },
+    {
+      "num": "084",
+      "name": "Sheriff Hagrid 'The Hog' Miller",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "The only man in the county who can legally tame a semi-truck sized hippogriff.",
+      "stats": {
+        "power": 98,
+        "speed": 82,
+        "technique": 85,
+        "endurance": 96,
+        "charisma": 90
+      },
+      "basePrice": 4.85,
+      "imagePrompt": "Giant bearded man in a flannel sheriff's uniform, standing next to a monstrous hippogriff in a pickup truck bed",
+      "imagePromptBack": "Distressed metal plate background, gold foil stats panel, rustic finish",
+      "imagePromptBackFlavor": "When the beast escaped the trailer, only Sheriff Miller could calm it down with a firm look and a slice of brisket."
+    },
+    {
+      "num": "085",
+      "name": "Tiffany Trelawney-Smith",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Reads horoscopes in the local paper between her shifts at the mall.",
+      "stats": {
+        "power": 40,
+        "speed": 45,
+        "technique": 50,
+        "endurance": 48,
+        "charisma": 60
+      },
+      "basePrice": 0.12,
+      "imagePrompt": "Teen girl with excessive jewelry, crystal ball on a velvet pillow, mall atmosphere, neon lighting",
+      "imagePromptBack": "Zodiac wheel design, starry sky border, stats panel in bottom right, matt coating",
+      "imagePromptBackFlavor": "Tiffany predicted you'd pull this card today. She also predicted you'd forget to pick up milk on the way home."
+    },
+    {
+      "num": "086",
+      "name": "Big Rig Ron",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "Transports magical artifacts across the interstate in his heavily enchanted semi-truck.",
+      "stats": {
+        "power": 75,
+        "speed": 55,
+        "technique": 60,
+        "endurance": 80,
+        "charisma": 50
+      },
+      "basePrice": 0.45,
+      "imagePrompt": "Trucker wizard with a beard, leaning against a cab that glows with pulsing runes, highway at sunset",
+      "imagePromptBack": "Road map aesthetic, speed limit sign motifs, stats panel aligned to tire tread pattern",
+      "imagePromptBackFlavor": "Ron\u2019s rig has seen more enchanted cargo than the entire Ministry of Magic combined. Keep your eyes on the road."
+    },
+    {
+      "num": "087",
+      "name": "Debbie 'Dual-Wielder' Dumbledore",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "A distant cousin who runs the local PTA with an iron fist and two holly-oak wands.",
+      "stats": {
+        "power": 88,
+        "speed": 85,
+        "technique": 92,
+        "endurance": 75,
+        "charisma": 88
+      },
+      "basePrice": 2.75,
+      "imagePrompt": "Woman in a sharp business suit, holding a wand in each hand, glowing power circles behind her",
+      "imagePromptBack": "Formal floral wallpaper pattern, gold stats overlay, premium linen texture",
+      "imagePromptBackFlavor": "She doesn't tolerate tardiness at the bake sale and she definitely doesn't tolerate dark wizards in the school gym."
+    },
+    {
+      "num": "088",
+      "name": "Kyle the Quidditch Coach",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Still wearing his championship ring from state finals twenty years ago.",
+      "stats": {
+        "power": 65,
+        "speed": 70,
+        "technique": 72,
+        "endurance": 60,
+        "charisma": 55
+      },
+      "basePrice": 0.28,
+      "imagePrompt": "Middle-aged man in a whistle and windbreaker, holding a broom, scoreboard background",
+      "imagePromptBack": "Locker room door texture, dry-erase board stats panel, semi-gloss finish",
+      "imagePromptBackFlavor": "If you want to win the state title, you\u2019ll listen to Kyle. He knows every loophole in the broom-racing rulebook."
+    },
+    {
+      "num": "089",
+      "name": "Detective Dementor-Duty Davis",
+      "subset": "Flashback",
+      "starTier": "Star",
+      "desc": "Used to guard the prison wings until he transferred to the city task force.",
+      "stats": {
+        "power": 78,
+        "speed": 65,
+        "technique": 80,
+        "endurance": 85,
+        "charisma": 40
+      },
+      "basePrice": 0.95,
+      "imagePrompt": "Gritty detective in a trench coat, dark rainy city alley, glowing Patronus badge",
+      "imagePromptBack": "Concrete grey tones, evidence filing cabinet theme, statistics displayed as police reports",
+      "imagePromptBackFlavor": "Davis has seen the worst of the soul-sucking underworld. He carries a chocolate bar in every pocket for emergencies."
+    },
+    {
+      "num": "090",
+      "name": "Chadwick 'The Charmer'",
+      "subset": "Rookie",
+      "starTier": "Star",
+      "desc": "The most popular wizard at the local fraternity; his love potions are top-tier.",
+      "stats": {
+        "power": 60,
+        "speed": 70,
+        "technique": 75,
+        "endurance": 65,
+        "charisma": 90
+      },
+      "basePrice": 1.25,
+      "imagePrompt": "College student in a varsity sweater, charming smile, sparks flying from his wand tip",
+      "imagePromptBack": "Campus quad aesthetic, brick wall border, gold-leaf stats panel, velvet touch finish",
+      "imagePromptBackFlavor": "It\u2019s not technically magic if you\u2019re just naturally that charismatic, right? Chadwick keeps the party going all night."
+    },
+    {
+      "num": "091",
+      "name": "Mayor McGonagall-Jones",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "She keeps the town running with strict policies and a very fast transfiguration spell.",
+      "stats": {
+        "power": 85,
+        "speed": 75,
+        "technique": 95,
+        "endurance": 80,
+        "charisma": 85
+      },
+      "basePrice": 2.45,
+      "imagePrompt": "Elderly woman with sharp glasses, sitting at a desk with a city seal, regal and stern expression",
+      "imagePromptBack": "Marble texture, city hall seal watermark, stats panel in gold, high-end matte finish",
+      "imagePromptBackFlavor": "Under her leadership, the city has seen a 40% decrease in unauthorized dragon sightings and a 100% increase in productivity."
+    },
+    {
+      "num": "092",
+      "name": "Farmer Filch's Cat",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "It's just a regular cat, but it has a sixth sense for detecting magical weeds.",
+      "stats": {
+        "power": 45,
+        "speed": 75,
+        "technique": 50,
+        "endurance": 60,
+        "charisma": 65
+      },
+      "basePrice": 0.18,
+      "imagePrompt": "Orange tabby cat sitting on a tractor, looking suspiciously clever, farmyard backdrop",
+      "imagePromptBack": "Hay bale texture, yarn trail border, paw print stats panel, rustic paper finish",
+      "imagePromptBackFlavor": "Don't let the purring fool you. This cat is the head of security for the entire vegetable patch."
+    },
+    {
+      "num": "093",
+      "name": "Granger the Librarian",
+      "subset": "Base",
+      "starTier": "Uncommon",
+      "desc": "She can find any book in the tri-state area using only a localized summoning charm.",
+      "stats": {
+        "power": 55,
+        "speed": 60,
+        "technique": 85,
+        "endurance": 70,
+        "charisma": 60
+      },
+      "basePrice": 0.65,
+      "imagePrompt": "Smart woman behind a library desk, surrounded by flying books, studious but intense",
+      "imagePromptBack": "Old parchment texture, ink quill border, card catalog stats panel, vintage finish",
+      "imagePromptBackFlavor": "Shh! If you make too much noise, she might transfigure your phone into a brick. She\u2019s strict about the library rules."
+    },
+    {
+      "num": "094",
+      "name": "Weasley the Woodworker",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Carves wands out of reclaimed barn wood; they aren't pretty, but they pack a punch.",
+      "stats": {
+        "power": 70,
+        "speed": 50,
+        "technique": 80,
+        "endurance": 75,
+        "charisma": 40
+      },
+      "basePrice": 0.25,
+      "imagePrompt": "Red-haired man in a workshop, sawdust in the air, holding a rough-hewn wand, wood grain background",
+      "imagePromptBack": "Sawmill board texture, iron nail border, stats panel branded into wood, rough matte finish",
+      "imagePromptBackFlavor": "Authentic wood. Authentic power. Each wand is tested on a sturdy oak before being sold to local conjurers."
+    },
+    {
+      "num": "095",
+      "name": "Snape the Science Teacher",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "His potions lab doubles as a chemistry class; he grades with extreme prejudice.",
+      "stats": {
+        "power": 95,
+        "speed": 80,
+        "technique": 98,
+        "endurance": 90,
+        "charisma": 30
+      },
+      "basePrice": 4.5,
+      "imagePrompt": "Stern man in a black lab coat, bubbling test tubes, chalk-covered blackboard filled with complex runes",
+      "imagePromptBack": "Dark slate background, periodic table of elements motif, stats panel in white chalk font",
+      "imagePromptBackFlavor": "There will be no foolish wand-waving or silly incantations in this classroom. Follow the instructions or suffer the consequences."
+    },
+    {
+      "num": "096",
+      "name": "Luna the Local Barista",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Writes cryptic messages on your coffee cup that somehow always come true.",
+      "stats": {
+        "power": 45,
+        "speed": 50,
+        "technique": 60,
+        "endurance": 55,
+        "charisma": 75
+      },
+      "basePrice": 0.2,
+      "imagePrompt": "Young woman with whimsical hair, behind a coffee counter, holding a latte with foam art",
+      "imagePromptBack": "Coffee bean pattern borders, cardboard texture, stats panel in handwritten marker",
+      "imagePromptBackFlavor": "She says the morning brew is a window into the soul. Also, your caffeine intake is dangerously low today."
+    },
+    {
+      "num": "097",
+      "name": "Dobby the Delivery Driver",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Delivers packages across the city in record time using magical shortcuts.",
+      "stats": {
+        "power": 50,
+        "speed": 95,
+        "technique": 70,
+        "endurance": 60,
+        "charisma": 60
+      },
+      "basePrice": 0.4,
+      "imagePrompt": "Small, swift figure on a moped, weaving through city traffic, blue-tinted movement lines",
+      "imagePromptBack": "Delivery box cardboard texture, stamp motifs, stats panel with tape border",
+      "imagePromptBackFlavor": "Dobby is a good driver. Dobby knows the city shortcuts that don't exist on any map."
+    },
+    {
+      "num": "098",
+      "name": "Sirius the State Trooper",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Patrols the dark highway at midnight; he's seen things you wouldn't believe.",
+      "stats": {
+        "power": 85,
+        "speed": 85,
+        "technique": 80,
+        "endurance": 90,
+        "charisma": 70
+      },
+      "basePrice": 1.45,
+      "imagePrompt": "Officer in a dark cruiser, red and blue lights flashing in the night, determined shadow-filled profile",
+      "imagePromptBack": "Asphalt texture, guardrail border, stats panel in police-report style, silver foil detail",
+      "imagePromptBackFlavor": "He\u2019s been wrongfully accused of speeding many times, but he\u2019s actually the fastest man on the force."
+    },
+    {
+      "num": "099",
+      "name": "Bellatrix the Biker",
+      "subset": "Flashback",
+      "starTier": "Superstar",
+      "desc": "Leader of the Death-Eater Motorcycle Club; she doesn't follow traffic laws.",
+      "stats": {
+        "power": 92,
+        "speed": 90,
+        "technique": 85,
+        "endurance": 80,
+        "charisma": 60
+      },
+      "basePrice": 2.9,
+      "imagePrompt": "Woman in a leather jacket on a roaring motorcycle, sparks flying, dark road at night",
+      "imagePromptBack": "Rusted chrome border, leather pattern, stats panel with skull icons, high-gloss finish",
+      "imagePromptBackFlavor": "You hear the engine roar before you see the fire. She\u2019s the queen of the blacktop and the terror of the toll booth."
+    },
+    {
+      "num": "100",
+      "name": "Uncle Vernon the Property Owner",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "He\u2019ll evict you if you bring a wand on the property; he hates 'magic nonsense'.",
+      "stats": {
+        "power": 60,
+        "speed": 40,
+        "technique": 45,
+        "endurance": 75,
+        "charisma": 20
+      },
+      "basePrice": 0.1,
+      "imagePrompt": "Grumpy man with a mustache, pointing a finger at a 'No Magic' sign, suburban lawn",
+      "imagePromptBack": "House deed paper texture, eviction notice design, stats panel inside a stamp box",
+      "imagePromptBackFlavor": "Vernon just wants a quiet life without owls dropping mail in his living room. Is that too much to ask?"
+    },
+    {
+      "num": "101",
+      "name": "Tex 'The Hex' Miller",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Shoots sparks from his wand to light his backyard barbecue.",
+      "stats": {
+        "power": 55,
+        "speed": 42,
+        "technique": 48,
+        "endurance": 60,
+        "charisma": 50
+      },
+      "basePrice": 0.25,
+      "imagePrompt": "Wizard in a cowboy hat holding a glowing splintered wand, digital art, trading card style.",
+      "imagePromptBack": "Rustic wood trim with a holster icon, stats panel in leather texture, copper foil finish.",
+      "imagePromptBackFlavor": "Tex believes every magical duel should end with a cold beverage. Don't touch his wand while he's grilling."
+    },
+    {
+      "num": "102",
+      "name": "Billy Bob Broom-Jockey",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Prefers his customized broom equipped with truck mudflaps and a horn.",
+      "stats": {
+        "power": 45,
+        "speed": 72,
+        "technique": 50,
+        "endurance": 45,
+        "charisma": 40
+      },
+      "basePrice": 0.15,
+      "imagePrompt": "Young wizard riding a broom with oversized wheels, sunny field background, digital art.",
+      "imagePromptBack": "Automotive aesthetic, tire-tread borders, neon green stats, glossy UV coating.",
+      "imagePromptBackFlavor": "He installed a muffler on his broom to keep the neighborhood peace. It didn't work."
+    },
+    {
+      "num": "103",
+      "name": "Sheriff Wand-Well",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Tries to enforce zoning laws on local magical forest spirits.",
+      "stats": {
+        "power": 62,
+        "speed": 55,
+        "technique": 65,
+        "endurance": 70,
+        "charisma": 60
+      },
+      "basePrice": 0.65,
+      "imagePrompt": "Sheriff holding a star-shaped wand, sunset desert backdrop, vibrant colors.",
+      "imagePromptBack": "Gold badge emblem top center, stats panel with parchment texture, matte finish.",
+      "imagePromptBackFlavor": "Sheriff Wand-Well doesn't need a spell to tell you that you're parking illegally. He'll just hex your tires."
+    },
+    {
+      "num": "104",
+      "name": "Sweet Tea Sorceress",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Her charms are as refreshing as a gallon of sugar-water.",
+      "stats": {
+        "power": 40,
+        "speed": 45,
+        "technique": 60,
+        "endurance": 55,
+        "charisma": 75
+      },
+      "basePrice": 0.2,
+      "imagePrompt": "Woman in a garden party hat holding a magical mason jar, digital illustration.",
+      "imagePromptBack": "Pastel floral borders, sugar-crystal font for stats, iridescent holographic foil.",
+      "imagePromptBackFlavor": "She can turn tap water into liquid gold, but only if it's served in a plastic cup with a lemon wedge."
+    },
+    {
+      "num": "105",
+      "name": "Big Rig Broom Wizard",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Hauls enchanted cargo across the interstate on a heavy-duty broom.",
+      "stats": {
+        "power": 70,
+        "speed": 50,
+        "technique": 45,
+        "endurance": 75,
+        "charisma": 50
+      },
+      "basePrice": 0.28,
+      "imagePrompt": "Large wizard standing next to a monstrous enchanted broom, industrial setting, digital art.",
+      "imagePromptBack": "Steel plate background, circuit-board stats panel, metallic silver ink finish.",
+      "imagePromptBackFlavor": "Long-haul flights are easier when you have cruise control and a pocketful of pumpkin pasties."
+    },
+    {
+      "num": "106",
+      "name": "Diner Witch of the West",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Writes the daily specials using cursive enchantments that never smudge.",
+      "stats": {
+        "power": 45,
+        "speed": 60,
+        "technique": 70,
+        "endurance": 50,
+        "charisma": 65
+      },
+      "basePrice": 0.18,
+      "imagePrompt": "Witch in a waitress apron holding a spellbook like a menu, retro diner background.",
+      "imagePromptBack": "Checkerboard floor pattern borders, menu-themed font for stats, textured matte.",
+      "imagePromptBackFlavor": "Her coffee refills are enchanted to keep you awake for three days straight. Proceed with caution."
+    },
+    {
+      "num": "107",
+      "name": "Backwoods Wand-Smith",
+      "subset": "Legend",
+      "starTier": "Legendary",
+      "desc": "Carves wands from reclaimed barn wood and old whiskey barrels.",
+      "stats": {
+        "power": 90,
+        "speed": 85,
+        "technique": 98,
+        "endurance": 95,
+        "charisma": 80
+      },
+      "basePrice": 4.8,
+      "imagePrompt": "Old wizard carving wood with a glowing chisel, moody cabin lighting, digital art.",
+      "imagePromptBack": "Cedar wood grain background, iron-forged stats brackets, hand-stamped wax seal.",
+      "imagePromptBackFlavor": "A wand made by him chooses the wizard who knows how to survive a winter without central heating."
+    },
+    {
+      "num": "108",
+      "name": "Deputy Dumble-Dodge",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "Can dodge a lightning bolt by leaning to the left at the last second.",
+      "stats": {
+        "power": 75,
+        "speed": 95,
+        "technique": 85,
+        "endurance": 80,
+        "charisma": 75
+      },
+      "basePrice": 2.5,
+      "imagePrompt": "Agile wizard in denim robes dodging a spell, motion blur effect, action portrait.",
+      "imagePromptBack": "Dynamic lightning bolt theme, speed-lines on stats panel, silver foil detailing.",
+      "imagePromptBackFlavor": "His reflexes are so sharp he once caught a Golden Snitch while checking his rearview mirror."
+    },
+    {
+      "num": "109",
+      "name": "Friday Night Football Mage",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Uses levitation charms to ensure his pass is always a touchdown.",
+      "stats": {
+        "power": 65,
+        "speed": 75,
+        "technique": 60,
+        "endurance": 65,
+        "charisma": 70
+      },
+      "basePrice": 0.22,
+      "imagePrompt": "Athlete wizard in stadium lights holding an enchanted football, digital illustration.",
+      "imagePromptBack": "Turf-textured border, stadium scoreboard design for stats, matte finish.",
+      "imagePromptBackFlavor": "The referees never call him on it because his illusions make the ball look like it's just spinning fast."
+    },
+    {
+      "num": "110",
+      "name": "Cornfield Conjurer",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "The only mage who can talk to scarecrows and get helpful agricultural tips.",
+      "stats": {
+        "power": 50,
+        "speed": 40,
+        "technique": 60,
+        "endurance": 75,
+        "charisma": 55
+      },
+      "basePrice": 0.12,
+      "imagePrompt": "Wizard standing in a glowing cornfield, golden hour, wide shot digital art.",
+      "imagePromptBack": "Stalk-pattern border, golden yellow stats box, textured cardstock.",
+      "imagePromptBackFlavor": "He says the corn whispers the future, but it usually just asks for more fertilizer."
+    },
+    {
+      "num": "111",
+      "name": "Star-Spangled Sorcerer",
+      "subset": "AllStar",
+      "starTier": "Legendary",
+      "desc": "Throws fireworks from his fingers that form giant bald eagles.",
+      "stats": {
+        "power": 98,
+        "speed": 85,
+        "technique": 90,
+        "endurance": 95,
+        "charisma": 98
+      },
+      "basePrice": 4.95,
+      "imagePrompt": "Wizard in patriotic robes casting sparklers into the sky, cinematic lighting.",
+      "imagePromptBack": "Red, white, and blue motif, metallic gold stats shield, embossed finish.",
+      "imagePromptBackFlavor": "His presence is enough to make any dark wizard feel slightly less evil and a bit more patriotic."
+    },
+    {
+      "num": "112",
+      "name": "Trailer Park Transmuter",
+      "subset": "Flashback",
+      "starTier": "Uncommon",
+      "desc": "Can change a rusted soda can into a pristine gold watch.",
+      "stats": {
+        "power": 65,
+        "speed": 60,
+        "technique": 80,
+        "endurance": 55,
+        "charisma": 70
+      },
+      "basePrice": 0.55,
+      "imagePrompt": "Wizard standing in front of a magical trailer home, sunset, detailed digital art.",
+      "imagePromptBack": "Aluminum siding background, metallic blue stats grid, glossy finish.",
+      "imagePromptBackFlavor": "He says everything has potential if you cast the right spell and have a little bit of patience."
+    },
+    {
+      "num": "113",
+      "name": "Biker Coven Leader",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Leads a motorcycle gang that rides enchanted Harleys across the sky.",
+      "stats": {
+        "power": 85,
+        "speed": 80,
+        "technique": 75,
+        "endurance": 85,
+        "charisma": 80
+      },
+      "basePrice": 1.1,
+      "imagePrompt": "Witch in leather jacket riding a flying motorbike, thunder clouds, digital art.",
+      "imagePromptBack": "Black leather texture background, flame-pattern stats border, embossed silver.",
+      "imagePromptBackFlavor": "She doesn't follow the broomstick lane laws, mostly because she's too fast for the aurors to catch."
+    },
+    {
+      "num": "114",
+      "name": "Suburban Spell-Check",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Ensures every HOA member is following the lawn-care hex guidelines.",
+      "stats": {
+        "power": 40,
+        "speed": 50,
+        "technique": 75,
+        "endurance": 50,
+        "charisma": 60
+      },
+      "basePrice": 0.15,
+      "imagePrompt": "Wizard with a clipboard and wand checking grass height, suburban street.",
+      "imagePromptBack": "White picket fence border, clipboard-themed stats area, satin finish.",
+      "imagePromptBackFlavor": "He'll hex your hedges if they grow an inch over regulation. It's for the neighborhood aesthetic."
+    },
+    {
+      "num": "115",
+      "name": "Garage Sale Ghost",
+      "subset": "Flashback",
+      "starTier": "Uncommon",
+      "desc": "Haunts antique shops searching for his missing enchanted spatula.",
+      "stats": {
+        "power": 60,
+        "speed": 70,
+        "technique": 55,
+        "endurance": 80,
+        "charisma": 60
+      },
+      "basePrice": 0.45,
+      "imagePrompt": "Translucent wizard ghostly hovering over a table of junk, nostalgic lighting.",
+      "imagePromptBack": "Sepia-toned background, dusty shop texture, worn-edge card finish.",
+      "imagePromptBackFlavor": "He's been dead for eighty years, but he still insists that spatula is worth more than five dollars."
+    },
+    {
+      "num": "116",
+      "name": "Route 66 Warlock",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Knows every shortcut between magical hidden towns across the heartland.",
+      "stats": {
+        "power": 75,
+        "speed": 85,
+        "technique": 70,
+        "endurance": 90,
+        "charisma": 65
+      },
+      "basePrice": 0.95,
+      "imagePrompt": "Wizard standing on an old asphalt road, desert horizon, iconic American landscape art.",
+      "imagePromptBack": "Road-map background style, neon-sign font for stats, matte finish.",
+      "imagePromptBackFlavor": "If you pick him up hitchhiking, he'll hex your engine into running on moonbeams."
+    },
+    {
+      "num": "117",
+      "name": "Fast Food Alchemist",
+      "subset": "Base",
+      "starTier": "Common",
+      "desc": "Can transform a soggy fry into a gourmet meal with a flick of his wrist.",
+      "stats": {
+        "power": 55,
+        "speed": 65,
+        "technique": 80,
+        "endurance": 50,
+        "charisma": 60
+      },
+      "basePrice": 0.1,
+      "imagePrompt": "Wizard in a fast-food uniform holding a glowing burger, vibrant colors.",
+      "imagePromptBack": "Fast-food red and yellow theme, tray-liner textured stats, glossy finish.",
+      "imagePromptBackFlavor": "He says the secret ingredient is always a drop of Phoenix tears and extra salt."
+    },
+    {
+      "num": "118",
+      "name": "High School Quidditch Coach",
+      "subset": "Base",
+      "starTier": "Star",
+      "desc": "Still believes he could have gone pro if not for that fateful Bludger injury.",
+      "stats": {
+        "power": 70,
+        "speed": 70,
+        "technique": 85,
+        "endurance": 75,
+        "charisma": 80
+      },
+      "basePrice": 1.25,
+      "imagePrompt": "Older wizard with a whistle and clipboard on a pitch, nostalgic stadium art.",
+      "imagePromptBack": "Varsity-jacket font for stats, scoreboard background, textured finish.",
+      "imagePromptBackFlavor": "He makes the team practice at 5 AM, but admits his own glory days are long behind him."
+    },
+    {
+      "num": "119",
+      "name": "Cactus Juice Conjurer",
+      "subset": "Rookie",
+      "starTier": "Uncommon",
+      "desc": "Learned his magic in the desert and won't shut up about it.",
+      "stats": {
+        "power": 65,
+        "speed": 60,
+        "technique": 75,
+        "endurance": 80,
+        "charisma": 55
+      },
+      "basePrice": 0.4,
+      "imagePrompt": "Wizard with cactus spikes in his robes, arid desert sunset, vibrant art.",
+      "imagePromptBack": "Succulent greenery border, sand-colored stats panel, matte finish.",
+      "imagePromptBackFlavor": "His spells leave a strange prickly sensation on your skin, but they last ten times longer."
+    },
+    {
+      "num": "120",
+      "name": "The Great Bayou Mage",
+      "subset": "AllStar",
+      "starTier": "Superstar",
+      "desc": "Lives in a floating shack and controls the swamp gators with music.",
+      "stats": {
+        "power": 90,
+        "speed": 75,
+        "technique": 95,
+        "endurance": 90,
+        "charisma": 85
+      },
+      "basePrice": 2.8,
+      "imagePrompt": "Wizard playing a fiddle on a boat in a misty swamp, dark mystical atmosphere.",
+      "imagePromptBack": "Moss-covered wood texture, swamp-green stats font, metallic bronze finish.",
+      "imagePromptBackFlavor": "The gators don't bite when he plays; they prefer to tap their tails to the rhythm."
+    }
+  ],
+  "seed": "Murrican Harry Potter|Custom||MHP|120|google/gemini-3.1-flash-lite||1|50|standard|normal",
+  "aiGenerated": true,
+  "created": "2026-05-15T07:33:07.648Z",
+  "metadata": {
+    "schemaVersion": 3,
+    "source": "ai-generated",
+    "code": "MHP",
+    "officialName": "Murrican Harry Potter Flagship Series",
+    "themeName": "Murrican Harry Potter",
+    "category": "Custom",
+    "setCategory": null,
+    "sport": null,
+    "collectionTheme": null,
+    "propertyGenre": null,
+    "propertySynopsis": null,
+    "seasons": null,
+    "cadenceDays": 45,
+    "releaseWindow": "2026 Early Summer Flagship Window",
+    "brandFamily": "flagship",
+    "productLine": "Flagship Series",
+    "productArchetype": "flagship",
+    "marketPosition": "mass flagship",
+    "tagline": "Built for the full chase",
+    "creativeDirection": {
+      "artisticStyle": "heroic portrait montage",
+      "layoutStyle": "classic stats grid",
+      "finishProfile": "foil logo accents",
+      "typographyDirection": "broadcast bold",
+      "paletteDirection": "chrome rainbow spectrum",
+      "photographyApproach": "hero portrait focus"
+    },
+    "productIdentity": {
+      "officialName": "Murrican Harry Potter Flagship Series",
+      "theme": "Murrican Harry Potter",
+      "collectorHook": "premium product identity with loud showcase hits",
+      "checklistPhilosophy": "template-led release built for annual continuity and serial collecting",
+      "boxBreakIdentity": "engineered for color-rainbow progression"
+    },
+    "packaging": {
+      "hobbyConfiguration": {
+        "packsPerBox": 12,
+        "cardsPerPack": 5
+      },
+      "blasterConfiguration": {
+        "packsPerBox": 6,
+        "cardsPerPack": 5
+      },
+      "jumboConfiguration": {
+        "packsPerBox": 1,
+        "cardsPerPack": 10
+      },
+      "retailConfiguration": {
+        "packsPerBox": 1,
+        "cardsPerPack": 5
+      },
+      "shelfPitch": "flagship checklist breadth with premium chase pressure"
+    },
+    "chaseArchitecture": {
+      "premiumCardCount": 31,
+      "hitPrograms": [],
+      "insertPrograms": [],
+      "parallelFamilies": [
+        {
+          "family": "base",
+          "role": "core checklist",
+          "finishStyle": "gloss coat"
+        },
+        {
+          "family": "color rainbow",
+          "role": "core collector rainbow",
+          "finishStyle": "gloss coat"
+        },
+        {
+          "family": "numbered chase",
+          "role": "mid-tier scarcity ladder",
+          "finishStyle": "foil logo accents"
+        },
+        {
+          "family": "premium black or gold",
+          "role": "late-rainbow prestige",
+          "finishStyle": "spot UV title hits"
+        },
+        {
+          "family": "one-of-one",
+          "role": "terminal chase card",
+          "finishStyle": "ultimate premium finish"
+        }
+      ],
+      "parallelLineup": [],
+      "chaseNarrative": "the release is designed so the rainbow itself becomes a metagame"
+    },
+    "contentStructure": {
+      "cardCount": 120,
+      "subsetCount": 5,
+      "tierDistribution": {
+        "Common": 44,
+        "Uncommon": 25,
+        "Star": 20,
+        "Superstar": 17,
+        "Legendary": 14
+      },
+      "rookieOrProspectBias": 0.133
+    },
+    "provenance": {
+      "seed": "Murrican Harry Potter|Custom||MHP|120|google/gemini-3.1-flash-lite||1|50|standard|normal",
+      "createdAt": "2026-05-15T07:33:07.648Z",
+      "generator": "ai-generated",
+      "researchBasis": [
+        "flagship/checklist scale",
+        "chrome rainbow logic",
+        "heritage template reuse",
+        "museum or gilded premium packaging",
+        "insert-and-hit ladder design"
+      ]
+    }
+  },
+  "showFlavorText": true,
+  "promptMode": "baked"
+}
