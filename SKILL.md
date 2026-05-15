@@ -24,12 +24,14 @@ This skill runs on **Hermes Agent** and **OpenClaw** without changes:
 | Flopps simulation | Built-in | Built-in |
 | Stores & scalpers | Built-in | Built-in |
 
-Set `TRADING_CARDS_DATA_DIR` to the player's data directory before running any player-scoped commands.
+Set `TRADING_CARDS_DATA_DIR` to the player's data directory before running any wallet/collection commands.
 
 ## Multi-User System
 
-The trading card system is player-scoped. Each registered player gets their own wallet, collection, trade history, marketplace state, and checklist.
-Never assume a shared/default wallet. Always resolve the player first, then run card-engine commands against that player's data directory.
+Each registered player gets their own wallet, collection, trade history, marketplace state, and checklist.
+Never assume a shared/default wallet. Always resolve the player first, then run `card-engine` commands against that player's data directory.
+
+**Sets are global.** All card sets live in `data/sets/` and are shared across every player. When a set is created (via `ai-set-generator`, `boc-set-generator`, or manually), it becomes available to all players immediately. No per-player set paths — saying "my set" means "the set I'm collecting from," not a private copy.
 
 Player identity comes from `player-manager.js`; do not invent a new user name inside the engine.
 
@@ -70,7 +72,7 @@ Commands that trigger the catch-up: `flopps-status`, `flopps-day`, `flopps-today
 - `Next launch: 14 May 2026 — Murrican Harry Potter Collectors Set` instead of `day 45`
 - FLPS price history shows per-day entries even after multi-day gaps
 
-**Flopps state file duality:** The flopps state is stored per-player at `data/players/<id>/flopps/state.json` AND at the global `data/flopps/state.json`. The player-scoped one is the source of truth when running under `TRADING_CARDS_DATA_DIR`. Keep them in sync if you manually edit one.
+**Flopps state file duality:** The flopps state is stored per-player at `data/players/<id>/flopps/state.json` AND at the global `data/flopps/state.json`. The player-scoped one is the source of truth when running under `TRADING_CARDS_DATA_DIR`. Keep them in sync if you manually edit one. **Sets are not affected by this** — all sets are always read from `data/sets/` regardless of `TRADING_CARDS_DATA_DIR`.
 
 ### Daily Stipend
 
@@ -345,7 +347,7 @@ Commands that trigger the catch-up: `flopps-status`, `flopps-day`, `flopps-today
 `flopps-wildcard` force-generates a surprise AI-written corporate event and records it in the same history stream.
 
 **Flopps state file duality:**  
-The flopps state is stored per-player at `data/players/<id>/flopps/state.json` AND at the global `data/flopps/state.json`. The player-scoped one is the source of truth when running under `TRADING_CARDS_DATA_DIR`. Keep them in sync if you manually edit one.
+The flopps state is stored per-player at `data/players/<id>/flopps/state.json` AND at the global `data/flopps/state.json`. The player-scoped one is the source of truth when running under `TRADING_CARDS_DATA_DIR`. Keep them in sync if you manually edit one. **Sets are always global** — `data/sets/` is shared across all players regardless of `TRADING_CARDS_DATA_DIR`.
 
 ### Build Modular Card Image Prompts
 ```bash
@@ -536,6 +538,8 @@ The flopps state exists in **two locations**:
 - Global: `data/flopps/state.json` (used when `TRADING_CARDS_DATA_DIR` is NOT set)
 
 When running commands with the player scoping pattern (`TRADING_CARDS_DATA_DIR=$(node player-manager.js dir)`), the player-scoped one is read and written. The global one falls out of sync. To check or manually edit flopps state, always target the player-scoped version if you're in the standard workflow.
+
+**Sets are NOT dual** — all sets live in `data/sets/` (global) and are read from there regardless of `TRADING_CARDS_DATA_DIR`. The code explicitly resolves sets against the project-level `data/` directory, not the player-scoped one.
 
 ### ~Collection File Auto-Creation Bug (FIXED)~
 ~~`card-engine.js` `loadCol()` returns `null` if the collection file doesn't exist, causing crashes on first pack open.~~

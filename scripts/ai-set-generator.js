@@ -27,6 +27,9 @@ const crypto = require('crypto');
 const {createTradingLogger,summarize:logSummarize} = require('./trading-logger.js');
 
 const DATA_DIR = process.env.TRADING_CARDS_DATA_DIR ? path.resolve(process.env.TRADING_CARDS_DATA_DIR) : path.join(__dirname, '..', 'data');
+// GLOBAL_DATA_DIR always points to the project-level data/ directory.
+// All sets are stored here — shared across all players, never per-player.
+const GLOBAL_DATA_DIR = path.join(__dirname, '..', 'data');
 const DEFAULT_ENV_FILES = [
   process.env.TRADING_CARDS_ENV_FILE ? path.resolve(process.env.TRADING_CARDS_ENV_FILE) : null,
   path.join(__dirname, '..', '.env'),
@@ -1005,7 +1008,7 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
   set.name = set.metadata.officialName;
 
   const key = `${setCode}-${year}`;
-  const setPath = path.join(DATA_DIR, 'sets', `${key}.json`);
+  const setPath = path.join(GLOBAL_DATA_DIR, 'sets', `${key}.json`);
   fs.mkdirSync(path.dirname(setPath), { recursive: true });
   fs.writeFileSync(setPath, JSON.stringify(set, null, 2));
   LOGGER.log('write-set',{key,setPath,summary:logSummarize({code:set.code,name:set.name,category:set.category,cards:set.cards.length})});
@@ -1052,7 +1055,7 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
 }
 
 function resolveGeneratedSetPath(key) {
-  const dir = path.join(DATA_DIR, 'sets');
+  const dir = path.join(GLOBAL_DATA_DIR, 'sets');
   const candidates = [
     path.join(dir, `${key}.json`),
     path.join(dir, key),

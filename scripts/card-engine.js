@@ -28,6 +28,7 @@ const {
   isReal, normalizeSeed, genCard, genSetCode, gaussRand, clamp,
   generateCondition, ensureCondition,
   FLOPPS_DIR, FLOPPS_STATE_FILE, FLOPPS_WILDCARD_DIR,
+  getGlobalDataDir,
   loadCompanies, loadGradingState, saveGradingState, loadPopulation, savePopulation,
   psaTierForValue, conditionToGrade, isBlackLabel, gradeMultiplier,
   estimateGradeProbability, gradeLabel, progressStr, bumpPopulation,
@@ -308,7 +309,7 @@ function cmdPortfolio(){
   let totalCards=0,totalValue=0,totalSpent=0,totalHits=0,totalOnes=0,setsInfo=[];
   for(const f of files){
     const col=rJ(path.join(colDir,f));if(!col)continue;
-    const setPath=path.join(getDataDir(),'sets',col.setKey+'.json');
+    const setPath=path.join(getGlobalDataDir(),'sets',col.setKey+'.json');
     const set=rJ(setPath);
     const uniqNums=new Set();
     for(const c of col.cards) uniqNums.add(c.cardNum);
@@ -1637,8 +1638,8 @@ function cmdUndo(n){
   // process each set
   for(const[sk,ents] of Object.entries(bySet)){
     const col=loadCol(sk);if(!col){console.log(`  ⚠ Collection not found: ${sk}`);continue}
-    let set=rJ(path.join(getDataDir(),'sets',sk+'.json'));
-    if(!set){const entries=fs.readdirSync(path.join(getDataDir(),'sets')).filter(f=>f.endsWith('.json'));const match=entries.find(f=>f.replace('.json','').startsWith(sk+'-'));if(match)set=rJ(path.join(getDataDir(),'sets',match))}
+    let set=rJ(path.join(getGlobalDataDir(),'sets',sk+'.json'));
+    if(!set){const entries=fs.readdirSync(path.join(getGlobalDataDir(),'sets')).filter(f=>f.endsWith('.json'));const match=entries.find(f=>f.replace('.json','').startsWith(sk+'-'));if(match)set=rJ(path.join(getGlobalDataDir(),'sets',match))}
     if(!set){console.log(`  ⚠ Set not found: ${sk}`);continue}
     const cfg=loadCfg()
     let totalCards=0,totalSpent=0,totalPacks=0,totalBoxes=0

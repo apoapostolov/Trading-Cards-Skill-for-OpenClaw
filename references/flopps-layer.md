@@ -86,6 +86,8 @@ Flopps state is stored in two places:
 
 The player-scoped one is the source of truth when running under `TRADING_CARDS_DATA_DIR`. If editing manually, keep both in sync.
 
+**Sets are not affected by this duality** — all card sets live in `data/sets/` (global) and are always read/written there, regardless of `TRADING_CARDS_DATA_DIR`.
+
 ### Catch-Up History Duplication Bug
 
 The catch-up mechanism (`maybeAnnounceFloppsNews`) appends new stock history entries without deduplicating. After repeated catch-up runs (e.g. from timeouts or interrupted commands), the same day numbers accumulate multiple entries — days 36-39 appearing 3x each is common. This inflates the history from ~25 entries to 40+ and causes the catch-up itself to hang as it iterates over the growing list.

@@ -9,9 +9,18 @@ const {
 } = require('./constants.js');
 
 // ─── Data Directory ────────────────────────────────────────────────
+// getDataDir() resolves to the player-scoped or project-level data dir
+// based on TRADING_CARDS_DATA_DIR. Used for per-player state (config,
+// collections, trades, history, market, flopps).
 const getDataDir = () => process.env.TRADING_CARDS_DATA_DIR
   ? path.resolve(process.env.TRADING_CARDS_DATA_DIR)
   : path.join(__dirname, '..', '..', 'data');
+
+// getGlobalDataDir() always returns the project-level data/ directory,
+// ignoring TRADING_CARDS_DATA_DIR. Used for sets and any data that must
+// be shared across all players.
+const GLOBAL_DATA_DIR = path.join(__dirname, '..', '..', 'data');
+const getGlobalDataDir = () => GLOBAL_DATA_DIR;
 
 const FLOPPS_DIR = () => path.join(getDataDir(), 'flopps');
 const FLOPPS_STATE_FILE = () => path.join(FLOPPS_DIR(), 'state.json');
@@ -104,10 +113,12 @@ function requirePlayerContext(command) {
 }
 
 // ─── Set / Collection Loaders ──────────────────────────────────────
+// Sets are always global (shared across all players). loadSet() resolves
+// against the project-level data/ directory, ignoring TRADING_CARDS_DATA_DIR.
 function loadSet() {
   const c = loadCfg();
   if (!c.activeSet) return null;
-  const p = path.join(getDataDir(), 'sets', c.activeSet + '.json');
+  const p = path.join(getGlobalDataDir(), 'sets', c.activeSet + '.json');
   const s = rJ(p);
   if (!s) LOG.current?.warn?.('missing-set', { activeSet: c.activeSet, path: p });
   return s;
@@ -597,6 +608,7 @@ module.exports = {
   ensureCondition,
   // Data dir
   getDataDir,
+  getGlobalDataDir,
   FLOPPS_DIR,
   FLOPPS_STATE_FILE,
   FLOPPS_WILDCARD_DIR,
