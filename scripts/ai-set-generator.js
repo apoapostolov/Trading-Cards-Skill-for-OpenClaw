@@ -54,7 +54,7 @@ process.on('uncaughtException',err=>{LOGGER?.error('uncaught-exception',{error:e
 process.on('unhandledRejection',err=>{LOGGER?.error('unhandled-rejection',{error:err});});
 
 // ── Config ──────────────────────────────────────────────────────
-const DEFAULT_MODEL = 'google/gemini-2.0-flash-001';
+const DEFAULT_MODEL = 'google/gemini-3.1-flash-lite';
 const DEFAULT_FLOPPS_MODEL = 'moonshotai/kimi-k2.5';
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const DEFAULT_SYSTEM_PROMPT = 'You are a creative trading card designer. You output ONLY valid JSON, never markdown fences or extra text. Complete the FULL array — never truncate.';
@@ -961,6 +961,7 @@ function saveSet(cards, setCode, setName, category, year, customTypes, extra = {
     cards,
     seed: extra.seed || null,
     aiGenerated: true,
+    showFlavorText: true,  // AI-generated sets always have flavor text
     created: new Date().toISOString(),
   };
 
@@ -1347,8 +1348,28 @@ async function main() {
   const generationRng = makeSeededRng(`set-gen|${generationSeed}`);
 
   // Build prompt and call LLM — use batching for 150+ cards
-  const BATCH_SIZE = 50; // 80 cards per API call is safe for most models
+  const BATCH_SIZE = 20; // Smaller batches so API calls complete faster
   let allCards = [];
+
+  // Pre-build the set structure for incremental saves
+  let incrementalSetKey = null;
+  let incrementalSetPath = null;
+
+  function saveIncremental(cards) {
+    if (!incrementalSetKey) return;
+    try {
+      // Re-read existing set JSON to preserve metadata, just update cards
+      let setData = {};
+      try {
+        setData = JSON.parse(fs.readFileSync(incrementalSetPath, 'utf8'));
+      } catch {}
+      setData.cards = cards;
+      setData.cardCount = cards.length;
+      fs.writeFileSync(incrementalSetPath, JSON.stringify(setData, null, 2));
+    } catch (e) {
+      console.error(`  ⚠️ Incremental save failed: ${e.message}`);
+    }
+  }
 
   if (hasSetFixture) {
     console.error(`  🧪 Using fixture cards from ${process.env.AI_SET_GENERATOR_FIXTURE_FILE}`);
@@ -1370,8 +1391,20 @@ async function main() {
     let batch = 1;
     const totalBatches = Math.ceil(opts.cards / BATCH_SIZE);
     
+    // Pre-write an empty set skeleton so incremental saves have a target
+    const key = `${setCode}-${year}`;
+    incrementalSetKey = key;
+    const d = path.join(DATA_DIR, 'sets');
+    if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
+    incrementalSetPath = path.join(d, `${key}.json`);
+    // Write initial skeleton
+    const skel = { code: setCode, name: themeName, themeName, year, category: catLabel, cards: [], cardCount: 0, seed: generationSeed, aiGenerated: true, created: new Date().toISOString() };
+    fs.writeFileSync(incrementalSetPath, JSON.stringify(skel, null, 2));
+    console.log(`[PROGRESS] Set skeleton created: ${key}`);
+    
     for (let start = 1; start <= opts.cards; start += BATCH_SIZE) {
       const end = Math.min(start + BATCH_SIZE - 1, opts.cards);
+      console.log(`[PROGRESS] Batch ${batch}/${totalBatches}: requesting cards ${start}-${end}...`);
       console.error(`  📦 Batch ${batch}/${totalBatches} (cards ${start}-${end})...`);
 
       const prompt = start === 1
@@ -1392,8 +1425,14 @@ async function main() {
           cards = cards.map((c, i) => ({ ...c, num: String(start + i).padStart(3, '0') }));
         }
         allCards.push(...cards);
+        console.log(`[PROGRESS] Batch ${batch}/${totalBatches}: got ${cards.length} cards (total: ${allCards.length}/${opts.cards})`);
         console.error(`  ✅ Got ${cards.length} cards`);
+        
+        // Incremental save after each batch
+        saveIncremental(allCards.map((c, i) => ({ ...c, num: String(i + 1).padStart(3, '0') })));
+        console.log(`[PROGRESS] Saved ${allCards.length} cards to ${key}.json`);
       } catch (e) {
+        console.log(`[PROGRESS] Batch ${batch}/${totalBatches} FAILED: ${e.message}`);
         console.error(`  ❌ Batch ${batch} failed: ${e.message}`);
         // Pad with procedural fallback for this batch
         console.error(`  ⚠️  Padding batch ${batch} with procedural cards...`);
@@ -1408,6 +1447,8 @@ async function main() {
             basePrice: 0.15,
           });
         }
+        // Still save after fallback
+        saveIncremental(allCards.map((c, i) => ({ ...c, num: String(i + 1).padStart(3, '0') })));
       }
       batch++;
     }

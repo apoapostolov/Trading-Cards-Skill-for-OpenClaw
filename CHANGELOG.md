@@ -1,5 +1,29 @@
 # Changelog
 
+## v2.1.0 — 2026-05-15
+
+**AI set generator overhaul + NEW CARDS REVEAL flavor text**
+
+### Added
+- **NEW CARDS REVEAL section** in pack/box opening — shows italic flavor text (`desc` field)
+  for new cards only (skips duplicates), gated by `showFlavorText` flag on the set
+  - `pack-engine.js`: `desc` field now passed through from base card to pulled card
+  - `card-engine.js`: post-summary `📜 NEW CARDS REVEAL` table in both `cmdOpenPack`
+    and `cmdOpenBox`
+- **`showFlavorText` set config flag** — auto-enabled for all AI-generated sets,
+  optional for procedural sets; MHP-2026 enabled
+- **Incremental save after each batch** in `ai-set-generator.js` — set written to disk
+  after every batch, so partial data survives timeouts
+- **Stdout progress markers** (`[PROGRESS]`) during AI set generation for agent visibility
+
+### Changed
+- **Default AI model** → `google/gemini-3.1-flash-lite` (fast, reliable on OpenRouter)
+- **BATCH_SIZE** reduced from 50 → 20 (each batch completes in ~15s instead of 30-65s)
+
+### Fixed
+- AI set generation no longer loses all progress on timeout — partial cards are saved
+  incrementally
+
 ## v2.0.0 — 2026-05-09
 
 **Major refactor: Monolith → Modular architecture**

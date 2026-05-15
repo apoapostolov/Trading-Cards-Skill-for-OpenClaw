@@ -187,6 +187,21 @@ function cmdOpenPack(type){
     console.log(`  Wallet: untouched (virtual)`);
   }
   console.log(`${'─'.repeat(52)}\n`);
+  // Flavor text section — shows desc for new cards only
+  if (set.showFlavorText) {
+    const newCards = pack.filter(c => !c.acquiredIsDuplicate && c.desc);
+    if (newCards.length > 0) {
+      console.log(`${'─'.repeat(52)}`);
+      console.log(`  📜 NEW CARDS REVEAL`);
+      console.log(`${'─'.repeat(52)}`);
+      newCards.forEach(c => {
+        const te = TIER_EMOJI[c.starTier] || '';
+        const prefix = te ? `${te} ` : '';
+        console.log(`  ${prefix}${set.code}-${c.cardNum} ${c.name} → _${c.desc}_`);
+      });
+      console.log(`${'─'.repeat(52)}\n`);
+    }
+  }
 }
 
 function cmdOpenBox(type){
@@ -211,6 +226,7 @@ function cmdOpenBox(type){
     var prevColLen=col.cards.length;
   }
   const np=PACKS[pt].packs;let tv=0,th=0,boxBest=null,totalNew=0,totalVariant=0,totalDup=0;
+  const boxNewCards = []; // for flavor text
   const displayCost=usedOwned?0:bp;
   const modeTag=real?(usedOwned?' [OWNED]':' [PURCHASED]'):' [DRY RUN]';
   console.log(`\n${'═'.repeat(52)}`);
@@ -236,6 +252,7 @@ function cmdOpenBox(type){
       if(isDup)totalDup++;
       else if(isVariant)totalVariant++;
       else totalNew++;
+      if (set.showFlavorText && !isDup && c.desc) boxNewCards.push(c);
       console.log(fmtCard(c,i+1,set,isDup?c.acquiredCopyIndex:0));
       console.log('');
     });
@@ -269,6 +286,18 @@ function cmdOpenBox(type){
   }
   if(boxBest)console.log(`  🏆 Best: ${boxBest.name} — ${boxBest.parallel} ${fm$(boxBest.price)}`);
   console.log(`${'═'.repeat(52)}\n`);
+  // Flavor text section for box openings
+  if (set.showFlavorText && boxNewCards.length > 0) {
+    console.log(`${'─'.repeat(52)}`);
+    console.log(`  📜 FLAVOR TEXT`);
+    console.log(`${'─'.repeat(52)}`);
+    boxNewCards.forEach(c => {
+      const te = TIER_EMOJI[c.starTier] || '';
+      console.log(`  ${te}${set.code}-${c.cardNum} ${c.name}`);
+      console.log(`  _${c.desc}_\n`);
+    });
+    console.log(`${'─'.repeat(52)}\n`);
+  }
 }
 
 function cmdPortfolio(){

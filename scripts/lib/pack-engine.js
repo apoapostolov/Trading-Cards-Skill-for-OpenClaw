@@ -149,7 +149,7 @@ function pullCards(set, col, packType, openCtx = {}) {
     const catLine = CAT.fmtCardCategoryLine(baseCard, set.setCategory);
     const condition = generateCondition(bc.starTier);
     const c = {
-      id, cardNum: bc.num, name: bc.name, subset: bc.subset, starTier: bc.starTier, stats: bc.stats || {},
+      id, cardNum: bc.num, name: bc.name, desc: bc.desc || '', subset: bc.subset, starTier: bc.starTier, stats: bc.stats || {},
       parallel: parallel.name, sn, serStr, plate, special: sp.name, specialDesc: sp.desc,
       quality, grade: cond.grade, gradeName: cond.name, price, isHit,
       marketPrice: price, popScore: 0, demandScore: 0,
