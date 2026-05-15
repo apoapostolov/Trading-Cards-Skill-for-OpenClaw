@@ -1476,7 +1476,7 @@ function buildImageSegment(card, set, side, tradeDressProfile, variantProfile, n
   return compact(lines);
 }
 
-function buildRenderPromptShort(card, set, side, formatProfile, variantProfile, tradeDressProfile, noveltyProfile, conditionProfile, serializationProfile) {
+function buildRenderPromptShort(card, set, side, formatProfile, variantProfile, tradeDressProfile, noveltyProfile, conditionProfile, serializationProfile, handHeld = true) {
   const subject = clean(card.name || card.cardNum || 'the card');
   // For baked prompt sets, use the rich baked description as the subject line
   // instead of a generic "Single centered hero subject: NAME" — the AI generator's
@@ -1498,6 +1498,7 @@ function buildRenderPromptShort(card, set, side, formatProfile, variantProfile, 
     side === 'front'
       ? 'Clean lower-third nameplate, crisp chrome border, realistic printed-card finish, tight card-safe crop.'
       : 'Crisp stats grid, serial rail, readable flavor text, realistic printed-card finish.',
+    handHeld ? 'Real-world photography framing of the card itself, not a full-frame digital render.' : '',
     conditionProfile.key === 'graded'
       ? `Graded slab presentation: ${gradeLabel(card)}.`
       : 'Ungraded raw card, no slab.',
@@ -1620,7 +1621,8 @@ function buildPromptPayload(card, set, side, options = {}) {
   const novelty = buildNoveltySegment(noveltyProfile);
   const physical = buildPhysicalSegment(formatProfile, conditionProfile, serializationProfile);
   const image = buildImageSegment(card, set, side, tradeDressProfile, variantProfile, noveltyProfile);
-  const renderPromptShort = buildRenderPromptShort(card, set, side, formatProfile, variantProfile, tradeDressProfile, noveltyProfile, conditionProfile, serializationProfile);
+  const handHeld = options.handHeld !== undefined ? options.handHeld : (set && set.handHeld !== undefined ? set.handHeld : true);
+  const renderPromptShort = buildRenderPromptShort(card, set, side, formatProfile, variantProfile, tradeDressProfile, noveltyProfile, conditionProfile, serializationProfile, handHeld);
   const renderPromptDetailed = buildRenderPromptDetailed(card, set, side, formatProfile, variantProfile, tradeDressProfile, noveltyProfile, typeProfile, conditionProfile, serializationProfile, image);
   const promptFormat = clean(options.promptFormat || 'text').toLowerCase() === 'json' ? 'json' : 'text';
 

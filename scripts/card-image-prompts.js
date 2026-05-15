@@ -24,6 +24,7 @@ function parseArgs(argv) {
     all: false,
     side: 'front',
     format: 'json',
+    handHeld: true,
     output: null,
     writeSet: false,
     includeSource: true,
@@ -46,6 +47,8 @@ function parseArgs(argv) {
     else if (arg === '--write-set') opts.writeSet = true;
     else if (arg === '--no-source') opts.includeSource = false;
     else if (arg === '--prompt-format' && args[i + 1]) opts.promptFormat = args[++i];
+    else if (arg === '--hand-held') opts.handHeld = true;
+    else if (arg === '--no-hand-held') opts.handHeld = false;
     else if (arg === '--help' || arg === '-h') opts.help = true;
   }
 
@@ -69,6 +72,8 @@ Options:
   --write-set            Persist prompt payloads back into the set JSON
   --no-source            Omit original flat prompt fields from payload
   --prompt-format <text|json>  Render the prompt as sectioned text or structured JSON
+  --hand-held              Real-world photography framing (card held in hand). On by default.
+  --no-hand-held           Disable hand-held framing (full-frame digital render).
 `);
 }
 
@@ -106,7 +111,7 @@ function main() {
   const bundleByCardNum = new Map();
 
   for (const card of cards) {
-    const bundle = buildPromptBundle(card, set, opts.side, { includeSource: opts.includeSource, promptFormat: opts.promptFormat });
+    const bundle = buildPromptBundle(card, set, opts.side, { includeSource: opts.includeSource, promptFormat: opts.promptFormat, handHeld: opts.handHeld });
     const key = normalizeNum(card.num || card.cardNum || '');
     if (opts.side === 'both') {
       payloads.push(bundle);
