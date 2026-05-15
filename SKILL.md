@@ -154,7 +154,7 @@ You are the card shop owner. Every transaction starts with a wallet check. **Nev
 
 ### Before ANY command that costs money, you MUST:
 
-1. **Know the wallet balance.** If you don't have it in context, run `wallet` FIRST.
+1. **Know the wallet balance.** If you don't have it in context, run `wallet` FIRST. Wallet now aggregates across ALL collections (cash + every set's collection value + sealed stock).
 2. **Know the cost.** Pack types have fixed prices. Grading costs $5/card. Store purchases have listed prices. Auctions require bid amounts.
 3. **Compare.** If `balance < cost`, REFUSE and tell the player what they can afford instead.
 4. **If balance ≥ cost,** proceed with the command.
@@ -437,8 +437,10 @@ node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js new-season
 TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js open-pack hobby
 TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js open-pack retail --real    # commit to collection
 
-# Compare all players (no TRADING_CARDS_DATA_DIR needed — global command)
-node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js compare
+# Player-free commands (no TRADING_CARDS_DATA_DIR needed — runs without wallet context):
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js help        # new-player guide: premise, economics, common actions
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js compare     # compare wallets/cards across all registered players
+node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js list-sets   # see all generated sets
 
 # Financial overview
 TRADING_CARDS_DATA_DIR=$(node ~/.hermes/skills/gaming/trading-cards/scripts/player-manager.js dir) node ~/.hermes/skills/gaming/trading-cards/scripts/card-engine.js portfolio
@@ -527,13 +529,17 @@ LOG.current?.log('process.start', {...});  // use (never LOG.log or LOG?.log)
 
 All `LOG?.` calls become `LOG.current?.`. If you define a helper that uses LOG, make sure it accesses `LOG.current`, not `LOG` directly.
 
-### compare Command — Global Context
+### compare / help / list-sets Commands — Global (Player-Free) Context
 
-`compare` is a **player-free command** — it reads all players from the global `data/players.json` and doesn't need `TRADING_CARDS_DATA_DIR`. Run it directly:
+`compare`, `help`, and `list-sets` are **player-free commands** — they don't need `TRADING_CARDS_DATA_DIR`:
+
 ```bash
-node scripts/card-engine.js compare
+node scripts/card-engine.js compare       # read all players from data/players.json
+node scripts/card-engine.js help           # print the new-player guide
+node scripts/card-engine.js list-sets      # list all generated sets
 ```
-It was added to `PLAYER_FREE_COMMANDS` in the init block and registered in Commander. If you add a new global command, do the same.
+
+They are added to `PLAYER_FREE_COMMANDS` in the init block and registered in Commander. If you add a new global command, do the same thing: add it to the `PLAYER_FREE_COMMANDS` Set and register it with Commander.
 
 ### Portfolio Display: Slots vs Variants
 
@@ -559,6 +565,26 @@ The flopps state exists in **two locations**:
 When running commands with the player scoping pattern (`TRADING_CARDS_DATA_DIR=$(node player-manager.js dir)`), the player-scoped one is read and written. The global one falls out of sync. To check or manually edit flopps state, always target the player-scoped version if you're in the standard workflow.
 
 **Sets are NOT dual** — all sets live in `data/sets/` (global) and are read from there regardless of `TRADING_CARDS_DATA_DIR`. The code explicitly resolves sets against the project-level `data/` directory, not the player-scoped one.
+
+### Wallet Now Shows Per-Set Breakdown (v2.2.0+)
+
+The `wallet` command aggregates **all collections** in a player's `collections/` directory, not just the active set. When you own cards in multiple sets, a `COLLECTION BY SET` table appears with each set's card count, value, and P/L.
+
+This means the old single-set `Inventory:` line (sealed inventory per set) is no longer shown — sealed stock is aggregated into the total.
+
+### Corrupt Collection Files (undefined.json)
+
+`loadCol()` auto-creates a collection file if one is missing, using `cfg.activeSet` as the set key. If `cfg.activeSet` is `undefined` (e.g. after a botched new-season or config corruption), a file named `undefined.json` gets created under `collections/`.
+
+Symptoms:
+- `wallet` or `portfolio` commands crash with `TypeError: Cannot read properties of undefined (reading 'length')`
+- A file called `undefined.json` exists in the player's `collections/` directory
+
+Fix:
+```bash
+rm data/players/<id>/collections/undefined.json
+```
+The `undefined.json` may also appear under `data/collections/` if running without `TRADING_CARDS_DATA_DIR`. The wallet command (v2.2.0+) skips these corrupt entries gracefully, but they should still be cleaned up manually.
 
 ### ~Collection File Auto-Creation Bug (FIXED)~
 ~~`card-engine.js` `loadCol()` returns `null` if the collection file doesn't exist, causing crashes on first pack open.~~

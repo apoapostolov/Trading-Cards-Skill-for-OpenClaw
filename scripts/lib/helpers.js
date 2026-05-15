@@ -315,7 +315,13 @@ function formatSealedInventorySummary(col) {
 }
 
 // ─── Real / Virtual ────────────────────────────────────────────────
-function isReal() { return process.argv.includes('--real'); }
+function isReal() {
+  const args = process.argv;
+  if (args.includes('--dry-run') || args.includes('--dry') || args.includes('--virtual') || args.includes('--virtual-only')) {
+    return false;
+  }
+  return true;
+}
 
 // ─── Card Generation ───────────────────────────────────────────────
 function genCard(num, cat, theme, rng) {

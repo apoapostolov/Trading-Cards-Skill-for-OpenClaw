@@ -4680,8 +4680,8 @@ const EXTENDED_HELP = `
   Pack types: hobby ($120), blaster ($50), retail ($5), jumbo ($30)
 
   Modes:
-    Default  = virtual (dry-run) — simulate breaks, no cards saved, no wallet spent
-    --real   = commit to collection — cards saved as personal assets, wallet deducted
+    Default  = real — commit to collection, cards saved, wallet deducted
+    --dry-run / --dry / --virtual = simulate (dry-run), no cards saved, no money spent
                Also advances the secondary market by elapsed 12-hour ticks since the last operation.
 
   Secondary Market (auto-advances on any inventory change):
@@ -4776,7 +4776,7 @@ program
 
 // Global options — isReal() and seed parsing still use process.argv directly
 program
-  .option('--real', 'Commit to collection — cards saved as personal assets, wallet deducted')
+  .option('--dry-run', 'Dry run — simulate pack opening, do not save cards or spend money')
   .option('--seed <value>', 'Set RNG seed for deterministic outcomes')
   .option('--verbose', 'Enable verbose logging');
 
