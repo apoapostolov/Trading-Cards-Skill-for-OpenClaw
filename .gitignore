@@ -1,2 +1,10 @@
+# Runtime data — created on first use
+data/players.json
+data/players/
+data/logs/
+data/orderbook/
+data/market/
+data/flopps/wildcards/
+
+# Environment
 .env
-node_modules/
