@@ -3,7 +3,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
 const {
   createTradingLogger,
   summarize,
@@ -32,8 +31,7 @@ function parseArgs(argv) {
     side: 'front',
     format: 'json',
     handHeld: cfg.handHeld !== undefined ? cfg.handHeld : true,
-    imageOndemand: cfg.imageOndemand !== undefined ? cfg.imageOndemand : true,
-    imageModel: cfg.imageModel || 'openai/gpt-image-2',
+    imagePromptOnly: cfg.imagePromptOnly !== undefined ? cfg.imagePromptOnly : true,
     output: null,
     writeSet: false,
     includeSource: true,
@@ -58,9 +56,8 @@ function parseArgs(argv) {
     else if (arg === '--prompt-format' && args[i + 1]) opts.promptFormat = args[++i];
     else if (arg === '--hand-held') opts.handHeld = true;
     else if (arg === '--no-hand-held') opts.handHeld = false;
-    else if (arg === '--image-ondemand') opts.imageOndemand = true;
-    else if (arg === '--no-image-ondemand') opts.imageOndemand = false;
-    else if (arg === '--image-model' && args[i + 1]) opts.imageModel = args[++i];
+    else if (arg === '--image-prompt-only') opts.imagePromptOnly = true;
+    else if (arg === '--no-image-prompt-only') opts.imagePromptOnly = false;
     else if (arg === '--help' || arg === '-h') opts.help = true;
   }
 
@@ -79,16 +76,15 @@ Options:
   --range <a-b>          Inclusive card range, e.g. 001-025
   --all                  Process all cards in the set
   --side <front|back|both>  Which card side to build
-  --format <json|text>   Output format (text for on-demand prompt viewing)
+  --format <json|text>   Output format
   --output <file>        Write output to file
   --write-set            Persist prompt payloads back into the set JSON
   --no-source            Omit original flat prompt fields from payload
   --prompt-format <text|json>  Render the prompt as sectioned text or structured JSON
   --hand-held              Real-world photography framing (card held in hand). On by default.
   --no-hand-held           Disable hand-held framing (full-frame digital render).
-  --image-ondemand         Output prompt for manual use instead of generating. On by default (saves money).
-  --no-image-ondemand      Actually generate the image via OpenRouter API.
-  --image-model <model>    Image generation model. Default: openai/gpt-image-2
+  --image-prompt-only      Show prompt only (user generates image themselves). On by default (saves money).
+  --no-image-prompt-only   Output full JSON payload for downstream image generation.
 `);
 }
 
@@ -96,107 +92,18 @@ function normalizeNum(value) {
   return String(value || '').trim().padStart(3, '0');
 }
 
-function formatPromptOutput(payload, card, set, side, opts) {
+function formatCleanPrompt(payload, card, set, side) {
   const prompt = payload.prompt || '';
-  const negative = payload.negativePrompt || '';
   const lines = [
     '',
     '═'.repeat(58),
-    `  SET: ${set.code || '?'} — ${set.name || '?'}`,
-    `  CARD: #${card.num || card.cardNum || '?'} — ${card.name || 'Untitled'}`,
-    `  SIDE: ${side}`,
+    `  ${set.code || '?'}-${String(card.num || card.cardNum || '?').padStart(3, '0')} — ${card.name || 'Untitled'} (${side})`,
     '═'.repeat(58),
     '',
-    '  📋 PROMPT (copy this into your image generator):',
+    prompt,
     '',
-    `  ${prompt}`,
   ];
-
-  if (negative) {
-    lines.push('', '  ⛔ NEGATIVE PROMPT:', '', `  ${negative}`);
-  }
-
-  lines.push(
-    '',
-    '  ─'.repeat(56),
-    `  💡 Tip: Use this prompt with ${opts.imageModel}, Imagen, Midjourney,`,
-    '     Dall-E, Stable Diffusion, or any image generator of your choice.',
-    '     Running with --no-image-ondemand generates it via OpenRouter automatically.',
-    '',
-  );
-
   return lines.join('\n');
-}
-
-function generateImageViaOpenRouter(prompt, model, card, set, side, opts) {
-  return new Promise((resolve, reject) => {
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey) {
-      reject(new Error('OPENROUTER_API_KEY not set in environment. Cannot generate image.'));
-      return;
-    }
-
-    // Trading card aspect ratio ~2.5:3.5 → closest is 2:3
-    const aspectRatio = side === 'front' ? '2:3' : '3:4';
-
-    const payload = JSON.stringify({
-      model: model,
-      messages: [{ role: 'user', content: prompt }],
-      modalities: ['image'],
-      image_config: { aspect_ratio: aspectRatio },
-    });
-
-    const reqOpts = {
-      hostname: 'openrouter.ai',
-      path: '/api/v1/chat/completions',
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload),
-      },
-    };
-
-    const req = https.request(reqOpts, (res) => {
-      let data = '';
-      res.on('data', (chunk) => data += chunk);
-      res.on('end', () => {
-        try {
-          const result = JSON.parse(data);
-          if (!result.choices || !result.choices[0]) {
-            reject(new Error(`OpenRouter API error: ${result.error?.message || JSON.stringify(result)}`));
-            return;
-          }
-          const message = result.choices[0].message;
-          if (!message.images || !message.images.length) {
-            reject(new Error('No images returned from OpenRouter'));
-            return;
-          }
-          resolve(message.images[0].imageUrl.url);
-        } catch (e) {
-          reject(new Error(`Failed to parse OpenRouter response: ${e.message}\n${data.slice(0, 500)}`));
-        }
-      });
-    });
-
-    req.on('error', (e) => reject(new Error(`OpenRouter request failed: ${e.message}`)));
-    req.write(payload);
-    req.end();
-  });
-}
-
-async function saveImageFromDataUrl(dataUrl, setCode, cardNum, side) {
-  const imagesDir = path.join(__dirname, '..', 'data', 'images', setCode);
-  fs.mkdirSync(imagesDir, { recursive: true });
-
-  const matches = dataUrl.match(/^data:image\/(\w+);base64,(.+)$/);
-  if (!matches) throw new Error('Invalid data URL from image response');
-
-  const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
-  const filename = `${String(cardNum).padStart(3, '0')}-${side}.${ext}`;
-  const filepath = path.join(imagesDir, filename);
-  fs.writeFileSync(filepath, Buffer.from(matches[2], 'base64'));
-  return filepath;
 }
 
 function main() {
@@ -244,102 +151,47 @@ function main() {
     }
   }
 
-  // ── Image on-demand mode: just print the prompt for manual use ──
-  if (opts.imageOndemand) {
-    if (opts.format === 'json') {
-      // JSON output with embedded prompts
-      process.stdout.write(JSON.stringify({
-        set: { code: set.code || '', name: set.name || '', category: set.setCategory || set.category || 'character' },
-        side: opts.side,
-        count: cards.length,
-        payloads,
-        note: 'Use .prompt from each payload as input to your image generator.',
-        suggestedModel: opts.imageModel,
-      }, null, 2) + '\n');
-    } else {
-      // Human-readable prompt output
-      for (let i = 0; i < cards.length; i++) {
-        const card = cards[i];
-        const bundle = payloads[i];
-        if (opts.side === 'both') {
-          process.stdout.write(formatPromptOutput(bundle.front, card, set, 'front', opts));
-          process.stdout.write(formatPromptOutput(bundle.back, card, set, 'back', opts));
-        } else if (bundle.front || bundle.back) {
-          const s = bundle.front ? 'front' : 'back';
-          process.stdout.write(formatPromptOutput(bundle[s] || bundle, card, set, s, opts));
-        } else {
-          process.stdout.write(formatPromptOutput(bundle, card, set, opts.side, opts));
-        }
+  // ── Image-prompt-only mode: just print the prompt text ──
+  if (opts.imagePromptOnly) {
+    let output = '';
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      const bundle = payloads[i];
+      if (opts.side === 'both') {
+        output += formatCleanPrompt(bundle.front, card, set, 'front');
+        if (bundle.back) output += formatCleanPrompt(bundle.back, card, set, 'back');
+      } else if (bundle.front || bundle.back) {
+        const s = bundle.front ? 'front' : 'back';
+        output += formatCleanPrompt(bundle[s] || bundle, card, set, s);
+      } else {
+        output += formatCleanPrompt(bundle, card, set, opts.side);
       }
+    }
+    if (opts.output) {
+      fs.writeFileSync(path.resolve(opts.output), output.trim() + '\n');
+    } else {
+      process.stdout.write(output.trim() + '\n');
     }
   }
 
-  // ── Generate mode: call OpenRouter API ──
+  // ── Full payload mode: output JSON for agent/tool to act on ──
   else {
-    if (opts.format !== 'json') {
-      console.log('Generating images via OpenRouter...\n');
+    const output = JSON.stringify({
+      set: {
+        code: set.code || '',
+        name: set.name || '',
+        category: set.setCategory || set.category || 'character',
+      },
+      side: opts.side,
+      count: cards.length,
+      payloads,
+    }, null, 2);
+
+    if (opts.output) {
+      fs.writeFileSync(path.resolve(opts.output), output + '\n');
+    } else {
+      process.stdout.write(output + '\n');
     }
-    (async () => {
-      for (let i = 0; i < cards.length; i++) {
-        const card = cards[i];
-        const bundle = payloads[i];
-
-        const sides = opts.side === 'both' ? ['front', 'back'] : [opts.side];
-        for (const side of sides) {
-          const payload = bundle[side] || bundle;
-          const prompt = payload.prompt;
-
-          if (opts.format !== 'json') {
-            process.stdout.write(`  🎨 Generating ${set.code}-${String(card.num || card.cardNum || '').padStart(3,'0')} (${side})... `);
-          }
-
-          try {
-            const dataUrl = await generateImageViaOpenRouter(prompt, opts.imageModel, card, set, side, opts);
-            const filepath = await saveImageFromDataUrl(dataUrl, set.code || 'unknown', card.num || card.cardNum || '000', side);
-
-            if (opts.format !== 'json') {
-              process.stdout.write(`✅ ${filepath}\n`);
-            }
-
-            // Track in payload
-            if (payload.imageUrl) {
-              if (!payload.imageUrl) payload.imageUrl = {};
-              payload.imageUrl[side] = filepath;
-            }
-          } catch (err) {
-            if (opts.format !== 'json') {
-              process.stdout.write(`❌ ${err.message}\n`);
-            }
-            logger.error('image.generate.fail', { card: card.num, side, error: err.message });
-          }
-        }
-      }
-
-      // Write final JSON if requested
-      if (opts.output) {
-        const output = opts.format === 'json'
-          ? JSON.stringify({
-              set: { code: set.code || '', name: set.name || '', category: set.setCategory || set.category || 'character' },
-              side: opts.side,
-              count: cards.length,
-              payloads,
-            }, null, 2)
-          : payloads.map((p) => {
-              if (p.front || p.back) {
-                return [p.front?.prompt, p.back?.prompt].filter(Boolean).join('\n\n---\n\n');
-              }
-              return p.prompt;
-            }).join('\n\n==========\n\n');
-        fs.writeFileSync(path.resolve(opts.output), output);
-        logger.debug('output.write', { output: path.resolve(opts.output), format: opts.format, count: cards.length });
-      }
-
-      logger.log('process.end', { command: 'card-image-prompts', status: 'ok', count: cards.length });
-    })().catch((err) => {
-      logger.error('process.fail', { message: err.message, stack: err.stack });
-      console.error(`Error: ${err.message}`);
-      process.exitCode = 1;
-    });
   }
 
   if (opts.writeSet) {
@@ -348,9 +200,7 @@ function main() {
     logger.debug('set.write', { setPath, cards: updatedSet.cards.length, payload: summarize(updatedSet.cards.slice(0, 3)) });
   }
 
-  if (opts.imageOndemand) {
-    logger.log('process.end', { command: 'card-image-prompts', status: 'ok', count: cards.length });
-  }
+  logger.log('process.end', { command: 'card-image-prompts', status: 'ok', count: cards.length });
 }
 
 if (require.main === module) {
