@@ -6,5 +6,8 @@ data/orderbook/
 data/market/
 data/flopps/wildcards/
 
+# Dependencies
+node_modules/
+
 # Environment
 .env
