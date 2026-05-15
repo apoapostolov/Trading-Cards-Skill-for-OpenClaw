@@ -1,5 +1,28 @@
 # Changelog
 
+## v2.2.0 — 2026-05-15
+
+**`help` command for new users + enhanced `wallet` with per-set breakdown**
+
+### Added
+- **`help` command** — teaches new players the Flopps trading card premise, economics
+  (daily stipend, market ticks, FLPS stock, scalpers/stores), and the most common
+  actions (open packs, sell/buy, grade, trade, auction, stores, lots, Flopps world)
+- **`help` command is player-free** — runs without a player context, accessible to
+  anyone
+
+### Changed
+- **`wallet` now shows ALL collections** — cash, total collection value across every
+  set, sealed stock, net worth, and P/L. No longer scoped to the active set only.
+- **Per-set breakdown table** — when you have cards in multiple sets, wallet shows
+  a `COLLECTION BY SET` section with each set's card count, total value, and P/L
+- Collection count label now says `X cards across Y sets` instead of just a
+  single-set count
+- P/L shows signed value (`+$X.XX` or `-$X.XX`) for the total portfolio
+
+### Fixed
+- Wallet now skips corrupt collection files (missing `setKey`) instead of crashing
+
 ## v2.1.0 — 2026-05-15
 
 **AI set generator overhaul + NEW CARDS REVEAL flavor text**

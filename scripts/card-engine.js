@@ -1879,20 +1879,101 @@ function cmdHistory(){
 function cmdWallet(){
   const cfg=loadCfg();
   if(typeof cfg.wallet!=='number'){console.log(`\n  No player wallet configured for this data directory. Use player-manager.js dir first.\n`);return;}
-  const col=cfg.activeSet?loadCol():null;
-  const assets=col?col.stats.value:0;
-  const sealedValue=col?getSealedInventoryValue(col):0;
-  const netWorth=cfg.wallet+assets+sealedValue;
+  // Aggregate across all collections (not just active set)
+  const colDir=path.join(getDataDir(),'collections');
+  let totalCards=0,totalValue=0,totalSpent=0,totalSealed=0,totalSets=0,setsInfo=[];
+  if(fs.existsSync(colDir)){
+    const files=fs.readdirSync(colDir).filter(f=>f.endsWith('.json'));
+    for(const f of files){
+      const col=rJ(path.join(colDir,f));if(!col||!col.cards||!col.setKey)continue;
+      const colSealed=getSealedInventoryValue(col);
+      const setPath=path.join(getGlobalDataDir(),'sets',col.setKey+'.json');
+      const set=rJ(setPath);
+      const setName=set?`${set.name} ${set.year}`:col.setKey;
+      setsInfo.push({key:col.setKey,name:setName,cards:col.cards.length,value:col.stats?.value||0,spent:col.stats?.spent||0,sealed:colSealed});
+      totalCards+=col.cards.length;totalValue+=col.stats?.value||0;totalSpent+=col.stats?.spent||0;totalSealed+=colSealed;totalSets++;
+    }
+  }
+  const netWorth=cfg.wallet+totalValue+totalSealed;
+  const pl=totalValue+totalSealed-totalSpent;
   console.log(`\n${'═'.repeat(50)}`);
   console.log(`  💰 WALLET & NET WORTH`);
   console.log(`${'═'.repeat(50)}`);
   console.log(`  Cash:          ${fm$(cfg.wallet)}`);
-  console.log(`  Collection:    ${fm$(assets)} (${col?col.stats.total:0} cards)`);
-  console.log(`  Sealed stock:   ${fm$(sealedValue)}`);
-  if(col&&sealedValue>0) console.log(`  Inventory:      ${formatSealedInventorySummary(col)}`);
+  console.log(`  Collection:    ${fm$(totalValue)} (${totalCards} cards across ${totalSets} set${totalSets!==1?'s':''})`);
+  console.log(`  Sealed stock:   ${fm$(totalSealed)}`);
   console.log(`  Net Worth:     ${fm$(netWorth)}`);
-  console.log(`  P/L:           ${col?(((col.stats.value+sealedValue)-col.stats.spent>=0?'+':'')+fm$((col.stats.value+sealedValue)-col.stats.spent)):'$0.00'}`);
-  console.log(`${'═'.repeat(50)}\n`);
+  console.log(`  P/L:           ${pl>=0?'+':''}${fm$(pl)}`);
+  console.log(`${'═'.repeat(50)}`);
+  if(setsInfo.length>1){
+    console.log(`\n  🃏 COLLECTION BY SET`);
+    console.log(`${'─'.repeat(52)}`);
+    for(const si of setsInfo){
+      const sPL=si.value+si.sealed-si.spent;
+      console.log(`${pR(si.name,30)} ${String(si.cards).padStart(5)} cards ${fm$(si.value+si.sealed).padStart(10)} ${sPL>=0?'+':''}${fm$(sPL).padStart(9)}`);
+    }
+    console.log(`${'═'.repeat(50)}`);
+  }
+  console.log();
+}
+
+function cmdHelp(){
+  console.log(`\n${'═'.repeat(56)}`);
+  console.log(`  🎴 TRADING CARDS — Welcome to the Flopps Universe`);
+  console.log(`${'═'.repeat(56)}`);
+  console.log(`\n  📖 THE PREMISE`);
+  console.log(`  You're a collector in the chaotic world of Flopps, a fake trading-card`);
+  console.log(`  company run by profit-obsessed executives. Every pack you open contains`);
+  console.log(`  cards from themed sets — base cards, parallels, autos, relics, and more.`);
+  console.log(`  Grade them, sell them, trade them, or chase that elusive 1/1 Superfractor.`);
+  console.log(`\n  💰 ECONOMICS`);
+  console.log(`  • You get a daily $5 stipend to spend on packs`);
+  console.log(`  • Cards have book value (set price) and market value (supply & demand)`);
+  console.log(`  • The secondary market ticks in 12-hour cycles — prices rise and fall`);
+  console.log(`  • FLPS (Flopps stock) fluctuates and influences the whole economy`);
+  console.log(`  • Scalpers, stores (like Bargain Bob), and NPC traders populate the world`);
+  console.log(`\n  🎲 COMMON ACTIONS`);
+  console.log(`  Open packs:`);
+  console.log(`    open-pack [hobby|blaster|retail|jumbo]   — open a pack (--real to commit)`);
+  console.log(`    open-box [hobby|blaster|retail|jumbo]    — open a full box`);
+  console.log(`\n  Manage your collection:`);
+  console.log(`    wallet            — cash, collection value, P/L, per-set breakdown`);
+  console.log(`    portfolio         — full financial overview with set completion`);
+  console.log(`    collection        — browse all your cards`);
+  console.log(`    checklist         — see what you're missing`);
+  console.log(`    duplicates / dups — find duplicate cards to sell`);
+  console.log(`    wishlist          — manage cards you're chasing`);
+  console.log(`\n  Buy & sell:`);
+  console.log(`    sell <card-num>   — sell a card to the market`);
+  console.log(`    sell dups         — bulk-sell all duplicates (keeps 1 best copy)`);
+  console.log(`    buy <card-num>    — buy a card from the market`);
+  console.log(`    market            — dashboard with top movers, trends, events`);
+  console.log(`    market <card-num> — price history for a specific card`);
+  console.log(`\n  Grade & trade:`);
+  console.log(`    grade-card <num>  — submit to PSA grading ($5/card)`);
+  console.log(`    trade browse      — view NPC traders and their cards`);
+  console.log(`    trade offer <npc> <your> for <their> — propose a swap`);
+  console.log(`    auction browse    — view active auctions`);
+  console.log(`    auction bid <id> <amt> — place a bid`);
+  console.log(`\n  Stores & lots:`);
+  console.log(`    store list        — list all stores with relationship tiers`);
+  console.log(`    store visit <id>  — browse a store's inventory & prices`);
+  console.log(`    lot browse        — view mystery lots for sale`);
+  console.log(`\n  Flopps world:`);
+  console.log(`    flopps-status     — FLPS stock price, latest bulletin, launch calendar`);
+  console.log(`    flopps-today      — what Flopps did today`);
+  console.log(`    flopps-wildcard   — force a surprise corporate event`);
+  console.log(`\n  Compare with other players:`);
+  console.log(`    compare           — wallet, cards, value, completion across all players`);
+  console.log(`\n  💡 TIPS`);
+  console.log(`  • Use --real to commit packs to your collection (costs wallet money)`);
+  console.log(`  • Without --real, it's a dry-run — no cards saved, no money spent`);
+  console.log(`  • Grading can increase a card's value 5-50x — but costs $5`);
+  console.log(`  • Store sales (Bargain Bob!) can beat retail prices`);
+  console.log(`  • Sealed product in inventory can be opened later — it's already paid for`);
+  console.log(`  • Market prices move in 12-hour ticks — check before selling`);
+  console.log(`\n  Type any command to get started. Good luck, collector. 🃏`);
+  console.log(`${'═'.repeat(56)}\n`);
 }
 
 function cmdResetCollection(){
@@ -4572,7 +4653,7 @@ process.on('unhandledRejection',err=>{LOG.current?.error('unhandled-rejection',{
   setEngineSeed(seed);
 }
 LOG.current?.log('process.start',{command:cmd||null,dataDir:getDataDir()});
-const PLAYER_FREE_COMMANDS=new Set(['generate-set','gen-set','generate-set-ai','gen-ai','flopps','flopps-launch','flopps-status','flopps-day','flopps-today','flopps-wildcard','compare','list-sets']);
+const PLAYER_FREE_COMMANDS=new Set(['generate-set','gen-set','generate-set-ai','gen-ai','flopps','flopps-launch','flopps-status','flopps-day','flopps-today','flopps-wildcard','compare','list-sets','help']);
 const isHelpOrVersion=cmd==='--help'||cmd==='-h'||cmd==='--version'||cmd==='-V';
 if(cmd&&!isHelpOrVersion&&!PLAYER_FREE_COMMANDS.has(cmd)&&!requirePlayerContext(cmd)){
   process.exitCode=1;
@@ -4769,6 +4850,10 @@ program.command('add-money')
   .argument('[amount]', 'Amount to add (default: pocketMoney from config)')
   .description('Add money to wallet')
   .action(cmdAddMoney);
+
+program.command('help')
+  .description('Show trading cards guide — premise, economics, common actions')
+  .action(cmdHelp);
 
 program.command('wallet')
   .description('Show wallet balance')
